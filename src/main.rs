@@ -1,16 +1,17 @@
-mod logger;
+pub mod lexer;
+pub mod logger;
+pub mod source;
 
 use logger::Logger;
-use std::env;
-use std::fs;
-use std::path::PathBuf;
+use source::Source;
+use std::{env, path::PathBuf};
 
 fn set_up_logger() {
     let pwd: PathBuf = env::current_dir().unwrap_or_else(|e| {
         panic!("Error getting current directory: {}", e);
     });
     let logger_file_path = pwd.join(".log").join("debug.log");
-    let _logger = Logger::init(logger_file_path);
+    let _logger = Logger::new(logger_file_path);
 }
 
 fn main() {
@@ -25,10 +26,5 @@ fn main() {
     }
 
     let file_path: &str = &args[0];
-    let _content: String = match fs::read_to_string(file_path) {
-        Ok(content) => content,
-        Err(e) => {
-            panic!("Error reading file \"{}\": {}", file_path, e);
-        }
-    };
+    let _source = Source::new(file_path);
 }

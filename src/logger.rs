@@ -1,7 +1,7 @@
 use std::fs;
+use std::path::Path;
 use std::path::PathBuf;
 use std::sync::Arc;
-use std::{fs::File, path::Path};
 use tracing_subscriber::{filter, prelude::*};
 
 pub struct Logger {
@@ -10,7 +10,7 @@ pub struct Logger {
 
 // https://stackoverflow.com/questions/70013172/how-to-use-the-tracing-library
 impl Logger {
-    pub fn init(file_path: impl AsRef<Path>) -> Logger {
+    pub fn new(file_path: impl AsRef<Path>) -> Logger {
         let file_path = file_path.as_ref().to_path_buf();
         let logger = Logger { file_path };
         logger.create_log_directory();
@@ -45,22 +45,27 @@ impl Logger {
         }
     }
 
-    // The `info`, `warn`, and `error` events will be seen by both the
-    // stdout log layer and the debug log file layer.
-    // The `debug` event will only be seen by the debug log file layer.
-    fn set_tracing_subscribers(&self) {
-        let stdout_log = tracing_subscriber::fmt::layer().pretty().without_time();
-
-        // A layer that logs events to a file.
-        let file = File::create(&self.file_path);
-        let file = match file {
+    fn create_log_file(&self) -> fs::File {
+        let file = fs::File::create(&self.file_path);
+        match file {
             Ok(file) => file,
             Err(error) => panic!(
                 "Error creating file: \"{}\": {}",
                 self.file_path.display(),
                 error
             ),
-        };
+        }
+    }
+
+    // The `info`, `warn`, and `error` events will be seen by both the
+    // stdout log layer and the debug log file layer.
+    // The `debug` event will only be seen by the debug log file layer.
+    fn set_tracing_subscribers(&self) {
+        // A layer that logs events to stdout.
+        let stdout_log = tracing_subscriber::fmt::layer().pretty().without_time();
+
+        // A layer that logs events to a file.
+        let file = self.create_log_file();
         let debug_log = tracing_subscriber::fmt::layer()
             .with_writer(Arc::new(file))
             .with_ansi(false);
