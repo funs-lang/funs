@@ -5,7 +5,7 @@
 - the difference between "variables" and "functions" is the `(args) ->` part
 
 # Imports
-```bash
+```python
 imp test # use: test.<name>
 imp test as t # use: t.<name>
 imp (
@@ -21,33 +21,33 @@ imp * of test # import all
 # Native Types
 
 - `()` -- Unit
-- `Int` -- 32 bits
-- `Float` -- 64 bits
-- `Str` -- Unicode string
-- `Char` -- Unicode character
-- `Bool` -- `True` or `False`
+- `int` -- 32 bits
+- `float` -- 64 bits
+- `str` -- Unicode string
+- `char` -- Unicode character
+- `bool` -- `True` or `False`
 - `[T]` -- List of `T`
 - `(T, U)` -- Tuple with two elements of type `T` and `U`
-- `Option<T>` -- `Just` or `Nil`
+- `option<T>` -- `Just` or `Nil`
 
 ```python
 # With type annotation
-x_int: Int = 1
-x_float: Float = 1.0
-x_bool: Bool = True # False
-x_str: Str = "hello 👾"
-x_char: Char = '👾' # unicode
-x_list: [Int]= [1, 2, 3]
-x_tuple: (Int, Str) = (1, "hello")
-x_option: Option<Int> = Just(1) # Nil
-x_f1: () -> Unit = () -> print "hello" ;
-x_f2: () -> Int = () -> 1 ;
+x_int: int = 1
+x_float: float = 1.0
+x_bool: bool = True # False
+x_str: str = "hello 👾"
+x_char: char = '👾' # unicode
+x_list: [int]= [1, 2, 3]
+x_tuple: (int, str) = (1, "hello")
+x_option: Option<int> = Just(1) # Nil
+x_f1: () -> unit = () -> print "hello" ;
+x_f2: () -> int = () -> 1 ;
 x_f3: (T) -> T = (x) -> x ; # Generic
 
 # Without type annotation
 x_int = 1
 x_float = 1.0
-x_bool = true # false
+x_bool = True # False
 x_str = "hello"
 x_char = 'a' # unicode
 x_list = [1, 2, 3]
@@ -64,10 +64,10 @@ x_f3 = (x) -> x ; # Generic
 
 ```bash
 data MyRecord = {
-  a: Int
-  b: mut Str
-  c: Int
-  d: mut Str
+  a: int
+  b: mut str
+  c: int
+  d: mut str
 }
 record: MyRecord = {a: 1, b: "a", c: 2, d: "b"}
 a = record.a
@@ -86,12 +86,12 @@ record.d = "d" # OK
 data MyVariant =
 | First
 | Second
-| Third(Int)
+| Third(int)
 ;
 first = First
 second = Second
 third = Third(1)
-match_variant: MyVariant -> Str = (v) ->
+match_variant: MyVariant -> str = (v) ->
   match v
   | First -> "first"
   | Second -> "second"
@@ -103,13 +103,13 @@ match_variant: MyVariant -> Str = (v) ->
 # Functions Overview
 
 ```python
-f_base: (Int, Int) -> Int = (a, b) ->
-  square_a: Int = a * a
-  square_b: Int = b * b
+f_base: (int, int) -> int = (a, b) ->
+  square_a: int = a * a
+  square_b: int = b * b
   square_a + square_b # return
 ;
 
-f_match: (Int) -> Str = (a) ->
+f_match: (int) -> Str = (a) ->
   match a
   | 0 => "zero"
   | 1 => "one"
@@ -158,7 +158,7 @@ apply: ((T) -> U, T) -> U = (f, x) -> f x ;
 
 # Partial application
 add: (T, T) -> T = (a, b) -> a + b ;
-add_1: (Int) -> Int = add 1 ;
+add_1: (int) -> int = add 1 ;
 
 # Function call
 result = add 1 2
@@ -172,14 +172,14 @@ result = f3 1 # 3
 # Lists Overview
 
 ```python
-l = [1, 2, 3, 4, 5] # mutable with cons and concat
+l: [int] = [1, 2, 3, 4, 5] # mutable with cons and concat
 head = hd l # 1
 tail = tl l # [2, 3, 4, 5]
 head, tail = l
 first, second, tail = l
 new_list = 0 : l # [0, 1, 2, 3, 4, 5] cons operator
 new_list2 = l ++ [6, 7, 8, 9] # [1, 2, 3, 4, 5, 6, 7, 8, 9] concat operator
-match_list: [Int] -> Str = (l) ->
+match_list: [int] -> str = (l) ->
   match l
   | [] => "empty"
   | [single] => match single
@@ -215,7 +215,7 @@ filter: ((T) -> Bool, [T]) -> [T] = (f, l) ->
 # Tuples Overview
 
 ```python
-tuple = (1, "a", 2, "b") # immutable
+tuple: (int, str, int, str) = (1, "a", 2, "b") # immutable
 first = tuple.0
 second = tuple.1
 third = tuple.2

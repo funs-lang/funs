@@ -13,16 +13,16 @@ imp { .. } of test # import all
 
 # Native Types
 # With type annotation (no type inference)
-x_int: Int = 1
-x_float: Float = 1.0
-x_bool: Bool = True # False
-x_str: Str = "hello 👾"
-x_char: Char = '👾' # unicode
-x_list: [Int] = [1, 2, 3]
-x_tuple: (Int, Str) = (1, "hello")
-x_option: Option<Int> = Just(1) # Nil
-x_f1: () -> Unit = () -> print "hello" ;
-x_f2: () -> Int = () -> 1 ;
+x_int: int = 1
+x_float: float = 1.0
+x_bool: bool = True # False
+x_str: str = "hello 👾"
+x_char: char = '👾' # unicode
+x_list: [int] = [1, 2, 3]
+x_tuple: (int, str) = (1, "hello")
+x_option: option<int> = Just(1) # Nil
+x_f1: () -> unit = () -> print "hello" ;
+x_f2: () -> int = () -> 1 ;
 x_f3: (T) -> T = (x) -> x ; # Generic
 
 # Without type annotation (type inference)
@@ -40,10 +40,10 @@ x_f3 = (x) -> x ; # Generic
 
 # Record
 data MyRecord = {
-  a: Int
-  b: mut Str
-  c: Int
-  d: mut Str
+  a: int
+  b: mut str
+  c: int
+  d: mut str
 }
 record: MyRecord = {a: 1, b: "a", c: 2, d: "b"}
 a = record.a
@@ -65,7 +65,7 @@ data MyVariant =
 first = First
 second = Second
 third = Third(1)
-match_variant: MyVariant -> Str = (v) ->
+match_variant: MyVariant -> str = (v) ->
   match v
   | First => "first"
   | Second => "second"
@@ -75,13 +75,13 @@ match_variant: MyVariant -> Str = (v) ->
 
 
 # Functions Overview
-f_base: (Int, Int) -> Int = (a, b) ->
-  square_a: Int = a * a
-  square_b: Int = b * b
+f_base: (int, int) -> int = (a, b) ->
+  square_a: int = a * a
+  square_b: int = b * b
   square_a + square_b # return
 ;
 
-f_match: (Int) -> Str = (a) ->
+f_match: (int) -> str = (a) ->
   match a
   | 0 => "zero"
   | 1 => "one"
@@ -142,7 +142,7 @@ f3 = f3 = f1 (f2 x) # f1 . f2
 result = f3 1 # 3
 
 # Lists Overviews
-l = [1, 2, 3, 4, 5] # mutable with cons and concat
+l: [int] = [1, 2, 3, 4, 5] # mutable with cons and concat
 head = hd l # 1
 tail = tl l # [2, 3, 4, 5]
 head, tail = l
@@ -182,7 +182,7 @@ filter: ((T) -> Bool, [T]) -> [T] = (f, l) ->
 ;
 
 # Tuples Overview
-tuple = (1, "a", 2, "b") # immutable
+tuple: (int, str, int, str) = (1, "a", 2, "b") # immutable
 first = tuple.0
 second = tuple.1
 third = tuple.2

@@ -18,15 +18,15 @@
 - `not` -- logical not
 
 ## Native Types
-- `Unit` -- Unit
-- `Int` -- 32 bits
-- `Float` -- 64 bits
-- `Str` -- Unicode string
-- `Char` -- Unicode character
-- `Bool` -- `True` or `False`
+- `unit` -- Unit
+- `int` -- 32 bits
+- `float` -- 64 bits
+- `str` -- Unicode string
+- `char` -- Unicode character
+- `bool` -- `True` or `False`
 - `[T]` -- List of `T`
 - `(T, U)` -- Tuple with two elements of type `T` and `U`
-- `Option<T>` -- `Just` or `None`
+- `option<T>` -- `Just` or `Nil`
 
 ## Separators
 - `\n` -- *new line* define the end of a statement

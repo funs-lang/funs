@@ -1,0 +1,79 @@
+use std::fs;
+use std::path::PathBuf;
+use std::sync::Arc;
+use std::{fs::File, path::Path};
+use tracing_subscriber::{filter, prelude::*};
+
+pub struct Logger {
+    file_path: PathBuf,
+}
+
+// https://stackoverflow.com/questions/70013172/how-to-use-the-tracing-library
+impl Logger {
+    pub fn init(file_path: impl AsRef<Path>) -> Logger {
+        let file_path = file_path.as_ref().to_path_buf();
+        let logger = Logger { file_path };
+        logger.create_log_directory();
+        logger.set_tracing_subscribers();
+        logger.set_rust_log_variable();
+        logger
+    }
+
+    fn set_rust_log_variable(&self) {
+        std::env::set_var(
+            "RUST_LOG",
+            std::env::var("RUST_LOG").unwrap_or("info".to_string()),
+        );
+    }
+
+    fn create_log_directory(&self) {
+        let log_directory = self.file_path.parent().unwrap_or_else(|| {
+            panic!(
+                "Error getting parent directory of file: \"{}\"",
+                self.file_path.display()
+            )
+        });
+        if !log_directory.exists() {
+            match fs::create_dir_all(log_directory) {
+                Ok(_) => {}
+                Err(error) => panic!(
+                    "Error creating directory: \"{}\": {}",
+                    log_directory.display(),
+                    error
+                ),
+            }
+        }
+    }
+
+    // The `info`, `warn`, and `error` events will be seen by both the
+    // stdout log layer and the debug log file layer.
+    // The `debug` event will only be seen by the debug log file layer.
+    fn set_tracing_subscribers(&self) {
+        let stdout_log = tracing_subscriber::fmt::layer().pretty().without_time();
+
+        // A layer that logs events to a file.
+        let file = File::create(&self.file_path);
+        let file = match file {
+            Ok(file) => file,
+            Err(error) => panic!(
+                "Error creating file: \"{}\": {}",
+                self.file_path.display(),
+                error
+            ),
+        };
+        let debug_log = tracing_subscriber::fmt::layer()
+            .with_writer(Arc::new(file))
+            .with_ansi(false);
+
+        tracing_subscriber::registry()
+            .with(
+                stdout_log
+                    // Add an `INFO` filter to the stdout logging layer
+                    .with_filter(filter::LevelFilter::INFO)
+                    // Combine the filtered `stdout_log` layer with the
+                    // `debug_log` layer, producing a new `Layered` layer.
+                    .and_then(debug_log),
+            )
+            .init();
+    }
+}
