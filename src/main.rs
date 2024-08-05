@@ -1,7 +1,9 @@
 pub mod lexer;
 pub mod logger;
 pub mod source;
+pub mod utils;
 
+use lexer::lexer::Lexer;
 use logger::Logger;
 use source::Source;
 use std::{env, path::PathBuf};
@@ -26,5 +28,8 @@ fn main() {
     }
 
     let file_path: &str = &args[0];
-    let _source = Source::new(file_path);
+    let source = Source::new(file_path);
+    let lexer = Lexer::new(&source);
+    let tokens = lexer.collect::<Vec<_>>();
+    println!("{:?}", tokens);
 }

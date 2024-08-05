@@ -62,7 +62,7 @@ impl Logger {
     // The `debug` event will only be seen by the debug log file layer.
     fn set_tracing_subscribers(&self) {
         // A layer that logs events to stdout.
-        let stdout_log = tracing_subscriber::fmt::layer().pretty().without_time();
+        let stdout_log = tracing_subscriber::fmt::layer().compact().without_time(); // .pretty();
 
         // A layer that logs events to a file.
         let file = self.create_log_file();
