@@ -1,6 +1,10 @@
 use crate::utils::color;
 use std::path::{Path, PathBuf};
 
+pub const KEYWORD_INT: &str = "int";
+pub const SEPARATOR_COLON: &str = ":";
+pub const SEPARATOR_ASSIGN: &str = "=";
+
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub enum Literal {
     Int(i64),
@@ -10,6 +14,7 @@ pub enum Literal {
 pub enum TokenKind {
     TokenLiteral(Literal),
     TokenIdentifier,
+    TokenKeyword,
     TokenNewLine, // \n
     TokenColon,   // :
     TokenAssign,  // =
@@ -133,6 +138,7 @@ impl std::fmt::Display for TokenKind {
         match self {
             TokenKind::TokenLiteral(literal) => write!(f, "TokenLiteral({})", literal),
             TokenKind::TokenIdentifier => write!(f, "TokenIdentifier"),
+            TokenKind::TokenKeyword => write!(f, "TokenKeyword"),
             TokenKind::TokenNewLine => write!(f, "TokenNewLine"),
             TokenKind::TokenColon => write!(f, "TokenColon"),
             TokenKind::TokenAssign => write!(f, "TokenAssign"),
