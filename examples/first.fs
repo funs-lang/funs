@@ -1,1 +1,1 @@
-               _x_int: int = 1
+               _x_int x_int

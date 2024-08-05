@@ -26,3 +26,12 @@ impl Source {
         &self.content
     }
 }
+
+impl From<String> for Source {
+    fn from(content: String) -> Source {
+        Source {
+            file_path: PathBuf::new(),
+            content,
+        }
+    }
+}

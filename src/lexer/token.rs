@@ -1,12 +1,12 @@
 use crate::utils::color;
 use std::path::{Path, PathBuf};
 
-#[derive(Debug)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub enum Literal {
     Int(i64),
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub enum TokenKind {
     TokenLiteral(Literal),
     TokenIdentifier,
@@ -16,7 +16,7 @@ pub enum TokenKind {
     TokenEOF,     // End of file
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Eq, PartialEq)]
 pub struct TokenLocation {
     file_path: PathBuf,
     line: usize,
@@ -59,9 +59,45 @@ impl TokenLocation {
     pub fn set_column_start(&mut self, column_start: usize) {
         self.column_start = column_start;
     }
+
+    pub fn with_file_path(&self, file_path: &Path) -> TokenLocation {
+        TokenLocation {
+            file_path: file_path.to_path_buf(),
+            line: self.line,
+            column_start: self.column_start,
+            column_end: self.column_end,
+        }
+    }
+
+    pub fn with_line(&self, line: usize) -> TokenLocation {
+        TokenLocation {
+            file_path: self.file_path.clone(),
+            line,
+            column_start: self.column_start,
+            column_end: self.column_end,
+        }
+    }
+
+    pub fn with_column_start(&self, column_start: usize) -> TokenLocation {
+        TokenLocation {
+            file_path: self.file_path.clone(),
+            line: self.line,
+            column_start,
+            column_end: self.column_end,
+        }
+    }
+
+    pub fn with_column_end(&self, column_end: usize) -> TokenLocation {
+        TokenLocation {
+            file_path: self.file_path.clone(),
+            line: self.line,
+            column_start: self.column_start,
+            column_end,
+        }
+    }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct Token {
     /// The kind of the token
     pub kind: TokenKind,
