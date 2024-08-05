@@ -46,3 +46,131 @@ impl Iterator for Lexer {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use token::TokenLocation;
+
+    use super::*;
+    use crate::lexer::token::TokenKind;
+    use crate::source::Source;
+    use crate::utils::file_handler::{create_tmp_file, remove_tmp_file};
+    use std::path::Path;
+
+    #[test]
+    fn test_token_identifier() {
+        let file_path = "test.tmp";
+        let file_content = "test_id";
+        create_tmp_file(file_path, file_content);
+        let source = Source::new(file_path);
+        let lexer = Lexer::new(&source);
+        let tokens = lexer.collect::<Vec<_>>();
+        assert_eq!(tokens.len(), 2);
+        assert_eq!(
+            (&tokens[0].kind, &tokens[1].kind),
+            (&TokenKind::TokenIdentifier, &TokenKind::TokenEOF)
+        );
+        assert_eq!(
+            (&tokens[0].lexeme, &tokens[1].lexeme),
+            (&"test_id".to_string(), &"".to_string())
+        );
+        assert_eq!(
+            (&tokens[0].location, &tokens[1].location),
+            (
+                &TokenLocation::new(&Path::new(file_path))
+                    .with_line(0)
+                    .with_column_start(0)
+                    .with_column_end(7),
+                &TokenLocation::new(&Path::new(file_path))
+                    .with_line(0)
+                    .with_column_start(7)
+                    .with_column_end(7)
+            )
+        );
+        remove_tmp_file(file_path);
+    }
+
+    #[test]
+    fn test_lexer_cursor_peek() {
+        let source = Source::from("test_id".to_string());
+        let cursor = Cursor::from(&source);
+        assert_eq!(cursor.peek(), Some('t'));
+    }
+
+    #[test]
+    fn test_lexer_cursor_consume() {
+        let source = Source::from("test_id".to_string());
+        let mut cursor = Cursor::from(&source);
+        cursor.consume();
+        assert_eq!(cursor.location().column_start(), 1);
+        assert_eq!(cursor.location().column_end(), 1);
+    }
+
+    #[test]
+    fn test_lexer_cursor_advance() {
+        let source = Source::from("test_id".to_string());
+        let mut cursor = Cursor::from(&source);
+        cursor.advance();
+        assert_eq!(cursor.location().column_start(), 0);
+        assert_eq!(cursor.location().column_end(), 1);
+    }
+
+    #[test]
+    fn test_lexer_cursor_align() {
+        let source = Source::from("test_id".to_string());
+        let mut cursor = Cursor::from(&source);
+        cursor.advance();
+        cursor.align();
+        assert_eq!(cursor.location().column_start(), 1);
+        assert_eq!(cursor.location().column_end(), 1);
+    }
+
+    #[test]
+    fn test_lexer_transition_apply() {
+        let source = Source::from("test_id".to_string());
+        let mut cursor = Cursor::from(&source);
+        let transition_kind = TransitionKind::Consume;
+        transition_kind.apply(&mut cursor);
+        assert_eq!(cursor.location().column_start(), 1);
+        assert_eq!(cursor.location().column_end(), 1);
+    }
+
+    #[test]
+    fn test_lexer_transition_apply_advance() {
+        let source = Source::from("test_id".to_string());
+        let mut cursor = Cursor::from(&source);
+        let transition_kind = TransitionKind::Advance;
+        transition_kind.apply(&mut cursor);
+        assert_eq!(cursor.location().column_start(), 0);
+        assert_eq!(cursor.location().column_end(), 1);
+    }
+
+    #[test]
+    fn test_token_identifier_using_string() {
+        let source = Source::from("test_id".to_string());
+        let lexer = Lexer::new(&source);
+        let tokens = lexer.collect::<Vec<_>>();
+        assert_eq!(tokens.len(), 2);
+        assert_eq!(
+            (&tokens[0].kind, &tokens[1].kind),
+            (&TokenKind::TokenIdentifier, &TokenKind::TokenEOF)
+        );
+        assert_eq!(
+            (&tokens[0].lexeme, &tokens[1].lexeme),
+            (&"test_id".to_string(), &"".to_string())
+        );
+        assert_eq!(
+            (&tokens[0].location, &tokens[1].location),
+            (
+                &TokenLocation::new(&Path::new(""))
+                    .with_line(0)
+                    .with_column_start(0)
+                    .with_column_end(7),
+                &TokenLocation::new(&Path::new(""))
+                    .with_line(0)
+                    .with_column_start(7)
+                    .with_column_end(7)
+            )
+        );
+    }
+}

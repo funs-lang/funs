@@ -26,20 +26,25 @@ env:
 
 jobs:
   ci:
-    name: Rust project - latest
+    name: ${{ matrix.toolchain }}
     strategy:
       matrix:
         toolchain:
           - stable
           - beta
           - nightly
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
       - uses: actions/checkout@v4
       - run: rustup update ${{ matrix.toolchain }} && rustup default ${{ matrix.toolchain }}
+      - name: Add clippy
+        if: matrix.toolchain != 'stable'
+        run: rustup component add clippy
+      - name: Add rustfmt
+        if: matrix.toolchain != 'stable'
+        run: rustup component add rustfmt
       - run: cargo build --verbose
       - run: cargo test --verbose
       - run: cargo clippy --verbose
       - run: cargo fmt -- --check
-
