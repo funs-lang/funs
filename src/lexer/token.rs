@@ -1,9 +1,9 @@
 use crate::utils::color;
 use std::path::{Path, PathBuf};
 
-pub const KEYWORD_INT: &str = "int";
-pub const SEPARATOR_COLON: &str = ":";
-pub const SEPARATOR_ASSIGN: &str = "=";
+const KEYWORD_INT: &str = "int";
+const SEPARATOR_COLON: &str = ":";
+const SEPARATOR_ASSIGN: &str = "=";
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub enum Literal {
@@ -19,6 +19,37 @@ pub enum TokenKind {
     TokenColon,   // :
     TokenAssign,  // =
     TokenEOF,     // End of file
+}
+
+impl TokenKind {
+    fn match_keyword(lexeme: &str) -> Option<TokenKind> {
+        match lexeme {
+            KEYWORD_INT => Some(TokenKind::TokenKeyword),
+            _ => None,
+        }
+    }
+
+    fn match_separator(lexeme: &str) -> Option<TokenKind> {
+        match lexeme {
+            SEPARATOR_COLON => Some(TokenKind::TokenColon),
+            SEPARATOR_ASSIGN => Some(TokenKind::TokenAssign),
+            _ => None,
+        }
+    }
+}
+
+impl From<&String> for TokenKind {
+    fn from(lexeme: &String) -> TokenKind {
+        if let Some(keyword) = TokenKind::match_keyword(lexeme) {
+            return keyword;
+        }
+
+        if let Some(separator) = TokenKind::match_separator(lexeme) {
+            return separator;
+        }
+
+        TokenKind::TokenIdentifier
+    }
 }
 
 #[derive(Debug, Clone, Eq, PartialEq)]

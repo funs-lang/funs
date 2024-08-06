@@ -6,7 +6,7 @@ use crate::lexer::token::Token;
 use crate::source::Source;
 use cursor::Cursor;
 use states::{State, StateStart, Transition, TransitionKind};
-use tracing::info;
+use tracing::{error, info};
 
 pub struct Lexer {
     cursor: Cursor,
@@ -23,7 +23,7 @@ impl Lexer {
         lexer
     }
 
-    pub fn advance(state: Box<dyn State>, consume_kind: TransitionKind) -> Transition {
+    pub fn proceed(state: Box<dyn State>, consume_kind: TransitionKind) -> Transition {
         Transition::new(state, consume_kind)
     }
 }
@@ -38,6 +38,11 @@ impl Iterator for Lexer {
             transition.consume_kind.apply(&mut self.cursor);
             if let TransitionKind::EmitToken(token) = transition.consume_kind {
                 info!("Emitting token - {}", token);
+                return Some(token);
+            }
+            if let TransitionKind::ErrorToken(token) = transition.consume_kind {
+                error!("Unexpected token: {}", token);
+                eprintln!("Unexpected token: {}", token);
                 return Some(token);
             }
             if let TransitionKind::End = transition.consume_kind {
