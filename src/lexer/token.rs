@@ -61,13 +61,22 @@ pub struct TokenLocation {
 }
 
 impl TokenLocation {
-    pub fn new(file_path: &Path) -> TokenLocation {
+    pub fn new(
+        file_path: PathBuf,
+        line: usize,
+        column_start: usize,
+        column_end: usize,
+    ) -> TokenLocation {
         TokenLocation {
-            file_path: file_path.to_path_buf(),
-            line: 0,
-            column_start: 0,
-            column_end: 0,
+            file_path,
+            line,
+            column_start,
+            column_end,
         }
+    }
+
+    pub fn line(&self) -> usize {
+        self.line
     }
 
     pub fn column_start(&self) -> usize {
@@ -133,7 +142,18 @@ impl TokenLocation {
     }
 }
 
-#[derive(Clone, Debug)]
+impl From<&PathBuf> for TokenLocation {
+    fn from(file_path: &PathBuf) -> TokenLocation {
+        TokenLocation {
+            file_path: file_path.clone(),
+            line: 0,
+            column_start: 0,
+            column_end: 0,
+        }
+    }
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct Token {
     /// The kind of the token
     pub kind: TokenKind,

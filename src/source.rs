@@ -18,7 +18,7 @@ impl Source {
         Source { file_path, content }
     }
 
-    pub fn file_path(&self) -> &Path {
+    pub fn file_path(&self) -> &PathBuf {
         &self.file_path
     }
 

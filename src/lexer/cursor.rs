@@ -24,6 +24,10 @@ impl Cursor {
         &self.location
     }
 
+    pub fn mut_location(&mut self) -> &mut TokenLocation {
+        &mut self.location
+    }
+
     pub fn is_eof(&self) -> bool {
         self.index >= self.source.content().len()
     }
@@ -100,7 +104,7 @@ impl From<&Source> for Cursor {
     fn from(source: &Source) -> Cursor {
         Cursor {
             source: source.clone(),
-            location: TokenLocation::new(source.file_path()),
+            location: TokenLocation::from(source.file_path()),
             index: 0,
         }
     }

@@ -29,6 +29,7 @@ fn main() {
 
     let file_path: &str = &args[0];
     let source = Source::new(file_path);
-    let lexer = Lexer::new(&source);
-    let _tokens = lexer.collect::<Vec<Token>>();
+    let mut lexer = Lexer::new(&source);
+    let _tokens = (&mut lexer).collect::<Vec<Token>>();
+    lexer.emit_errors();
 }
