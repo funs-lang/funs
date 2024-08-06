@@ -98,8 +98,39 @@ mod tests {
     use std::path::PathBuf;
 
     #[test]
-    // TODO: The column_end should equal to column_start + 1 but this is fine for now. We return
-    // only the position (in this case (18, 18)) where the first unexpected character is found.
+    fn test_lexer_comment() {
+        let file_path = "test_lexer_comment.tmp";
+        let file_content = "# this is a comment\n";
+        create_tmp_file(file_path, file_content);
+        let source = Source::new(file_path);
+        let lexer = Lexer::new(&source);
+        let tokens = lexer.collect::<Vec<_>>();
+        assert_eq!(tokens.len(), 2);
+        assert_eq!(
+            (&tokens[0].kind, &tokens[1].kind),
+            (&TokenKind::TokenNewLine, &TokenKind::TokenEOF)
+        );
+        assert_eq!(
+            (&tokens[0].lexeme, &tokens[1].lexeme),
+            (&"\\n".to_string(), &"".to_string())
+        );
+        assert_eq!(
+            (&tokens[0].location, &tokens[1].location),
+            (
+                &TokenLocation::from(&PathBuf::from(file_path))
+                    .with_line(0)
+                    .with_column_start(19)
+                    .with_column_end(19),
+                &TokenLocation::from(&PathBuf::from(file_path))
+                    .with_line(1)
+                    .with_column_start(0)
+                    .with_column_end(0)
+            )
+        );
+        remove_tmp_file(file_path);
+    }
+
+    #[test]
     fn test_lexer_unexpected_token() {
         let file_path = "test_lex_unexpected_token.tmp";
         let file_content = "    _x_int:   int £   =  0   ";

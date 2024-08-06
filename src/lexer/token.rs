@@ -40,6 +40,10 @@ impl TokenKind {
 
 impl From<&String> for TokenKind {
     fn from(lexeme: &String) -> TokenKind {
+        if lexeme.eq(&'\n'.to_string()) {
+            return TokenKind::TokenNewLine;
+        }
+
         if let Some(keyword) = TokenKind::match_keyword(lexeme) {
             return keyword;
         }

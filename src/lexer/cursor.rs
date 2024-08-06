@@ -107,7 +107,13 @@ impl Cursor {
     }
 
     pub fn new_line(&mut self) {
+        if self.is_eof() {
+            return;
+        }
+
         self.location.advance_line();
+        self.index = self.offset;
+        self.offset += 1;
     }
 }
 

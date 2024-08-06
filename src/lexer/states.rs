@@ -14,7 +14,7 @@ pub trait State: Debug {
 pub enum TransitionKind {
     Consume,
     Advance,
-    NewLine,
+    Empty, // Keep cursors in the same position
     EmitToken(Token),
     End,
 }
@@ -28,9 +28,7 @@ impl TransitionKind {
             TransitionKind::Advance => {
                 cursor.advance();
             }
-            TransitionKind::NewLine => {
-                cursor.new_line();
-            }
+            TransitionKind::Empty => {}
             TransitionKind::EmitToken(_) => cursor.align(),
             TransitionKind::End => {}
         }
@@ -62,7 +60,7 @@ pub struct StateStart;
 impl State for StateStart {
     fn visit(&self, cursor: &mut Cursor) -> Result<Transition, LexerError> {
         match cursor.peek() {
-            Some(c) if c.is_whitespace() => Ok(Lexer::proceed(
+            Some(c) if c.eq(&' ') || c.eq(&'\t') || c.eq(&'\r') => Ok(Lexer::proceed(
                 Box::new(StateStart),
                 TransitionKind::Consume,
             )),
@@ -77,10 +75,9 @@ impl State for StateStart {
             Some(c) if c.is_alphabetic() || c.eq(&'_') => {
                 Ok(Lexer::proceed(Box::new(StateWord), TransitionKind::Advance))
             }
-            Some(c) if StateSymbol::is_symbol(c) => Ok(Lexer::proceed(
-                Box::new(StateSymbol),
-                TransitionKind::Advance,
-            )),
+            Some(c) if StateSymbol::is_symbol(c) => {
+                Ok(Lexer::proceed(Box::new(StateSymbol), TransitionKind::Empty))
+            }
             Some(c) => Err(LexerError::UnexpectedToken(Token::new(
                 TokenKind::from(&c.to_string()),
                 c.to_string(),
@@ -96,13 +93,12 @@ pub struct StateComment;
 impl State for StateComment {
     fn visit(&self, cursor: &mut Cursor) -> Result<Transition, LexerError> {
         match cursor.peek() {
-            Some(c) if c.ne(&'\n') => Ok(Lexer::proceed(
+            Some(c) if c.eq(&'\n') => {
+                Ok(Lexer::proceed(Box::new(StateStart), TransitionKind::Empty))
+            }
+            _ => Ok(Lexer::proceed(
                 Box::new(StateComment),
                 TransitionKind::Consume,
-            )),
-            _ => Ok(Lexer::proceed(
-                Box::new(StateStart),
-                TransitionKind::NewLine,
             )),
         }
     }
@@ -164,13 +160,25 @@ pub struct StateSymbol;
 
 impl StateSymbol {
     fn is_symbol(c: char) -> bool {
-        matches!(c, ':' | '=')
+        matches!(c, ':' | '=' | '\n')
     }
 }
 
 impl State for StateSymbol {
     fn visit(&self, cursor: &mut Cursor) -> Result<Transition, LexerError> {
         match cursor.peek() {
+            Some(c) if c.eq(&'\n') => {
+                let transition = Lexer::proceed(
+                    Box::new(StateStart),
+                    TransitionKind::EmitToken(Token::new(
+                        TokenKind::TokenNewLine,
+                        "\\n".to_string(),
+                        cursor.location().clone(),
+                    )),
+                );
+                cursor.new_line();
+                Ok(transition)
+            }
             Some(c) if StateSymbol::is_symbol(c) => Ok(Lexer::proceed(
                 Box::new(StateSymbol),
                 TransitionKind::Advance,
