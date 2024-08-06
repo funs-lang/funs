@@ -35,21 +35,27 @@ impl Iterator for Lexer {
         loop {
             let transition = match self.state.visit(&mut self.cursor) {
                 Ok(transition) => transition,
-                Err(err) => match err {
-                    LexerError::UnexpectedToken(token) => {
-                        error!("Unexpected token: {}", token);
-                        eprintln!("Unexpected token: {}", token);
-                        return None;
+                Err(err) =>
+                // TODO: return a transition to continue lexing (for error recovery)
+                {
+                    match err {
+                        LexerError::UnexpectedToken(token) => {
+                            error!("Unexpected token: {}", token);
+                            eprintln!("Unexpected token: {}", token);
+                            return None;
+                        }
                     }
-                },
+                }
             };
-            self.state = transition.state;
-            transition.transition_kind.apply(&mut self.cursor);
-            if let TransitionKind::EmitToken(token) = transition.transition_kind {
+            let (state, transition_kind) = transition.into_parts();
+
+            self.state = state;
+            transition_kind.apply(&mut self.cursor);
+            if let TransitionKind::EmitToken(token) = transition_kind {
                 info!("Emitting token - {}", token);
-                return Some(token);
+                return Some(token.clone());
             }
-            if let TransitionKind::End = transition.transition_kind {
+            if let TransitionKind::End = transition_kind {
                 return None;
             }
         }

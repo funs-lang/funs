@@ -34,10 +34,9 @@ impl TransitionKind {
 }
 
 #[derive(Debug)]
-// TODO: Remove pub from fields
 pub struct Transition {
-    pub state: Box<dyn State>,
-    pub transition_kind: TransitionKind,
+    state: Box<dyn State>,
+    transition_kind: TransitionKind,
 }
 
 impl Transition {
@@ -46,6 +45,10 @@ impl Transition {
             state,
             transition_kind: consume_kind,
         }
+    }
+
+    pub fn into_parts(self) -> (Box<dyn State>, TransitionKind) {
+        (self.state, self.transition_kind)
     }
 }
 
