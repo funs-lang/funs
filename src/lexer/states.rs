@@ -14,6 +14,7 @@ pub trait State: Debug {
 pub enum TransitionKind {
     Consume,
     Advance,
+    NewLine,
     EmitToken(Token),
     End,
 }
@@ -26,6 +27,9 @@ impl TransitionKind {
             }
             TransitionKind::Advance => {
                 cursor.advance();
+            }
+            TransitionKind::NewLine => {
+                cursor.new_line();
             }
             TransitionKind::EmitToken(_) => cursor.align(),
             TransitionKind::End => {}
@@ -62,6 +66,10 @@ impl State for StateStart {
                 Box::new(StateStart),
                 TransitionKind::Consume,
             )),
+            Some(c) if c.eq(&'#') => Ok(Lexer::proceed(
+                Box::new(StateComment),
+                TransitionKind::Consume,
+            )),
             Some(c) if c.is_ascii_digit() => Ok(Lexer::proceed(
                 Box::new(StateNumber),
                 TransitionKind::Advance,
@@ -84,6 +92,23 @@ impl State for StateStart {
 }
 
 #[derive(Debug)]
+pub struct StateComment;
+impl State for StateComment {
+    fn visit(&self, cursor: &mut Cursor) -> Result<Transition, LexerError> {
+        match cursor.peek() {
+            Some(c) if c.ne(&'\n') => Ok(Lexer::proceed(
+                Box::new(StateComment),
+                TransitionKind::Consume,
+            )),
+            _ => Ok(Lexer::proceed(
+                Box::new(StateStart),
+                TransitionKind::NewLine,
+            )),
+        }
+    }
+}
+
+#[derive(Debug)]
 pub struct StateNumber;
 
 impl State for StateNumber {
@@ -94,9 +119,7 @@ impl State for StateNumber {
                 TransitionKind::Advance,
             )),
             _ => {
-                let lexeme = cursor.source().content()
-                    [cursor.location().column_start()..cursor.location().column_end()]
-                    .to_string();
+                let lexeme = cursor.source().content()[cursor.index()..cursor.offset()].to_string();
                 let location = cursor.location().clone();
                 Ok(Transition {
                     state: Box::new(StateStart),
@@ -122,9 +145,7 @@ impl State for StateWord {
             }
             _ => {
                 // Emit token when we encounter a non-alphabetic character
-                let lexeme = cursor.source().content()
-                    [cursor.location().column_start()..cursor.location().column_end()]
-                    .to_string();
+                let lexeme = cursor.source().content()[cursor.index()..cursor.offset()].to_string();
                 let token_kind = TokenKind::from(&lexeme);
                 let location = cursor.location().clone();
                 Ok(Transition {
@@ -155,9 +176,7 @@ impl State for StateSymbol {
                 TransitionKind::Advance,
             )),
             _ => {
-                let lexeme = cursor.source().content()
-                    [cursor.location().column_start()..cursor.location().column_end()]
-                    .to_string();
+                let lexeme = cursor.source().content()[cursor.index()..cursor.offset()].to_string();
                 let token_kind = TokenKind::from(&lexeme);
                 let location = cursor.location().clone();
                 Ok(Transition {
