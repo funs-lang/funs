@@ -1,12 +1,13 @@
 use super::cursor::Cursor;
 use super::token::Literal;
 use super::Lexer;
+use super::LexerError;
 use crate::lexer::token::Token;
 use crate::lexer::token::TokenKind;
 use std::fmt::Debug;
 
 pub trait State: Debug {
-    fn visit(&self, cursor: &mut Cursor) -> Transition;
+    fn visit(&self, cursor: &mut Cursor) -> Result<Transition, LexerError>;
 }
 
 #[derive(Debug)]
@@ -14,7 +15,6 @@ pub enum TransitionKind {
     Consume,
     Advance,
     EmitToken(Token),
-    ErrorToken(Token),
     End,
 }
 
@@ -28,7 +28,6 @@ impl TransitionKind {
                 cursor.advance();
             }
             TransitionKind::EmitToken(_) => cursor.align(),
-            TransitionKind::ErrorToken(_) => cursor.align(),
             TransitionKind::End => {}
         }
     }
@@ -38,14 +37,14 @@ impl TransitionKind {
 // TODO: Remove pub from fields
 pub struct Transition {
     pub state: Box<dyn State>,
-    pub consume_kind: TransitionKind,
+    pub transition_kind: TransitionKind,
 }
 
 impl Transition {
     pub fn new(state: Box<dyn State>, consume_kind: TransitionKind) -> Transition {
         Transition {
             state,
-            consume_kind,
+            transition_kind: consume_kind,
         }
     }
 }
@@ -54,30 +53,29 @@ impl Transition {
 pub struct StateStart;
 
 impl State for StateStart {
-    fn visit(&self, cursor: &mut Cursor) -> Transition {
+    fn visit(&self, cursor: &mut Cursor) -> Result<Transition, LexerError> {
         match cursor.peek() {
-            Some(c) if c.is_whitespace() => {
-                Lexer::proceed(Box::new(StateStart), TransitionKind::Consume)
-            }
-            Some(c) if c.is_ascii_digit() => {
-                Lexer::proceed(Box::new(StateNumber), TransitionKind::Advance)
-            }
+            Some(c) if c.is_whitespace() => Ok(Lexer::proceed(
+                Box::new(StateStart),
+                TransitionKind::Consume,
+            )),
+            Some(c) if c.is_ascii_digit() => Ok(Lexer::proceed(
+                Box::new(StateNumber),
+                TransitionKind::Advance,
+            )),
             Some(c) if c.is_alphabetic() || c.eq(&'_') => {
-                Lexer::proceed(Box::new(StateWord), TransitionKind::Advance)
+                Ok(Lexer::proceed(Box::new(StateWord), TransitionKind::Advance))
             }
-            Some(c) if StateSymbol::is_symbol(c) => {
-                Lexer::proceed(Box::new(StateSymbol), TransitionKind::Advance)
-            }
-            Some(c) => Lexer::proceed(
-                Box::new(StateEnd), // TODO: Consider to return to the StartState to continue the
-                // lexing
-                TransitionKind::ErrorToken(Token::new(
-                    TokenKind::from(&c.to_string()),
-                    c.to_string(),
-                    cursor.location().clone(),
-                )),
-            ),
-            None => Lexer::proceed(Box::new(StateEOF), TransitionKind::Consume),
+            Some(c) if StateSymbol::is_symbol(c) => Ok(Lexer::proceed(
+                Box::new(StateSymbol),
+                TransitionKind::Advance,
+            )),
+            Some(c) => Err(LexerError::UnexpectedToken(Token::new(
+                TokenKind::from(&c.to_string()),
+                c.to_string(),
+                cursor.location().clone(),
+            ))),
+            None => Ok(Lexer::proceed(Box::new(StateEOF), TransitionKind::Consume)),
         }
     }
 }
@@ -86,24 +84,25 @@ impl State for StateStart {
 pub struct StateNumber;
 
 impl State for StateNumber {
-    fn visit(&self, cursor: &mut Cursor) -> Transition {
+    fn visit(&self, cursor: &mut Cursor) -> Result<Transition, LexerError> {
         match cursor.peek() {
-            Some(c) if c.is_ascii_digit() => {
-                Lexer::proceed(Box::new(StateNumber), TransitionKind::Advance)
-            }
+            Some(c) if c.is_ascii_digit() => Ok(Lexer::proceed(
+                Box::new(StateNumber),
+                TransitionKind::Advance,
+            )),
             _ => {
                 let lexeme = cursor.source().content()
                     [cursor.location().column_start()..cursor.location().column_end()]
                     .to_string();
                 let location = cursor.location().clone();
-                Transition {
+                Ok(Transition {
                     state: Box::new(StateStart),
-                    consume_kind: TransitionKind::EmitToken(Token::new(
+                    transition_kind: TransitionKind::EmitToken(Token::new(
                         TokenKind::TokenLiteral(Literal::Int(lexeme.parse().unwrap())),
                         lexeme,
                         location,
                     )),
-                }
+                })
             }
         }
     }
@@ -113,10 +112,10 @@ impl State for StateNumber {
 pub struct StateWord;
 
 impl State for StateWord {
-    fn visit(&self, cursor: &mut Cursor) -> Transition {
+    fn visit(&self, cursor: &mut Cursor) -> Result<Transition, LexerError> {
         match cursor.peek() {
             Some(c) if c.is_alphanumeric() || c.eq(&'_') => {
-                Lexer::proceed(Box::new(StateWord), TransitionKind::Advance)
+                Ok(Lexer::proceed(Box::new(StateWord), TransitionKind::Advance))
             }
             _ => {
                 // Emit token when we encounter a non-alphabetic character
@@ -125,12 +124,12 @@ impl State for StateWord {
                     .to_string();
                 let token_kind = TokenKind::from(&lexeme);
                 let location = cursor.location().clone();
-                Transition {
+                Ok(Transition {
                     state: Box::new(StateStart),
-                    consume_kind: TransitionKind::EmitToken(Token::new(
+                    transition_kind: TransitionKind::EmitToken(Token::new(
                         token_kind, lexeme, location,
                     )),
-                }
+                })
             }
         }
     }
@@ -146,23 +145,24 @@ impl StateSymbol {
 }
 
 impl State for StateSymbol {
-    fn visit(&self, cursor: &mut Cursor) -> Transition {
+    fn visit(&self, cursor: &mut Cursor) -> Result<Transition, LexerError> {
         match cursor.peek() {
-            Some(c) if StateSymbol::is_symbol(c) => {
-                Lexer::proceed(Box::new(StateSymbol), TransitionKind::Advance)
-            }
+            Some(c) if StateSymbol::is_symbol(c) => Ok(Lexer::proceed(
+                Box::new(StateSymbol),
+                TransitionKind::Advance,
+            )),
             _ => {
                 let lexeme = cursor.source().content()
                     [cursor.location().column_start()..cursor.location().column_end()]
                     .to_string();
                 let token_kind = TokenKind::from(&lexeme);
                 let location = cursor.location().clone();
-                Transition {
+                Ok(Transition {
                     state: Box::new(StateStart),
-                    consume_kind: TransitionKind::EmitToken(Token::new(
+                    transition_kind: TransitionKind::EmitToken(Token::new(
                         token_kind, lexeme, location,
                     )),
-                }
+                })
             }
         }
     }
@@ -172,16 +172,16 @@ impl State for StateSymbol {
 pub struct StateEOF;
 
 impl State for StateEOF {
-    fn visit(&self, cursor: &mut Cursor) -> Transition {
+    fn visit(&self, cursor: &mut Cursor) -> Result<Transition, LexerError> {
         cursor.align();
-        Transition {
+        Ok(Transition {
             state: Box::new(StateEnd),
-            consume_kind: TransitionKind::EmitToken(Token::new(
+            transition_kind: TransitionKind::EmitToken(Token::new(
                 TokenKind::TokenEOF,
                 "".to_string(),
                 cursor.location().clone(),
             )),
-        }
+        })
     }
 }
 
@@ -189,10 +189,10 @@ impl State for StateEOF {
 pub struct StateEnd;
 
 impl State for StateEnd {
-    fn visit(&self, _cursor: &mut Cursor) -> Transition {
-        Transition {
+    fn visit(&self, _cursor: &mut Cursor) -> Result<Transition, LexerError> {
+        Ok(Transition {
             state: Box::new(StateEnd),
-            consume_kind: TransitionKind::End,
-        }
+            transition_kind: TransitionKind::End,
+        })
     }
 }

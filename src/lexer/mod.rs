@@ -23,8 +23,8 @@ impl Lexer {
         lexer
     }
 
-    pub fn proceed(state: Box<dyn State>, consume_kind: TransitionKind) -> Transition {
-        Transition::new(state, consume_kind)
+    pub fn proceed(state: Box<dyn State>, transition_kind: TransitionKind) -> Transition {
+        Transition::new(state, transition_kind)
     }
 }
 
@@ -33,23 +33,32 @@ impl Iterator for Lexer {
 
     fn next(&mut self) -> Option<Self::Item> {
         loop {
-            let transition = self.state.visit(&mut self.cursor);
+            let transition = match self.state.visit(&mut self.cursor) {
+                Ok(transition) => transition,
+                Err(err) => match err {
+                    LexerError::UnexpectedToken(token) => {
+                        error!("Unexpected token: {}", token);
+                        eprintln!("Unexpected token: {}", token);
+                        return None;
+                    }
+                },
+            };
             self.state = transition.state;
-            transition.consume_kind.apply(&mut self.cursor);
-            if let TransitionKind::EmitToken(token) = transition.consume_kind {
+            transition.transition_kind.apply(&mut self.cursor);
+            if let TransitionKind::EmitToken(token) = transition.transition_kind {
                 info!("Emitting token - {}", token);
                 return Some(token);
             }
-            if let TransitionKind::ErrorToken(token) = transition.consume_kind {
-                error!("Unexpected token: {}", token);
-                eprintln!("Unexpected token: {}", token);
-                return Some(token);
-            }
-            if let TransitionKind::End = transition.consume_kind {
+            if let TransitionKind::End = transition.transition_kind {
                 return None;
             }
         }
     }
+}
+
+#[derive(Debug)]
+pub enum LexerError {
+    UnexpectedToken(Token),
 }
 
 #[cfg(test)]
@@ -63,8 +72,15 @@ mod tests {
     use std::path::Path;
 
     #[test]
+    fn test_lexer_unexpected_token() {
+        let file_path = "test_lex_unexpected_token.tmp";
+        let file_content = "    _x_int:   int £   =  0   ";
+        create_tmp_file(file_path, file_content);
+    }
+
+    #[test]
     fn test_lexer_tokenize_var_int_with_spaces() {
-        let file_path = "test_var_int_with_spaces.tmp";
+        let file_path = "test_lexer_var_int_with_spaces.tmp";
         let file_content = "    _x_int:   int  =  0   ";
         create_tmp_file(file_path, file_content);
         let source = Source::new(file_path);
@@ -232,7 +248,7 @@ mod tests {
 
     #[test]
     fn test_lexer_token_identifier_file() {
-        let file_path = "test_token_identifier.tmp";
+        let file_path = "test_lexer_token_identifier.tmp";
         let file_content = "test_id";
         create_tmp_file(file_path, file_content);
         let source = Source::new(file_path);
