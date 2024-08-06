@@ -2,6 +2,7 @@ use std::fs;
 use std::path::Path;
 use std::path::PathBuf;
 use std::sync::Arc;
+use tracing_subscriber::EnvFilter;
 use tracing_subscriber::{filter, prelude::*};
 
 pub struct Logger {
@@ -13,9 +14,9 @@ impl Logger {
     pub fn new(file_path: impl AsRef<Path>) -> Logger {
         let file_path = file_path.as_ref().to_path_buf();
         let logger = Logger { file_path };
+        logger.set_rust_log_variable();
         logger.create_log_directory();
         logger.set_tracing_subscribers();
-        logger.set_rust_log_variable();
         logger
     }
 
@@ -57,9 +58,16 @@ impl Logger {
         }
     }
 
-    // The `info`, `warn`, and `error` events will be seen by both the
-    // stdout log layer and the debug log file layer.
-    // The `debug` event will only be seen by the debug log file layer.
+    ///  Set up the tracing subscribers.
+    ///
+    /// By default the `info`, `warn`, and `error` events will be seen by both the
+    /// stdout log layer and the debug log file layer.
+    /// While the `debug` event will only be seen by the debug log file layer.
+    ///
+    /// If a `RUST_LOG` environment variable is set, the `env_filter` layer will
+    /// take it into account.
+    /// But the `stdout_log` layer will only log events with a level greater than or equal to
+    /// `INFO`.
     fn set_tracing_subscribers(&self) {
         // A layer that logs events to stdout.
         let stdout_log = tracing_subscriber::fmt::layer().compact().without_time(); // .pretty();
@@ -70,7 +78,11 @@ impl Logger {
             .with_writer(Arc::new(file))
             .with_ansi(false);
 
+        // A filter that takes the `RUST_LOG` environment variable into account.
+        let env_filter = EnvFilter::from_default_env();
+
         tracing_subscriber::registry()
+            .with(env_filter)
             .with(
                 stdout_log
                     // Add an `INFO` filter to the stdout logging layer
