@@ -57,6 +57,7 @@ impl From<&String> for TokenKind {
 }
 
 #[derive(Debug, Clone, Eq, PartialEq)]
+/// The location of a token in the source code in a uman-readable format
 pub struct TokenLocation {
     file_path: PathBuf,
     line: usize,
@@ -160,15 +161,15 @@ impl From<&PathBuf> for TokenLocation {
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct Token {
     /// The kind of the token
-    pub kind: TokenKind,
+    kind: TokenKind,
     /// The lexeme is the string representation of the token
     ///
     /// For example:
     /// - the lexeme of the token `TokenLiteral(Literal::Int(42))` is "42"
     /// - the lexeme of the token `TokenColon` is ":"
-    pub lexeme: String,
+    lexeme: String,
     /// The location of the token in the source code
-    pub location: TokenLocation,
+    location: TokenLocation,
 }
 
 impl Token {
@@ -178,6 +179,18 @@ impl Token {
             lexeme,
             location,
         }
+    }
+
+    pub fn kind(&self) -> &TokenKind {
+        &self.kind
+    }
+
+    pub fn lexeme(&self) -> &String {
+        &self.lexeme
+    }
+
+    pub fn location(&self) -> &TokenLocation {
+        &self.location
     }
 }
 

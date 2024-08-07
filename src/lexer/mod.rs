@@ -114,13 +114,13 @@ mod tests {
         assert_eq!(tokens.len(), 7);
         assert_eq!(
             (
-                &tokens[0].kind,
-                &tokens[1].kind,
-                &tokens[2].kind,
-                &tokens[3].kind,
-                &tokens[4].kind,
-                &tokens[5].kind,
-                &tokens[6].kind
+                tokens[0].kind(),
+                tokens[1].kind(),
+                tokens[2].kind(),
+                tokens[3].kind(),
+                tokens[4].kind(),
+                tokens[5].kind(),
+                tokens[6].kind()
             ),
             (
                 &TokenKind::TokenNewLine,
@@ -134,13 +134,13 @@ mod tests {
         );
         assert_eq!(
             (
-                &tokens[0].lexeme,
-                &tokens[1].lexeme,
-                &tokens[2].lexeme,
-                &tokens[3].lexeme,
-                &tokens[4].lexeme,
-                &tokens[5].lexeme,
-                &tokens[6].lexeme
+                tokens[0].lexeme(),
+                tokens[1].lexeme(),
+                tokens[2].lexeme(),
+                tokens[3].lexeme(),
+                tokens[4].lexeme(),
+                tokens[5].lexeme(),
+                tokens[6].lexeme()
             ),
             (
                 &"\\n".to_string(),
@@ -154,13 +154,13 @@ mod tests {
         );
         assert_eq!(
             (
-                &tokens[0].location,
-                &tokens[1].location,
-                &tokens[2].location,
-                &tokens[3].location,
-                &tokens[4].location,
-                &tokens[5].location,
-                &tokens[6].location
+                tokens[0].location(),
+                tokens[1].location(),
+                tokens[2].location(),
+                tokens[3].location(),
+                tokens[4].location(),
+                tokens[5].location(),
+                tokens[6].location()
             ),
             (
                 &TokenLocation::from(&PathBuf::from(file_path))
@@ -206,15 +206,15 @@ mod tests {
         let tokens = lexer.collect::<Vec<_>>();
         assert_eq!(tokens.len(), 2);
         assert_eq!(
-            (&tokens[0].kind, &tokens[1].kind),
+            (tokens[0].kind(), tokens[1].kind()),
             (&TokenKind::TokenNewLine, &TokenKind::TokenEOF)
         );
         assert_eq!(
-            (&tokens[0].lexeme, &tokens[1].lexeme),
+            (tokens[0].lexeme(), tokens[1].lexeme()),
             (&"\\n".to_string(), &"".to_string())
         );
         assert_eq!(
-            (&tokens[0].location, &tokens[1].location),
+            (tokens[0].location(), tokens[1].location()),
             (
                 &TokenLocation::from(&PathBuf::from(file_path))
                     .with_line(0)
@@ -238,10 +238,10 @@ mod tests {
         let lexer = Lexer::new(&source);
         let tokens = lexer.collect::<Vec<_>>();
         assert_eq!(tokens.len(), 1);
-        assert_eq!((&tokens[0].kind), (&TokenKind::TokenEOF));
-        assert_eq!((&tokens[0].lexeme), (&"".to_string()));
+        assert_eq!(tokens[0].kind(), &TokenKind::TokenEOF);
+        assert_eq!(tokens[0].lexeme(), &"".to_string());
         assert_eq!(
-            &tokens[0].location,
+            tokens[0].location(),
             &TokenLocation::from(&PathBuf::from(file_path))
                 .with_line(0)
                 .with_column_start(19)
@@ -261,7 +261,7 @@ mod tests {
         let errors = lexer.errors();
         assert_eq!(tokens.len(), 3);
         assert_eq!(
-            (&tokens[0].kind, &tokens[1].kind, &tokens[2].kind,),
+            (tokens[0].kind(), tokens[1].kind(), tokens[2].kind(),),
             (
                 &TokenKind::TokenIdentifier,
                 &TokenKind::TokenColon,
@@ -269,14 +269,14 @@ mod tests {
             )
         );
         assert_eq!(
-            (&tokens[0].lexeme, &tokens[1].lexeme, &tokens[2].lexeme,),
+            (tokens[0].lexeme(), tokens[1].lexeme(), tokens[2].lexeme(),),
             (&"_x_int".to_string(), &":".to_string(), &"int".to_string())
         );
         assert_eq!(
             (
-                &tokens[0].location,
-                &tokens[1].location,
-                &tokens[2].location,
+                tokens[0].location(),
+                tokens[1].location(),
+                tokens[2].location(),
             ),
             (
                 &TokenLocation::from(&PathBuf::from(file_path))
@@ -320,12 +320,12 @@ mod tests {
         assert_eq!(tokens.len(), 6);
         assert_eq!(
             (
-                &tokens[0].kind,
-                &tokens[1].kind,
-                &tokens[2].kind,
-                &tokens[3].kind,
-                &tokens[4].kind,
-                &tokens[5].kind
+                tokens[0].kind(),
+                tokens[1].kind(),
+                tokens[2].kind(),
+                tokens[3].kind(),
+                tokens[4].kind(),
+                tokens[5].kind()
             ),
             (
                 &TokenKind::TokenIdentifier,
@@ -338,12 +338,12 @@ mod tests {
         );
         assert_eq!(
             (
-                &tokens[0].lexeme,
-                &tokens[1].lexeme,
-                &tokens[2].lexeme,
-                &tokens[3].lexeme,
-                &tokens[4].lexeme,
-                &tokens[5].lexeme
+                tokens[0].lexeme(),
+                tokens[1].lexeme(),
+                tokens[2].lexeme(),
+                tokens[3].lexeme(),
+                tokens[4].lexeme(),
+                tokens[5].lexeme()
             ),
             (
                 &"i".to_string(),
@@ -356,12 +356,12 @@ mod tests {
         );
         assert_eq!(
             (
-                &tokens[0].location,
-                &tokens[1].location,
-                &tokens[2].location,
-                &tokens[3].location,
-                &tokens[4].location,
-                &tokens[5].location
+                tokens[0].location(),
+                tokens[1].location(),
+                tokens[2].location(),
+                tokens[3].location(),
+                tokens[4].location(),
+                tokens[5].location()
             ),
             (
                 &TokenLocation::from(&PathBuf::from(file_path))
@@ -404,12 +404,12 @@ mod tests {
         assert_eq!(tokens.len(), 6);
         assert_eq!(
             (
-                &tokens[0].kind,
-                &tokens[1].kind,
-                &tokens[2].kind,
-                &tokens[3].kind,
-                &tokens[4].kind,
-                &tokens[5].kind
+                tokens[0].kind(),
+                tokens[1].kind(),
+                tokens[2].kind(),
+                tokens[3].kind(),
+                tokens[4].kind(),
+                tokens[5].kind()
             ),
             (
                 &TokenKind::TokenIdentifier,
@@ -422,12 +422,12 @@ mod tests {
         );
         assert_eq!(
             (
-                &tokens[0].lexeme,
-                &tokens[1].lexeme,
-                &tokens[2].lexeme,
-                &tokens[3].lexeme,
-                &tokens[4].lexeme,
-                &tokens[5].lexeme
+                tokens[0].lexeme(),
+                tokens[1].lexeme(),
+                tokens[2].lexeme(),
+                tokens[3].lexeme(),
+                tokens[4].lexeme(),
+                tokens[5].lexeme()
             ),
             (
                 &"_x_int".to_string(),
@@ -440,12 +440,12 @@ mod tests {
         );
         assert_eq!(
             (
-                &tokens[0].location,
-                &tokens[1].location,
-                &tokens[2].location,
-                &tokens[3].location,
-                &tokens[4].location,
-                &tokens[5].location
+                tokens[0].location(),
+                tokens[1].location(),
+                tokens[2].location(),
+                tokens[3].location(),
+                tokens[4].location(),
+                tokens[5].location()
             ),
             (
                 &TokenLocation::from(&PathBuf::from(file_path))
@@ -488,12 +488,12 @@ mod tests {
         assert_eq!(tokens.len(), 6);
         assert_eq!(
             (
-                &tokens[0].kind,
-                &tokens[1].kind,
-                &tokens[2].kind,
-                &tokens[3].kind,
-                &tokens[4].kind,
-                &tokens[5].kind
+                tokens[0].kind(),
+                tokens[1].kind(),
+                tokens[2].kind(),
+                tokens[3].kind(),
+                tokens[4].kind(),
+                tokens[5].kind()
             ),
             (
                 &TokenKind::TokenIdentifier,
@@ -506,12 +506,12 @@ mod tests {
         );
         assert_eq!(
             (
-                &tokens[0].lexeme,
-                &tokens[1].lexeme,
-                &tokens[2].lexeme,
-                &tokens[3].lexeme,
-                &tokens[4].lexeme,
-                &tokens[5].lexeme
+                tokens[0].lexeme(),
+                tokens[1].lexeme(),
+                tokens[2].lexeme(),
+                tokens[3].lexeme(),
+                tokens[4].lexeme(),
+                tokens[5].lexeme()
             ),
             (
                 &"_x_int".to_string(),
@@ -524,12 +524,12 @@ mod tests {
         );
         assert_eq!(
             (
-                &tokens[0].location,
-                &tokens[1].location,
-                &tokens[2].location,
-                &tokens[3].location,
-                &tokens[4].location,
-                &tokens[5].location
+                tokens[0].location(),
+                tokens[1].location(),
+                tokens[2].location(),
+                tokens[3].location(),
+                tokens[4].location(),
+                tokens[5].location()
             ),
             (
                 &TokenLocation::from(&PathBuf::from(file_path))
@@ -571,15 +571,15 @@ mod tests {
         let tokens = lexer.collect::<Vec<_>>();
         assert_eq!(tokens.len(), 2);
         assert_eq!(
-            (&tokens[0].kind, &tokens[1].kind),
+            (tokens[0].kind(), tokens[1].kind()),
             (&TokenKind::TokenIdentifier, &TokenKind::TokenEOF)
         );
         assert_eq!(
-            (&tokens[0].lexeme, &tokens[1].lexeme),
+            (tokens[0].lexeme(), tokens[1].lexeme()),
             (&"test_id".to_string(), &"".to_string())
         );
         assert_eq!(
-            (&tokens[0].location, &tokens[1].location),
+            (tokens[0].location(), tokens[1].location()),
             (
                 &TokenLocation::from(&PathBuf::from(file_path))
                     .with_line(0)
@@ -604,15 +604,15 @@ mod tests {
         let tokens = lexer.collect::<Vec<_>>();
         assert_eq!(tokens.len(), 2);
         assert_eq!(
-            (&tokens[0].kind, &tokens[1].kind),
+            (tokens[0].kind(), tokens[1].kind()),
             (&TokenKind::TokenIdentifier, &TokenKind::TokenEOF)
         );
         assert_eq!(
-            (&tokens[0].lexeme, &tokens[1].lexeme),
+            (tokens[0].lexeme(), tokens[1].lexeme()),
             (&"__test_id".to_string(), &"".to_string())
         );
         assert_eq!(
-            (&tokens[0].location, &tokens[1].location),
+            (tokens[0].location(), tokens[1].location()),
             (
                 &TokenLocation::from(&PathBuf::from(file_path))
                     .with_line(0)
@@ -637,15 +637,15 @@ mod tests {
         let tokens = lexer.collect::<Vec<_>>();
         assert_eq!(tokens.len(), 2);
         assert_eq!(
-            (&tokens[0].kind, &tokens[1].kind),
+            (tokens[0].kind(), tokens[1].kind()),
             (&TokenKind::TokenIdentifier, &TokenKind::TokenEOF)
         );
         assert_eq!(
-            (&tokens[0].lexeme, &tokens[1].lexeme),
+            (tokens[0].lexeme(), tokens[1].lexeme()),
             (&"__test_id".to_string(), &"".to_string())
         );
         assert_eq!(
-            (&tokens[0].location, &tokens[1].location),
+            (tokens[0].location(), tokens[1].location()),
             (
                 &TokenLocation::from(&PathBuf::from(file_path))
                     .with_line(0)
@@ -670,15 +670,15 @@ mod tests {
         let tokens = lexer.collect::<Vec<_>>();
         assert_eq!(tokens.len(), 2);
         assert_eq!(
-            (&tokens[0].kind, &tokens[1].kind),
+            (tokens[0].kind(), tokens[1].kind()),
             (&TokenKind::TokenIdentifier, &TokenKind::TokenEOF)
         );
         assert_eq!(
-            (&tokens[0].lexeme, &tokens[1].lexeme),
+            (tokens[0].lexeme(), tokens[1].lexeme()),
             (&"__test_id".to_string(), &"".to_string())
         );
         assert_eq!(
-            (&tokens[0].location, &tokens[1].location),
+            (tokens[0].location(), tokens[1].location()),
             (
                 &TokenLocation::from(&PathBuf::from(file_path))
                     .with_line(0)
@@ -755,15 +755,15 @@ mod tests {
         let tokens = lexer.collect::<Vec<_>>();
         assert_eq!(tokens.len(), 2);
         assert_eq!(
-            (&tokens[0].kind, &tokens[1].kind),
+            (tokens[0].kind(), tokens[1].kind()),
             (&TokenKind::TokenIdentifier, &TokenKind::TokenEOF)
         );
         assert_eq!(
-            (&tokens[0].lexeme, &tokens[1].lexeme),
+            (tokens[0].lexeme(), tokens[1].lexeme()),
             (&"test_id".to_string(), &"".to_string())
         );
         assert_eq!(
-            (&tokens[0].location, &tokens[1].location),
+            (tokens[0].location(), tokens[1].location()),
             (
                 &TokenLocation::from(&PathBuf::from(""))
                     .with_line(0)
