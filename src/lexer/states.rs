@@ -93,11 +93,14 @@ pub struct StateComment;
 impl State for StateComment {
     fn visit(&self, cursor: &mut Cursor) -> Result<Transition, LexerError> {
         match cursor.peek() {
-            Some('\n') => Ok(Lexer::proceed(Box::new(StateStart), TransitionKind::Empty)),
-            _ => Ok(Lexer::proceed(
-                Box::new(StateComment),
-                TransitionKind::Consume,
-            )),
+            Some(c) if c.ne(&'\n') => {
+                println!("Cursor peek: {:?}", cursor.peek());
+                Ok(Lexer::proceed(
+                    Box::new(StateComment),
+                    TransitionKind::Consume,
+                ))
+            }
+            _ => Ok(Lexer::proceed(Box::new(StateStart), TransitionKind::Empty)),
         }
     }
 }
