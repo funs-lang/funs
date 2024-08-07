@@ -64,7 +64,7 @@ impl State for StateStart {
                 Box::new(StateStart),
                 TransitionKind::Consume,
             )),
-            Some(c) if c.eq(&'#') => Ok(Lexer::proceed(
+            Some('#') => Ok(Lexer::proceed(
                 Box::new(StateComment),
                 TransitionKind::Consume,
             )),
@@ -93,9 +93,7 @@ pub struct StateComment;
 impl State for StateComment {
     fn visit(&self, cursor: &mut Cursor) -> Result<Transition, LexerError> {
         match cursor.peek() {
-            Some(c) if c.eq(&'\n') => {
-                Ok(Lexer::proceed(Box::new(StateStart), TransitionKind::Empty))
-            }
+            Some('\n') => Ok(Lexer::proceed(Box::new(StateStart), TransitionKind::Empty)),
             _ => Ok(Lexer::proceed(
                 Box::new(StateComment),
                 TransitionKind::Consume,
@@ -167,7 +165,7 @@ impl StateSymbol {
 impl State for StateSymbol {
     fn visit(&self, cursor: &mut Cursor) -> Result<Transition, LexerError> {
         match cursor.peek() {
-            Some(c) if c.eq(&'\n') => {
+            Some('\n') => {
                 let transition = Lexer::proceed(
                     Box::new(StateStart),
                     TransitionKind::EmitToken(Token::new(

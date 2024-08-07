@@ -34,6 +34,10 @@ impl Lexer {
     }
 
     pub fn emit_errors(&self) {
+        if self.errors.is_empty() {
+            return;
+        }
+
         eprintln!("{}", color::red("Errors:"));
         for error in &self.errors {
             eprintln!("  {}", error);
@@ -96,6 +100,101 @@ mod tests {
     use crate::source::Source;
     use crate::utils::file_handler::{create_tmp_file, remove_tmp_file};
     use std::path::PathBuf;
+
+    #[test]
+    fn test_lexer_comment_and_statement() {
+        let file_path = "test_lexer_comment_and_statement.tmp";
+        let file_content = "# this is a comment\n\
+                            x: int = 0";
+        create_tmp_file(file_path, file_content);
+
+        let source = Source::new(file_path);
+        let lexer = Lexer::new(&source);
+        let tokens = lexer.collect::<Vec<_>>();
+        assert_eq!(tokens.len(), 7);
+        assert_eq!(
+            (
+                &tokens[0].kind,
+                &tokens[1].kind,
+                &tokens[2].kind,
+                &tokens[3].kind,
+                &tokens[4].kind,
+                &tokens[5].kind,
+                &tokens[6].kind
+            ),
+            (
+                &TokenKind::TokenNewLine,
+                &TokenKind::TokenIdentifier,
+                &TokenKind::TokenColon,
+                &TokenKind::TokenKeyword,
+                &TokenKind::TokenAssign,
+                &TokenKind::TokenLiteral(token::Literal::Int(0)),
+                &TokenKind::TokenEOF
+            )
+        );
+        assert_eq!(
+            (
+                &tokens[0].lexeme,
+                &tokens[1].lexeme,
+                &tokens[2].lexeme,
+                &tokens[3].lexeme,
+                &tokens[4].lexeme,
+                &tokens[5].lexeme,
+                &tokens[6].lexeme
+            ),
+            (
+                &"\\n".to_string(),
+                &"x".to_string(),
+                &":".to_string(),
+                &"int".to_string(),
+                &"=".to_string(),
+                &"0".to_string(),
+                &"".to_string()
+            )
+        );
+        assert_eq!(
+            (
+                &tokens[0].location,
+                &tokens[1].location,
+                &tokens[2].location,
+                &tokens[3].location,
+                &tokens[4].location,
+                &tokens[5].location,
+                &tokens[6].location
+            ),
+            (
+                &TokenLocation::from(&PathBuf::from(file_path))
+                    .with_line(0)
+                    .with_column_start(19)
+                    .with_column_end(19),
+                &TokenLocation::from(&PathBuf::from(file_path))
+                    .with_line(1)
+                    .with_column_start(0)
+                    .with_column_end(1),
+                &TokenLocation::from(&PathBuf::from(file_path))
+                    .with_line(1)
+                    .with_column_start(1)
+                    .with_column_end(2),
+                &TokenLocation::from(&PathBuf::from(file_path))
+                    .with_line(1)
+                    .with_column_start(3)
+                    .with_column_end(6),
+                &TokenLocation::from(&PathBuf::from(file_path))
+                    .with_line(1)
+                    .with_column_start(7)
+                    .with_column_end(8),
+                &TokenLocation::from(&PathBuf::from(file_path))
+                    .with_line(1)
+                    .with_column_start(9)
+                    .with_column_end(10),
+                &TokenLocation::from(&PathBuf::from(file_path))
+                    .with_line(1)
+                    .with_column_start(10)
+                    .with_column_end(10)
+            )
+        );
+        remove_tmp_file(file_path);
+    }
 
     #[test]
     fn test_lexer_comment() {

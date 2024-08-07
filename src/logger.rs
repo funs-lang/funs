@@ -74,9 +74,7 @@ impl Logger {
 
         // A layer that logs events to a file.
         let file = self.create_log_file();
-        let debug_log = tracing_subscriber::fmt::layer()
-            .with_writer(Arc::new(file))
-            .with_ansi(false);
+        let debug_log = tracing_subscriber::fmt::layer().with_writer(Arc::new(file)); // .with_ansi(false);
 
         // A filter that takes the `RUST_LOG` environment variable into account.
         let env_filter = EnvFilter::from_default_env();

@@ -1,6 +1,6 @@
-# Comment
+# comment
 _x_int: int = 0
-# Another Comment
+# another comment
 
 
                _x_int: int = 0
