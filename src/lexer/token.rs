@@ -5,12 +5,12 @@ const KEYWORD_INT: &str = "int";
 const SEPARATOR_COLON: &str = ":";
 const SEPARATOR_ASSIGN: &str = "=";
 
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq, serde::Deserialize, serde::Serialize)]
 pub enum Literal {
     Int(i64),
 }
 
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq, serde::Deserialize, serde::Serialize)]
 pub enum TokenKind {
     TokenLiteral(Literal),
     TokenIdentifier,
@@ -56,8 +56,8 @@ impl From<&String> for TokenKind {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq)]
 /// The location of a token in the source code in a uman-readable format
+#[derive(Debug, Clone, Eq, PartialEq, serde::Deserialize, serde::Serialize)]
 pub struct TokenLocation {
     file_path: PathBuf,
     line: usize,
@@ -158,7 +158,7 @@ impl From<&PathBuf> for TokenLocation {
     }
 }
 
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq, serde::Deserialize, serde::Serialize)]
 pub struct Token {
     /// The kind of the token
     kind: TokenKind,
