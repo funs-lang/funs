@@ -91,6 +91,33 @@ impl std::fmt::Display for LexerError {
     }
 }
 
+/// Collect all fs files in the given path.
+/// This is util function for testing.
+#[cfg(test)]
+pub fn collect_fs_files(path: &str) -> Vec<std::path::PathBuf> {
+    let subscriber = tracing_subscriber::fmt()
+        // filter spans/events with level TRACE or higher.
+        .with_max_level(tracing::Level::TRACE)
+        // build but do not install the subscriber.
+        .finish();
+
+    let _ = tracing::subscriber::set_global_default(subscriber)
+        .map_err(|_err| eprintln!("Unable to set global default subscriber"));
+
+    std::fs::read_dir(path)
+        .expect("Failed to read directory")
+        .filter_map(|entry| {
+            let path = entry.ok()?.path();
+            if let Some(extension) = path.extension() {
+                if extension == "fs" {
+                    return Some(path);
+                }
+            }
+            None
+        })
+        .collect()
+}
+
 #[cfg(test)]
 mod tests {
     use token::TokenLocation;
@@ -100,6 +127,29 @@ mod tests {
     use crate::source::Source;
     use crate::utils::file_handler::{create_tmp_file, remove_tmp_file};
     use std::path::PathBuf;
+
+    use pretty_assertions::assert_eq;
+
+    #[test]
+    fn variable() {
+        let fs_files = collect_fs_files("./src/testdata/variable");
+        assert_eq!(fs_files.len(), 1);
+
+        for path in fs_files {
+            eprintln!("file -> {:?}", path);
+            let input = std::fs::File::open(path.clone()).unwrap();
+            let content = std::io::read_to_string(input).unwrap();
+            let source = Source::from(content);
+            let lexer = Lexer::new(&source);
+            let output_tokens = lexer.collect::<Vec<Token>>();
+
+            let tokens_file = path.to_str().unwrap();
+            let tokens_file = tokens_file.to_string().replace(".fs", ".tokens");
+            let tokens = std::fs::File::open(tokens_file).unwrap();
+            let expected_tokens: Vec<Token> = serde_json::from_reader(tokens).unwrap();
+            assert_eq!(output_tokens, expected_tokens);
+        }
+    }
 
     #[test]
     fn test_lexer_comment_and_statement() {
