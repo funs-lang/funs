@@ -132,7 +132,7 @@ mod tests {
 
     #[test]
     fn identifier() {
-        let fs_files = collect_fs_files("./testdata/identifier", false);
+        let fs_files = collect_fs_files("./testdata/identifier", true);
         assert_eq!(fs_files.len(), 12);
 
         for path in fs_files {

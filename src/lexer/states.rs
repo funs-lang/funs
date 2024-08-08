@@ -60,10 +60,13 @@ pub struct StateStart;
 impl State for StateStart {
     fn visit(&self, cursor: &mut Cursor) -> Result<Transition, LexerError> {
         match cursor.peek() {
-            Some(c) if c.eq(&' ') || c.eq(&'\t') || c.eq(&'\r') => Ok(Lexer::proceed(
+            Some(c) if c.eq(&' ') || c.eq(&'\t') => Ok(Lexer::proceed(
                 Box::new(StateStart),
                 TransitionKind::Consume,
             )),
+            Some(c) if c.eq(&'\r') => {
+                Ok(Lexer::proceed(Box::new(StateStart), TransitionKind::Empty))
+            }
             Some('#') => Ok(Lexer::proceed(
                 Box::new(StateComment),
                 TransitionKind::Consume,
