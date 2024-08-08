@@ -105,7 +105,7 @@ f3 = (a, b) ->
         else
             b * b # return
     ;
-    f_inner(a, b)
+    f_inner a b
 ;
 
 f4 = (a, b) ->
@@ -117,7 +117,7 @@ f4 = (a, b) ->
         else
             b * b # return
     ;
-    f_inner a b
+    f_inner
 ;
 
 print_test = () -> print "test" ;

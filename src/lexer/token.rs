@@ -1,16 +1,17 @@
 use crate::utils::color;
+use serde::{Deserialize, Serialize};
 use std::path::{Path, PathBuf};
 
 const KEYWORD_INT: &str = "int";
 const SEPARATOR_COLON: &str = ":";
 const SEPARATOR_ASSIGN: &str = "=";
 
-#[derive(Clone, Debug, Eq, PartialEq, serde::Deserialize, serde::Serialize)]
+#[derive(Clone, Debug, Eq, PartialEq, Deserialize, Serialize)]
 pub enum Literal {
     Int(i64),
 }
 
-#[derive(Clone, Debug, Eq, PartialEq, serde::Deserialize, serde::Serialize)]
+#[derive(Clone, Debug, Eq, PartialEq, Deserialize, Serialize)]
 pub enum TokenKind {
     TokenLiteral(Literal),
     TokenIdentifier,
@@ -57,7 +58,7 @@ impl From<&String> for TokenKind {
 }
 
 /// The location of a token in the source code in a uman-readable format
-#[derive(Debug, Clone, Eq, PartialEq, serde::Deserialize, serde::Serialize)]
+#[derive(Debug, Clone, Eq, PartialEq, Deserialize, Serialize)]
 pub struct TokenLocation {
     file_path: PathBuf,
     line: usize,

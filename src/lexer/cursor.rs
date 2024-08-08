@@ -127,3 +127,43 @@ impl From<&Source> for Cursor {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_lexer_cursor_peek() {
+        let source = Source::from("test_id".to_string());
+        let cursor = Cursor::from(&source);
+        assert_eq!(cursor.peek(), Some('t'));
+    }
+
+    #[test]
+    fn test_lexer_cursor_consume() {
+        let source = Source::from("test_id".to_string());
+        let mut cursor = Cursor::from(&source);
+        cursor.consume();
+        assert_eq!(cursor.location().column_start(), 1);
+        assert_eq!(cursor.location().column_end(), 1);
+    }
+
+    #[test]
+    fn test_lexer_cursor_advance() {
+        let source = Source::from("test_id".to_string());
+        let mut cursor = Cursor::from(&source);
+        cursor.advance();
+        assert_eq!(cursor.location().column_start(), 0);
+        assert_eq!(cursor.location().column_end(), 1);
+    }
+
+    #[test]
+    fn test_lexer_cursor_align() {
+        let source = Source::from("test_id".to_string());
+        let mut cursor = Cursor::from(&source);
+        cursor.advance();
+        cursor.align();
+        assert_eq!(cursor.location().column_start(), 1);
+        assert_eq!(cursor.location().column_end(), 1);
+    }
+}

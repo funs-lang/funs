@@ -94,15 +94,17 @@ impl std::fmt::Display for LexerError {
 /// Collect all fs files in the given path.
 /// This is util function for testing.
 #[cfg(test)]
-pub fn collect_fs_files(path: &str) -> Vec<std::path::PathBuf> {
-    let subscriber = tracing_subscriber::fmt()
-        // filter spans/events with level TRACE or higher.
-        .with_max_level(tracing::Level::TRACE)
-        // build but do not install the subscriber.
-        .finish();
+pub fn collect_fs_files(path: &str, set_logger: bool) -> Vec<std::path::PathBuf> {
+    if set_logger {
+        let subscriber = tracing_subscriber::fmt()
+            // filter spans/events with level TRACE or higher.
+            .with_max_level(tracing::Level::TRACE)
+            // build but do not install the subscriber.
+            .finish();
 
-    let _ = tracing::subscriber::set_global_default(subscriber)
-        .map_err(|_err| eprintln!("Unable to set global default subscriber"));
+        let _ = tracing::subscriber::set_global_default(subscriber)
+            .map_err(|_err| eprintln!("Unable to set global default subscriber"));
+    }
 
     std::fs::read_dir(path)
         .expect("Failed to read directory")
@@ -120,22 +122,21 @@ pub fn collect_fs_files(path: &str) -> Vec<std::path::PathBuf> {
 
 #[cfg(test)]
 mod tests {
-    use token::TokenLocation;
-
     use super::*;
     use crate::lexer::token::TokenKind;
     use crate::source::Source;
     use crate::utils::file_handler::{create_tmp_file, remove_tmp_file};
-    use std::path::PathBuf;
-
     use pretty_assertions::assert_eq;
+    use std::path::PathBuf;
+    use token::TokenLocation;
 
     #[test]
-    fn variable() {
-        let fs_files = collect_fs_files("./src/testdata/variable");
-        assert_eq!(fs_files.len(), 1);
+    fn identifier() {
+        let fs_files = collect_fs_files("./testdata/identifier", false);
+        assert_eq!(fs_files.len(), 12);
 
         for path in fs_files {
+            info!("file -> {:?}", path);
             eprintln!("file -> {:?}", path);
             let input = std::fs::File::open(path.clone()).unwrap();
             let content = std::io::read_to_string(input).unwrap();
@@ -149,6 +150,26 @@ mod tests {
             let expected_tokens: Vec<Token> = serde_json::from_reader(tokens).unwrap();
             assert_eq!(output_tokens, expected_tokens);
         }
+    }
+
+    #[test]
+    fn test_lexer_transition_apply() {
+        let source = Source::from("test_id".to_string());
+        let mut cursor = Cursor::from(&source);
+        let transition_kind = TransitionKind::Consume;
+        transition_kind.apply(&mut cursor);
+        assert_eq!(cursor.location().column_start(), 1);
+        assert_eq!(cursor.location().column_end(), 1);
+    }
+
+    #[test]
+    fn test_lexer_transition_apply_advance() {
+        let source = Source::from("test_id".to_string());
+        let mut cursor = Cursor::from(&source);
+        let transition_kind = TransitionKind::Advance;
+        transition_kind.apply(&mut cursor);
+        assert_eq!(cursor.location().column_start(), 0);
+        assert_eq!(cursor.location().column_end(), 1);
     }
 
     #[test]
@@ -299,9 +320,10 @@ mod tests {
         );
         remove_tmp_file(file_path);
     }
+
     #[test]
-    fn test_lexer_unexpected_token() {
-        let file_path = "test_lex_unexpected_token.tmp";
+    fn test_lexer_id_int_unexpected_token() {
+        let file_path = "test_lexer_id_int_unexpected_token.tmp";
         let file_content = "    _x_int:   int £   =  0   ";
         create_tmp_file(file_path, file_content);
 
@@ -360,8 +382,8 @@ mod tests {
     }
 
     #[test]
-    fn test_lexer_identifier_with_length_one() {
-        let file_path = "test_lexer_identifier_with_length_one.tmp";
+    fn test_lexer_id_with_length_one() {
+        let file_path = "test_lexer_id_with_length_one.tmp";
         let file_content = "i: int = 1";
         create_tmp_file(file_path, file_content);
         let source = Source::new(file_path);
@@ -444,8 +466,8 @@ mod tests {
     }
 
     #[test]
-    fn test_lexer_tokenize_var_int_with_spaces() {
-        let file_path = "test_lexer_var_int_with_spaces.tmp";
+    fn test_lexer_id_int_assign_with_spaces() {
+        let file_path = "test_lexer_id_int_assign_with_spaces.tmp";
         let file_content = "    _x_int:   int  =  0   ";
         create_tmp_file(file_path, file_content);
         let source = Source::new(file_path);
@@ -528,7 +550,7 @@ mod tests {
     }
 
     #[test]
-    fn test_lexer_tokenize_var_int() {
+    fn test_lexer_id_int_assign() {
         let file_path = "test_var_int.tmp";
         let file_content = "_x_int: int = 0";
         create_tmp_file(file_path, file_content);
@@ -612,8 +634,8 @@ mod tests {
     }
 
     #[test]
-    fn test_lexer_token_identifier_file() {
-        let file_path = "test_lexer_token_identifier.tmp";
+    fn test_lexer_identifier_file() {
+        let file_path = "test_token_identifier.tmp";
         let file_content = "test_id";
         create_tmp_file(file_path, file_content);
         let source = Source::new(file_path);
@@ -645,8 +667,37 @@ mod tests {
     }
 
     #[test]
-    fn test_lexer_space_before_identifier() {
-        let file_path = "test_lexer_space_before_identifier.tmp";
+    fn test_lexer_identifier_string() {
+        let source = Source::from("test_id".to_string());
+        let lexer = Lexer::new(&source);
+        let tokens = lexer.collect::<Vec<_>>();
+        assert_eq!(tokens.len(), 2);
+        assert_eq!(
+            (tokens[0].kind(), tokens[1].kind()),
+            (&TokenKind::TokenIdentifier, &TokenKind::TokenEOF)
+        );
+        assert_eq!(
+            (tokens[0].lexeme(), tokens[1].lexeme()),
+            (&"test_id".to_string(), &"".to_string())
+        );
+        assert_eq!(
+            (tokens[0].location(), tokens[1].location()),
+            (
+                &TokenLocation::from(&PathBuf::from(""))
+                    .with_line(0)
+                    .with_column_start(0)
+                    .with_column_end(7),
+                &TokenLocation::from(&PathBuf::from(""))
+                    .with_line(0)
+                    .with_column_start(7)
+                    .with_column_end(7)
+            )
+        );
+    }
+
+    #[test]
+    fn test_lexer_id_with_spaces_before() {
+        let file_path = "test_lexer_id_with_spaces_before.tmp";
         let file_content = "         __test_id";
         create_tmp_file(file_path, file_content);
         let source = Source::new(file_path);
@@ -678,8 +729,8 @@ mod tests {
     }
 
     #[test]
-    fn test_lexer_space_after_identifier() {
-        let file_path = "test_lexer_space_after_identifier.tmp";
+    fn test_lexer_id_with_spaces_after() {
+        let file_path = "test_lexer_id_with_spaces_after.tmp";
         let file_content = "__test_id         ";
         create_tmp_file(file_path, file_content);
         let source = Source::new(file_path);
@@ -711,8 +762,8 @@ mod tests {
     }
 
     #[test]
-    fn test_lexer_space_before_and_after_identifier() {
-        let file_path = "test_lexer_space_before_and_after_identifier.tmp";
+    fn test_lexer_id_with_spaces() {
+        let file_path = "test_lexer_id_with_spaces.tmp";
         let file_content = "         __test_id         ";
         create_tmp_file(file_path, file_content);
         let source = Source::new(file_path);
@@ -741,89 +792,5 @@ mod tests {
             )
         );
         remove_tmp_file(file_path);
-    }
-
-    #[test]
-    fn test_lexer_cursor_peek() {
-        let source = Source::from("test_id".to_string());
-        let cursor = Cursor::from(&source);
-        assert_eq!(cursor.peek(), Some('t'));
-    }
-
-    #[test]
-    fn test_lexer_cursor_consume() {
-        let source = Source::from("test_id".to_string());
-        let mut cursor = Cursor::from(&source);
-        cursor.consume();
-        assert_eq!(cursor.location().column_start(), 1);
-        assert_eq!(cursor.location().column_end(), 1);
-    }
-
-    #[test]
-    fn test_lexer_cursor_advance() {
-        let source = Source::from("test_id".to_string());
-        let mut cursor = Cursor::from(&source);
-        cursor.advance();
-        assert_eq!(cursor.location().column_start(), 0);
-        assert_eq!(cursor.location().column_end(), 1);
-    }
-
-    #[test]
-    fn test_lexer_cursor_align() {
-        let source = Source::from("test_id".to_string());
-        let mut cursor = Cursor::from(&source);
-        cursor.advance();
-        cursor.align();
-        assert_eq!(cursor.location().column_start(), 1);
-        assert_eq!(cursor.location().column_end(), 1);
-    }
-
-    #[test]
-    fn test_lexer_transition_apply() {
-        let source = Source::from("test_id".to_string());
-        let mut cursor = Cursor::from(&source);
-        let transition_kind = TransitionKind::Consume;
-        transition_kind.apply(&mut cursor);
-        assert_eq!(cursor.location().column_start(), 1);
-        assert_eq!(cursor.location().column_end(), 1);
-    }
-
-    #[test]
-    fn test_lexer_transition_apply_advance() {
-        let source = Source::from("test_id".to_string());
-        let mut cursor = Cursor::from(&source);
-        let transition_kind = TransitionKind::Advance;
-        transition_kind.apply(&mut cursor);
-        assert_eq!(cursor.location().column_start(), 0);
-        assert_eq!(cursor.location().column_end(), 1);
-    }
-
-    #[test]
-    fn test_lexer_token_identifier_string() {
-        let source = Source::from("test_id".to_string());
-        let lexer = Lexer::new(&source);
-        let tokens = lexer.collect::<Vec<_>>();
-        assert_eq!(tokens.len(), 2);
-        assert_eq!(
-            (tokens[0].kind(), tokens[1].kind()),
-            (&TokenKind::TokenIdentifier, &TokenKind::TokenEOF)
-        );
-        assert_eq!(
-            (tokens[0].lexeme(), tokens[1].lexeme()),
-            (&"test_id".to_string(), &"".to_string())
-        );
-        assert_eq!(
-            (tokens[0].location(), tokens[1].location()),
-            (
-                &TokenLocation::from(&PathBuf::from(""))
-                    .with_line(0)
-                    .with_column_start(0)
-                    .with_column_end(7),
-                &TokenLocation::from(&PathBuf::from(""))
-                    .with_line(0)
-                    .with_column_start(7)
-                    .with_column_end(7)
-            )
-        );
     }
 }

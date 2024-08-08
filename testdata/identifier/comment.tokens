@@ -1,0 +1,12 @@
+[
+  {
+    "kind": "TokenEOF",
+    "lexeme": "",
+    "location": {
+      "file_path": "",
+      "line": 0,
+      "column_start": 19,
+      "column_end": 19
+    }
+  }
+]

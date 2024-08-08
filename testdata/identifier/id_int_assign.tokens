@@ -1,0 +1,67 @@
+[
+  {
+    "kind": "TokenIdentifier",
+    "lexeme": "_x_int",
+    "location": {
+      "file_path": "",
+      "line": 0,
+      "column_start": 0,
+      "column_end": 6
+    }
+  },
+  {
+    "kind": "TokenColon",
+    "lexeme": ":",
+    "location": {
+      "file_path": "",
+      "line": 0,
+      "column_start": 6,
+      "column_end": 7
+    }
+  },
+  {
+    "kind": "TokenKeyword",
+    "lexeme": "int",
+    "location": {
+      "file_path": "",
+      "line": 0,
+      "column_start": 8,
+      "column_end": 11
+    }
+  },
+  {
+    "kind": "TokenAssign",
+    "lexeme": "=",
+    "location": {
+      "file_path": "",
+      "line": 0,
+      "column_start": 12,
+      "column_end": 13
+    }
+  },
+  {
+    "kind": {
+      "TokenLiteral": {
+        "Int": 0
+      }
+    },
+    "lexeme": "0",
+    "location": {
+      "file_path": "",
+      "line": 0,
+      "column_start": 14,
+      "column_end": 15
+    }
+  },
+  {
+    "kind": "TokenEOF",
+    "lexeme": "",
+    "location": {
+      "file_path": "",
+      "line": 0,
+      "column_start": 15,
+      "column_end": 15
+    }
+  }
+]
+
