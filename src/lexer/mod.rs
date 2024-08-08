@@ -132,7 +132,7 @@ mod tests {
 
     #[test]
     fn identifier() {
-        let fs_files = collect_fs_files("./testdata/identifier", false);
+        let fs_files = collect_fs_files("./testdata/identifier", true);
         assert_eq!(fs_files.len(), 12);
 
         for path in fs_files {
@@ -166,7 +166,7 @@ mod tests {
     fn test_lexer_transition_apply_advance() {
         let source = Source::from("test_id".to_string());
         let mut cursor = Cursor::from(&source);
-        let transition_kind = TransitionKind::Advance;
+        let transition_kind = TransitionKind::AdvanceOffset;
         transition_kind.apply(&mut cursor);
         assert_eq!(cursor.location().column_start(), 0);
         assert_eq!(cursor.location().column_end(), 1);

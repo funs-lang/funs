@@ -107,8 +107,8 @@ impl TokenLocation {
         self.column_end += 1;
     }
 
-    pub fn set_column_start(&mut self, column_start: usize) {
-        self.column_start = column_start;
+    pub fn set_column_start(&mut self, new_column_start: usize) {
+        self.column_start = new_column_start;
     }
 
     pub fn with_file_path(&self, file_path: &Path) -> TokenLocation {

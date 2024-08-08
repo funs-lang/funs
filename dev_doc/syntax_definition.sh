@@ -21,9 +21,9 @@ x_char: char = '👾' # unicode
 x_list: [int] = [1, 2, 3]
 x_tuple: (int, str) = (1, "hello")
 x_option: option<int> = Just(1) # Nil
-x_f1: () -> unit = () -> print "hello" ;
-x_f2: () -> int = () -> 1 ;
-x_f3: (T) -> T = (x) -> x ; # Generic
+x_f1: () -> unit = () -> print "hello"
+x_f2: () -> int = () -> 1
+x_f3: (T) -> T = (x) -> x # Generic
 
 # Without type annotation (type inference)
 x_int = 1
@@ -69,7 +69,7 @@ match_variant: MyVariant -> str = (v) ->
   match v
   | First => "first"
   | Second => "second"
-  | Third(n) => "third"
+  | Third(_) => "third"
   ;
 ;
 
@@ -109,7 +109,7 @@ f3 = (a, b) ->
 ;
 
 f4 = (a, b) ->
-    f_inner = (..) -> # `..` thakes all arguments of the parent function
+    f_inner = (..) -> # `..` inherits all arguments of the parent function
         if gt a b then
           a_square \ # `\` is the line continuation character
             = a * a

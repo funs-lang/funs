@@ -43,12 +43,16 @@ impl Cursor {
     /// Before consume:
     ///
     /// test
+    /// ^_____ index
+    /// ^_____ offset
     /// ^_____ column_start
     /// ^_____ column_end
     ///
     /// After two consume:
     ///
     /// test
+    ///   ^_____ index
+    ///   ^_____ offset
     ///   ^_____ column_start
     ///   ^_____ column_end
     /// ```
@@ -65,19 +69,23 @@ impl Cursor {
     /// Advances the cursor without consuming the current character
     ///
     /// ```text
-    /// Before advance:
+    /// Before advance offset:
     ///
     /// test
-    /// ^_____ column_start
-    /// ^_____ column_end
+    /// ^_____ index = 0
+    /// ^_____ offset = 0
+    /// ^_____ column_start = 0
+    /// ^_____ column_end = 0
     ///
-    /// After two advance:
+    /// After advance:
     ///
     /// test
-    /// ^_______ column_start
-    ///   ^_____ column_end
+    /// ^_____ index = 0
+    ///  ^_____ offset = 1
+    /// ^_______ column_start = 0
+    ///  ^_____ column_end = 1
     /// ```
-    pub fn advance(&mut self) {
+    pub fn advance_offset(&mut self) {
         if self.is_eof() {
             return;
         }
@@ -92,20 +100,40 @@ impl Cursor {
     /// Before align:
     ///
     /// test
-    /// ^_________ column_start
-    ///     ^_____ column_end
+    /// ^_________ column_start = 0
+    ///     ^_____ column_end = 3
     ///
     /// After align:
     ///
     /// test
-    ///     ^_____ column_start
-    ///     ^_____ column_end
+    ///     ^_____ column_start = 3
+    ///     ^_____ column_end = 3
     /// ```
     pub fn align(&mut self) {
         self.location.set_column_start(self.location.column_end());
         self.index = self.offset;
     }
 
+    /// Advances only the cursor indexes
+    pub fn remove_carriage_return(&mut self) {
+        self.source.content_mut().remove(self.offset);
+    }
+
+    /// Advances the cursor to the next line
+    /// ```text
+    /// Before new line:
+    /// test\ntest2
+    ///     ^_____ index = 4
+    ///     ^_____ offset = 4
+    ///     ^_____ column_start = 4
+    ///     ^_____ column_end = 4
+    ///
+    /// After new line:
+    /// test\ntest2
+    ///       ^_____ index = 5
+    ///       ^_____ offset = 5
+    ///       ^_____ column_start = 0
+    ///       ^_____ column_end = 0
     pub fn new_line(&mut self) {
         if self.is_eof() {
             return;
@@ -152,7 +180,7 @@ mod tests {
     fn test_lexer_cursor_advance() {
         let source = Source::from("test_id".to_string());
         let mut cursor = Cursor::from(&source);
-        cursor.advance();
+        cursor.advance_offset();
         assert_eq!(cursor.location().column_start(), 0);
         assert_eq!(cursor.location().column_end(), 1);
     }
@@ -161,7 +189,7 @@ mod tests {
     fn test_lexer_cursor_align() {
         let source = Source::from("test_id".to_string());
         let mut cursor = Cursor::from(&source);
-        cursor.advance();
+        cursor.advance_offset();
         cursor.align();
         assert_eq!(cursor.location().column_start(), 1);
         assert_eq!(cursor.location().column_end(), 1);

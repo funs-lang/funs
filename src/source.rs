@@ -25,6 +25,10 @@ impl Source {
     pub fn content(&self) -> &str {
         &self.content
     }
+
+    pub fn content_mut(&mut self) -> &mut String {
+        &mut self.content
+    }
 }
 
 impl From<String> for Source {

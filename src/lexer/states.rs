@@ -13,7 +13,7 @@ pub trait State: Debug {
 #[derive(Debug)]
 pub enum TransitionKind {
     Consume,
-    Advance,
+    AdvanceOffset,
     Empty, // Keep cursors in the same position
     EmitToken(Token),
     End,
@@ -25,8 +25,8 @@ impl TransitionKind {
             TransitionKind::Consume => {
                 cursor.consume();
             }
-            TransitionKind::Advance => {
-                cursor.advance();
+            TransitionKind::AdvanceOffset => {
+                cursor.advance_offset();
             }
             TransitionKind::Empty => {}
             TransitionKind::EmitToken(_) => cursor.align(),
@@ -60,21 +60,26 @@ pub struct StateStart;
 impl State for StateStart {
     fn visit(&self, cursor: &mut Cursor) -> Result<Transition, LexerError> {
         match cursor.peek() {
-            Some(c) if c.eq(&' ') || c.eq(&'\t') || c.eq(&'\r') => Ok(Lexer::proceed(
+            Some(c) if c.eq(&' ') || c.eq(&'\t') => Ok(Lexer::proceed(
                 Box::new(StateStart),
                 TransitionKind::Consume,
             )),
+            Some(c) if c.eq(&'\r') => {
+                cursor.remove_carriage_return();
+                Ok(Lexer::proceed(Box::new(StateStart), TransitionKind::Empty))
+            }
             Some('#') => Ok(Lexer::proceed(
                 Box::new(StateComment),
                 TransitionKind::Consume,
             )),
             Some(c) if c.is_ascii_digit() => Ok(Lexer::proceed(
                 Box::new(StateNumber),
-                TransitionKind::Advance,
+                TransitionKind::AdvanceOffset,
             )),
-            Some(c) if c.is_alphabetic() || c.eq(&'_') => {
-                Ok(Lexer::proceed(Box::new(StateWord), TransitionKind::Advance))
-            }
+            Some(c) if c.is_alphabetic() || c.eq(&'_') => Ok(Lexer::proceed(
+                Box::new(StateWord),
+                TransitionKind::AdvanceOffset,
+            )),
             Some(c) if StateSymbol::is_symbol(c) => {
                 Ok(Lexer::proceed(Box::new(StateSymbol), TransitionKind::Empty))
             }
@@ -93,7 +98,7 @@ pub struct StateComment;
 impl State for StateComment {
     fn visit(&self, cursor: &mut Cursor) -> Result<Transition, LexerError> {
         match cursor.peek() {
-            Some(c) if c.ne(&'\n') => Ok(Lexer::proceed(
+            Some(c) if c.ne(&'\n') && c.ne(&'\r') => Ok(Lexer::proceed(
                 Box::new(StateComment),
                 TransitionKind::Consume,
             )),
@@ -110,7 +115,7 @@ impl State for StateNumber {
         match cursor.peek() {
             Some(c) if c.is_ascii_digit() => Ok(Lexer::proceed(
                 Box::new(StateNumber),
-                TransitionKind::Advance,
+                TransitionKind::AdvanceOffset,
             )),
             _ => {
                 let lexeme = cursor.source().content()[cursor.index()..cursor.offset()].to_string();
@@ -134,9 +139,10 @@ pub struct StateWord;
 impl State for StateWord {
     fn visit(&self, cursor: &mut Cursor) -> Result<Transition, LexerError> {
         match cursor.peek() {
-            Some(c) if c.is_alphanumeric() || c.eq(&'_') => {
-                Ok(Lexer::proceed(Box::new(StateWord), TransitionKind::Advance))
-            }
+            Some(c) if c.is_alphanumeric() || c.eq(&'_') => Ok(Lexer::proceed(
+                Box::new(StateWord),
+                TransitionKind::AdvanceOffset,
+            )),
             _ => {
                 // Emit token when we encounter a non-alphabetic character
                 let lexeme = cursor.source().content()[cursor.index()..cursor.offset()].to_string();
@@ -179,7 +185,7 @@ impl State for StateSymbol {
             }
             Some(c) if StateSymbol::is_symbol(c) => Ok(Lexer::proceed(
                 Box::new(StateSymbol),
-                TransitionKind::Advance,
+                TransitionKind::AdvanceOffset,
             )),
             _ => {
                 let lexeme = cursor.source().content()[cursor.index()..cursor.offset()].to_string();
