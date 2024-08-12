@@ -3,15 +3,17 @@ use serde::{Deserialize, Serialize};
 use std::path::{Path, PathBuf};
 
 const KEYWORD_INT: &str = "int";
+const KEYWORD_FLOAT: &str = "float";
 const SEPARATOR_COLON: &str = ":";
 const SEPARATOR_ASSIGN: &str = "=";
 
-#[derive(Clone, Debug, Eq, PartialEq, Deserialize, Serialize)]
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 pub enum Literal {
     Int(i64),
+    Float(f64),
 }
 
-#[derive(Clone, Debug, Eq, PartialEq, Deserialize, Serialize)]
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 pub enum TokenKind {
     TokenLiteral(Literal),
     TokenIdentifier,
@@ -26,6 +28,7 @@ impl TokenKind {
     fn match_keyword(lexeme: &str) -> Option<TokenKind> {
         match lexeme {
             KEYWORD_INT => Some(TokenKind::TokenKeyword),
+            KEYWORD_FLOAT => Some(TokenKind::TokenKeyword),
             _ => None,
         }
     }
@@ -159,7 +162,7 @@ impl From<&PathBuf> for TokenLocation {
     }
 }
 
-#[derive(Clone, Debug, Eq, PartialEq, serde::Deserialize, serde::Serialize)]
+#[derive(Clone, Debug, PartialEq, serde::Deserialize, serde::Serialize)]
 pub struct Token {
     /// The kind of the token
     kind: TokenKind,
@@ -199,6 +202,7 @@ impl std::fmt::Display for Literal {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         match self {
             Literal::Int(value) => write!(f, "Int({})", value),
+            Literal::Float(value) => write!(f, "Float({})", value),
         }
     }
 }

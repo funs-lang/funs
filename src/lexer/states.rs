@@ -73,7 +73,7 @@ impl State for StateStart {
                 TransitionKind::Consume,
             )),
             Some(c) if c.is_ascii_digit() => Ok(Lexer::proceed(
-                Box::new(StateNumber),
+                Box::new(StateNumber { is_float: false }),
                 TransitionKind::AdvanceOffset,
             )),
             Some(c) if c.is_alphabetic() || c.eq(&'_') => Ok(Lexer::proceed(
@@ -108,24 +108,35 @@ impl State for StateComment {
 }
 
 #[derive(Debug)]
-pub struct StateNumber;
+pub struct StateNumber {
+    is_float: bool,
+}
 
 impl State for StateNumber {
     fn visit(&self, cursor: &mut Cursor) -> Result<Transition, LexerError> {
         match cursor.peek() {
             Some(c) if c.is_ascii_digit() => Ok(Lexer::proceed(
-                Box::new(StateNumber),
+                Box::new(StateNumber {
+                    is_float: self.is_float,
+                }),
+                TransitionKind::AdvanceOffset,
+            )),
+            Some(c) if c.eq(&'.') => Ok(Lexer::proceed(
+                Box::new(StateNumber { is_float: true }),
                 TransitionKind::AdvanceOffset,
             )),
             _ => {
                 let lexeme = cursor.source().content()[cursor.index()..cursor.offset()].to_string();
                 let location = cursor.location().clone();
+                let token_kind = if self.is_float {
+                    TokenKind::TokenLiteral(Literal::Float(lexeme.parse().unwrap()))
+                } else {
+                    TokenKind::TokenLiteral(Literal::Int(lexeme.parse().unwrap()))
+                };
                 Ok(Transition {
                     state: Box::new(StateStart),
                     transition_kind: TransitionKind::EmitToken(Token::new(
-                        TokenKind::TokenLiteral(Literal::Int(lexeme.parse().unwrap())),
-                        lexeme,
-                        location,
+                        token_kind, lexeme, location,
                     )),
                 })
             }
