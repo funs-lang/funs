@@ -78,7 +78,7 @@ impl Iterator for Lexer {
     }
 }
 
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum LexerError {
     UnexpectedToken(Token),
 }
@@ -133,7 +133,7 @@ mod tests {
     #[test]
     fn identifier() {
         let fs_files = collect_fs_files("./testdata/identifier", true);
-        assert_eq!(fs_files.len(), 12);
+        assert_eq!(fs_files.len(), 15);
 
         for path in fs_files {
             info!("file -> {:?}", path);

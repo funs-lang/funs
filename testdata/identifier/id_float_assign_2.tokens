@@ -1,12 +1,12 @@
 [
   {
     "kind": "TokenIdentifier",
-    "lexeme": "_x_int",
+    "lexeme": "_x_float",
     "location": {
       "file_path": "",
       "line": 0,
       "column_start": 0,
-      "column_end": 6
+      "column_end": 8
     }
   },
   {
@@ -15,18 +15,18 @@
     "location": {
       "file_path": "",
       "line": 0,
-      "column_start": 6,
-      "column_end": 7
+      "column_start": 8,
+      "column_end": 9
     }
   },
   {
     "kind": "TokenKeyword",
-    "lexeme": "int",
+    "lexeme": "float",
     "location": {
       "file_path": "",
       "line": 0,
-      "column_start": 8,
-      "column_end": 11
+      "column_start": 10,
+      "column_end": 15
     }
   },
   {
@@ -35,22 +35,22 @@
     "location": {
       "file_path": "",
       "line": 0,
-      "column_start": 12,
-      "column_end": 13
+      "column_start": 16,
+      "column_end": 17
     }
   },
   {
     "kind": {
       "TokenLiteral": {
-        "Int": 0
+        "Float": 73.20
       }
     },
-    "lexeme": "0",
+    "lexeme": "73.20",
     "location": {
       "file_path": "",
       "line": 0,
-      "column_start": 14,
-      "column_end": 15
+      "column_start": 18,
+      "column_end": 23
     }
   },
   {
@@ -59,8 +59,8 @@
     "location": {
       "file_path": "",
       "line": 0,
-      "column_start": 15,
-      "column_end": 15
+      "column_start": 23,
+      "column_end": 23
     }
   },
   {
@@ -74,4 +74,3 @@
     }
   }
 ]
-

@@ -42,15 +42,15 @@
   {
     "kind": {
       "TokenLiteral": {
-        "Int": 0
+        "Int": 732
       }
     },
-    "lexeme": "0",
+    "lexeme": "732",
     "location": {
       "file_path": "",
       "line": 0,
       "column_start": 14,
-      "column_end": 15
+      "column_end": 17
     }
   },
   {
@@ -59,8 +59,8 @@
     "location": {
       "file_path": "",
       "line": 0,
-      "column_start": 15,
-      "column_end": 15
+      "column_start": 17,
+      "column_end": 17
     }
   },
   {
