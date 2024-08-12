@@ -28,8 +28,7 @@ fn main() {
     }
 
     let file_path: &str = &args[0];
-    let mut source = Source::new(file_path);
-    source.content_mut().push_str("test");
+    let source = Source::new(file_path);
     let mut lexer = Lexer::new(&source);
     let _tokens = (&mut lexer).collect::<Vec<Token>>();
     lexer.emit_errors();

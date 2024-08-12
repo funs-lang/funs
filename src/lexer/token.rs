@@ -4,6 +4,9 @@ use std::path::{Path, PathBuf};
 
 const KEYWORD_INT: &str = "int";
 const KEYWORD_FLOAT: &str = "float";
+const KEYWORD_BOOL: &str = "bool";
+const KEYWORD_BOOL_TRUE: &str = "true";
+const KEYWORD_BOOL_FALSE: &str = "false";
 const SEPARATOR_COLON: &str = ":";
 const SEPARATOR_ASSIGN: &str = "=";
 
@@ -11,6 +14,7 @@ const SEPARATOR_ASSIGN: &str = "=";
 pub enum Literal {
     Int(i64),
     Float(f64),
+    Bool(bool),
 }
 
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
@@ -29,8 +33,27 @@ impl TokenKind {
         match lexeme {
             KEYWORD_INT => Some(TokenKind::TokenKeyword),
             KEYWORD_FLOAT => Some(TokenKind::TokenKeyword),
+            KEYWORD_BOOL => Some(TokenKind::TokenKeyword),
+            KEYWORD_BOOL_TRUE => Some(TokenKind::TokenLiteral(Literal::Bool(true))),
+            KEYWORD_BOOL_FALSE => Some(TokenKind::TokenLiteral(Literal::Bool(false))),
             _ => None,
         }
+    }
+
+    fn match_number(lexeme: &str) -> Option<TokenKind> {
+        if lexeme.chars().all(char::is_numeric) {
+            return Some(TokenKind::TokenLiteral(Literal::Int(
+                lexeme.parse().unwrap(),
+            )));
+        }
+
+        if lexeme.contains('.') {
+            return Some(TokenKind::TokenLiteral(Literal::Float(
+                lexeme.parse().unwrap(),
+            )));
+        }
+
+        None
     }
 
     fn match_separator(lexeme: &str) -> Option<TokenKind> {
@@ -54,6 +77,10 @@ impl From<&String> for TokenKind {
 
         if let Some(separator) = TokenKind::match_separator(lexeme) {
             return separator;
+        }
+
+        if let Some(number) = TokenKind::match_number(lexeme) {
+            return number;
         }
 
         TokenKind::TokenIdentifier
@@ -203,6 +230,7 @@ impl std::fmt::Display for Literal {
         match self {
             Literal::Int(value) => write!(f, "Int({})", value),
             Literal::Float(value) => write!(f, "Float({})", value),
+            Literal::Bool(value) => write!(f, "Bool({})", value),
         }
     }
 }
