@@ -1,0 +1,19 @@
+[
+  { "kind": "TokenSpace", "lexeme": " ", "location": { "file_path": "", "line": 0, "column_start": 0, "column_end": 1 } },
+  { "kind": "TokenSpace", "lexeme": " ", "location": { "file_path": "", "line": 0, "column_start": 1, "column_end": 2 } },
+  { "kind": "TokenSpace", "lexeme": " ", "location": { "file_path": "", "line": 0, "column_start": 2, "column_end": 3 } },
+  { "kind": "TokenSpace", "lexeme": " ", "location": { "file_path": "", "line": 0, "column_start": 3, "column_end": 4 } },
+  { "kind": "TokenIdentifier", "lexeme": "_x_int", "location": { "file_path": "", "line": 0, "column_start": 4, "column_end": 10 } },
+  { "kind": "TokenColon", "lexeme": ":", "location": { "file_path": "", "line": 0, "column_start": 10, "column_end": 11 } },
+  { "kind": "TokenSpace", "lexeme": " ", "location": { "file_path": "", "line": 0, "column_start": 11, "column_end": 12 } },
+  { "kind": "TokenSpace", "lexeme": " ", "location": { "file_path": "", "line": 0, "column_start": 12, "column_end": 13 } },
+  { "kind": "TokenSpace", "lexeme": " ", "location": { "file_path": "", "line": 0, "column_start": 13, "column_end": 14 } },
+  { "kind": "TokenKeyword", "lexeme": "int", "location": { "file_path": "", "line": 0, "column_start": 14, "column_end": 17 } },
+  { "kind": "TokenSpace", "lexeme": " ", "location": { "file_path": "", "line": 0, "column_start": 17, "column_end": 18 } },
+  { "kind": "TokenSpace", "lexeme": " ", "location": { "file_path": "", "line": 0, "column_start": 18, "column_end": 19 } },
+  { "kind": "TokenAssign", "lexeme": "=", "location": { "file_path": "", "line": 0, "column_start": 19, "column_end": 20 } },
+  { "kind": "TokenSpace", "lexeme": " ", "location": { "file_path": "", "line": 0, "column_start": 20, "column_end": 21 } },
+  { "kind": "TokenSpace", "lexeme": " ", "location": { "file_path": "", "line": 0, "column_start": 21, "column_end": 22 } },
+  { "kind": { "TokenLiteral": { "Int": 0 } }, "lexeme": "0", "location": { "file_path": "", "line": 0, "column_start": 22, "column_end": 23 } },
+  { "kind": "TokenEOF", "lexeme": "", "location": { "file_path": "", "line": 0, "column_start": 23, "column_end": 23 } }
+]

@@ -1,0 +1,12 @@
+[
+  { "kind": "TokenIdentifier", "lexeme": "_x_bool", "location": { "file_path": "", "line": 0, "column_start": 0, "column_end": 7 } },
+  { "kind": "TokenColon", "lexeme": ":", "location": { "file_path": "", "line": 0, "column_start": 7, "column_end": 8 } },
+  { "kind": "TokenSpace", "lexeme": " ", "location": { "file_path": "", "line": 0, "column_start": 8, "column_end": 9 } },
+  { "kind": "TokenKeyword", "lexeme": "bool", "location": { "file_path": "", "line": 0, "column_start": 9, "column_end": 13 } },
+  { "kind": "TokenSpace", "lexeme": " ", "location": { "file_path": "", "line": 0, "column_start": 13, "column_end": 14 } },
+  { "kind": "TokenAssign", "lexeme": "=", "location": { "file_path": "", "line": 0, "column_start": 14, "column_end": 15 } },
+  { "kind": "TokenSpace", "lexeme": " ", "location": { "file_path": "", "line": 0, "column_start": 15, "column_end": 16 } },
+  { "kind": { "TokenLiteral": { "Bool" : false } }, "lexeme": "false", "location": { "file_path": "", "line": 0, "column_start": 16, "column_end": 21 } },
+  { "kind": "TokenNewLine", "lexeme": "\\n", "location": { "file_path": "", "line": 0, "column_start": 21, "column_end": 21 } },
+  { "kind": "TokenEOF", "lexeme": "", "location": { "file_path": "", "line": 1, "column_start": 0, "column_end": 0 } }
+]

@@ -60,17 +60,27 @@ pub struct StateStart;
 impl State for StateStart {
     fn visit(&self, cursor: &mut Cursor) -> Result<Transition, LexerError> {
         match cursor.peek() {
-            Some(c) if c.eq(&' ') || c.eq(&'\t') => Ok(Lexer::proceed(
-                Box::new(StateStart),
-                TransitionKind::Consume,
-            )),
+            Some(c) if c.eq(&' ') || c.eq(&'\t') => {
+                cursor.advance_offset();
+                Ok(Lexer::proceed(
+                    Box::new(StateStart),
+                    TransitionKind::EmitToken(Token::new(
+                        TokenKind::from(&c.to_string()),
+                        c.to_string(),
+                        cursor.location().clone(),
+                    )),
+                ))
+            }
             Some(c) if c.eq(&'\r') => {
                 cursor.remove_carriage_return();
                 Ok(Lexer::proceed(Box::new(StateStart), TransitionKind::Empty))
             }
+            Some(c) if StateSymbol::is_symbol(c) => {
+                Ok(Lexer::proceed(Box::new(StateSymbol), TransitionKind::Empty))
+            }
             Some('#') => Ok(Lexer::proceed(
                 Box::new(StateComment),
-                TransitionKind::Consume,
+                TransitionKind::AdvanceOffset,
             )),
             Some(c) if c.is_ascii_digit() => Ok(Lexer::proceed(
                 Box::new(StateNumber),
@@ -80,9 +90,6 @@ impl State for StateStart {
                 Box::new(StateWord),
                 TransitionKind::AdvanceOffset,
             )),
-            Some(c) if StateSymbol::is_symbol(c) => {
-                Ok(Lexer::proceed(Box::new(StateSymbol), TransitionKind::Empty))
-            }
             Some(c) => Err(LexerError::UnexpectedToken(Token::new(
                 TokenKind::from(&c.to_string()),
                 c.to_string(),
@@ -95,14 +102,22 @@ impl State for StateStart {
 
 #[derive(Debug)]
 pub struct StateComment;
+
 impl State for StateComment {
     fn visit(&self, cursor: &mut Cursor) -> Result<Transition, LexerError> {
         match cursor.peek() {
             Some(c) if c.ne(&'\n') && c.ne(&'\r') => Ok(Lexer::proceed(
                 Box::new(StateComment),
-                TransitionKind::Consume,
+                TransitionKind::AdvanceOffset,
             )),
-            _ => Ok(Lexer::proceed(Box::new(StateStart), TransitionKind::Empty)),
+            _ => Ok(Lexer::proceed(
+                Box::new(StateStart),
+                TransitionKind::EmitToken(Token::new(
+                    TokenKind::TokenComment,
+                    cursor.source().content()[cursor.index()..cursor.offset()].to_string(),
+                    cursor.location().clone(),
+                )),
+            )),
         }
     }
 }
