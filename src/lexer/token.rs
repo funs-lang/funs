@@ -5,6 +5,7 @@ use std::path::{Path, PathBuf};
 const KEYWORD_INT: &str = "int";
 const KEYWORD_FLOAT: &str = "float";
 const KEYWORD_BOOL: &str = "bool";
+const KEYWORD_CHAR: &str = "char";
 const KEYWORD_BOOL_TRUE: &str = "true";
 const KEYWORD_BOOL_FALSE: &str = "false";
 const SEPARATOR_COLON: &str = ":";
@@ -15,6 +16,7 @@ pub enum Literal {
     Int(i64),
     Float(f64),
     Bool(bool),
+    Char(char),
 }
 
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
@@ -25,6 +27,7 @@ pub enum TokenKind {
     TokenNewLine, // \n
     TokenColon,   // :
     TokenAssign,  // =
+    TokenTick,    // '
     TokenEOF,     // End of file
 }
 
@@ -34,6 +37,7 @@ impl TokenKind {
             KEYWORD_INT => Some(TokenKind::TokenKeyword),
             KEYWORD_FLOAT => Some(TokenKind::TokenKeyword),
             KEYWORD_BOOL => Some(TokenKind::TokenKeyword),
+            KEYWORD_CHAR => Some(TokenKind::TokenKeyword),
             KEYWORD_BOOL_TRUE => Some(TokenKind::TokenLiteral(Literal::Bool(true))),
             KEYWORD_BOOL_FALSE => Some(TokenKind::TokenLiteral(Literal::Bool(false))),
             _ => None,
@@ -42,9 +46,10 @@ impl TokenKind {
 
     fn match_number(lexeme: &str) -> Option<TokenKind> {
         if lexeme.chars().all(char::is_numeric) {
-            return Some(TokenKind::TokenLiteral(Literal::Int(
-                lexeme.parse().unwrap(),
-            )));
+            return match lexeme.parse() {
+                Ok(value) => Some(TokenKind::TokenLiteral(Literal::Int(value))),
+                Err(_) => None,
+            };
         }
 
         if lexeme.contains('.') {
@@ -60,6 +65,7 @@ impl TokenKind {
         match lexeme {
             SEPARATOR_COLON => Some(TokenKind::TokenColon),
             SEPARATOR_ASSIGN => Some(TokenKind::TokenAssign),
+            "'" => Some(TokenKind::TokenTick),
             _ => None,
         }
     }
@@ -86,7 +92,6 @@ impl From<&String> for TokenKind {
         TokenKind::TokenIdentifier
     }
 }
-
 /// The location of a token in the source code in a uman-readable format
 #[derive(Debug, Clone, Eq, PartialEq, Deserialize, Serialize)]
 pub struct TokenLocation {
@@ -231,6 +236,7 @@ impl std::fmt::Display for Literal {
             Literal::Int(value) => write!(f, "Int({})", value),
             Literal::Float(value) => write!(f, "Float({})", value),
             Literal::Bool(value) => write!(f, "Bool({})", value),
+            Literal::Char(value) => write!(f, "Char({})", value),
         }
     }
 }
@@ -243,6 +249,7 @@ impl std::fmt::Display for TokenKind {
             TokenKind::TokenNewLine => write!(f, "TokenNewLine"),
             TokenKind::TokenColon => write!(f, "TokenColon"),
             TokenKind::TokenAssign => write!(f, "TokenAssign"),
+            TokenKind::TokenTick => write!(f, "TokenTick"),
             TokenKind::TokenEOF => write!(f, "TokenEOF"),
         }
     }

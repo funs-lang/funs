@@ -54,13 +54,13 @@ impl Iterator for Lexer {
                 Ok(transition) => transition,
                 Err(err) => {
                     self.errors.push(err.clone());
-                    match err {
+                    return match err {
                         LexerError::UnexpectedToken(token) => {
                             error!("Unexpected token: {}", token);
                             // TODO: return a transition to continue lexing (for error recovery)
-                            return None;
+                            None
                         }
-                    }
+                    };
                 }
             };
             let (state, transition_kind) = transition.into_parts();
@@ -133,7 +133,7 @@ mod tests {
     #[test]
     fn identifier() {
         let fs_files = collect_fs_files("./testdata/identifier", true);
-        assert_eq!(fs_files.len(), 17);
+        assert_eq!(fs_files.len(), 18);
 
         for path in fs_files {
             info!("file -> {:?}", path);

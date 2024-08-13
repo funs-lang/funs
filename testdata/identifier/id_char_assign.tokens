@@ -1,0 +1,11 @@
+[
+  {"kind": "TokenIdentifier","lexeme": "my_char","location": {"file_path": "","line": 0,"column_start": 0,"column_end": 7}},
+  {"kind": "TokenColon","lexeme": ":","location": {"file_path": "","line": 0,"column_start": 7,"column_end": 8}},
+  {"kind": "TokenKeyword","lexeme": "char","location": {"file_path": "","line": 0,"column_start": 9,"column_end": 13}},
+  {"kind": "TokenAssign","lexeme": "=","location": {"file_path": "","line": 0,"column_start": 14,"column_end": 15}},
+  {"kind": "TokenTick","lexeme": "'","location": {"file_path": "","line": 0,"column_start": 16,"column_end": 17}},
+  {"kind": "TokenIdentifier","lexeme": "a","location": {"file_path": "","line": 0,"column_start": 17,"column_end": 18}},
+  {"kind": "TokenTick","lexeme": "'","location": {"file_path": "","line": 0,"column_start": 18,"column_end": 19}},
+  {"kind": "TokenNewLine","lexeme": "\\n","location": {"file_path": "","line": 0,"column_start": 19,"column_end": 19}},
+  {"kind": "TokenEOF","lexeme": "","location": {"file_path": "","line": 1,"column_start": 0,"column_end": 0}}
+]
