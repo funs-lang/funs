@@ -8,8 +8,9 @@ const KEYWORD_BOOL: &str = "bool";
 const KEYWORD_CHAR: &str = "char";
 const KEYWORD_BOOL_TRUE: &str = "true";
 const KEYWORD_BOOL_FALSE: &str = "false";
-const SEPARATOR_COLON: &str = ":";
-const SEPARATOR_ASSIGN: &str = "=";
+const COLON: &str = ":";
+const ASSIGN: &str = "=";
+const TICK: &str = "'";
 
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 pub enum Literal {
@@ -24,6 +25,9 @@ pub enum TokenKind {
     TokenLiteral(Literal),
     TokenIdentifier,
     TokenKeyword,
+    TokenComment,
+    TokenSpace,   // ' '
+    TokenTab,     // \t
     TokenNewLine, // \n
     TokenColon,   // :
     TokenAssign,  // =
@@ -63,9 +67,9 @@ impl TokenKind {
 
     fn match_separator(lexeme: &str) -> Option<TokenKind> {
         match lexeme {
-            SEPARATOR_COLON => Some(TokenKind::TokenColon),
-            SEPARATOR_ASSIGN => Some(TokenKind::TokenAssign),
-            "'" => Some(TokenKind::TokenTick),
+            COLON => Some(TokenKind::TokenColon),
+            ASSIGN => Some(TokenKind::TokenAssign),
+            TICK => Some(TokenKind::TokenTick),
             _ => None,
         }
     }
@@ -76,15 +80,19 @@ impl From<&String> for TokenKind {
         if lexeme.eq(&'\n'.to_string()) {
             return TokenKind::TokenNewLine;
         }
+        if lexeme.eq(&'\t'.to_string()) {
+            return TokenKind::TokenTab;
+        }
+        if lexeme.eq(&' '.to_string()) {
+            return TokenKind::TokenSpace;
+        }
 
         if let Some(keyword) = TokenKind::match_keyword(lexeme) {
             return keyword;
         }
-
         if let Some(separator) = TokenKind::match_separator(lexeme) {
             return separator;
         }
-
         if let Some(number) = TokenKind::match_number(lexeme) {
             return number;
         }
@@ -246,6 +254,9 @@ impl std::fmt::Display for TokenKind {
             TokenKind::TokenLiteral(literal) => write!(f, "TokenLiteral({})", literal),
             TokenKind::TokenIdentifier => write!(f, "TokenIdentifier"),
             TokenKind::TokenKeyword => write!(f, "TokenKeyword"),
+            TokenKind::TokenComment => write!(f, "TokenComment"),
+            TokenKind::TokenSpace => write!(f, "TokenSpace"),
+            TokenKind::TokenTab => write!(f, "TokenTab"),
             TokenKind::TokenNewLine => write!(f, "TokenNewLine"),
             TokenKind::TokenColon => write!(f, "TokenColon"),
             TokenKind::TokenAssign => write!(f, "TokenAssign"),
