@@ -1,14 +1,14 @@
 [
   { "kind": "TokenComment", "lexeme": "# this is a comment", "location": { "file_path": "", "line": 0, "column_start": 0, "column_end": 19 } },
   { "kind": "TokenNewLine", "lexeme": "\\n", "location": { "file_path": "", "line": 0, "column_start": 19, "column_end": 19 } },
-  { "kind": "TokenIdentifier", "lexeme": "x", "location": { "file_path": "", "line": 1, "column_start": 0, "column_end": 1 } },
+  { "kind": "TokenWord", "lexeme": "x", "location": { "file_path": "", "line": 1, "column_start": 0, "column_end": 1 } },
   { "kind": "TokenColon", "lexeme": ":", "location": { "file_path": "", "line": 1, "column_start": 1, "column_end": 2 } },
   { "kind": "TokenSpace", "lexeme": " ", "location": { "file_path": "", "line": 1, "column_start": 2, "column_end": 3 } },
-  { "kind": "TokenKeyword", "lexeme": "int", "location": { "file_path": "", "line": 1, "column_start": 3, "column_end": 6 } },
+  { "kind": "TokenType", "lexeme": "int", "location": { "file_path": "", "line": 1, "column_start": 3, "column_end": 6 } },
   { "kind": "TokenSpace", "lexeme": " ", "location": { "file_path": "", "line": 1, "column_start": 6, "column_end": 7 } },
   { "kind": "TokenAssign", "lexeme": "=", "location": { "file_path": "", "line": 1, "column_start": 7, "column_end": 8 } },
   { "kind": "TokenSpace", "lexeme": " ", "location": { "file_path": "", "line": 1, "column_start": 8, "column_end": 9 } },
-  { "kind": { "TokenLiteral": { "Int": 0 } }, "lexeme": "0", "location": { "file_path": "", "line": 1, "column_start": 9, "column_end": 10 } },
+  { "kind": "TokenInt", "lexeme": "0", "location": { "file_path": "", "line": 1, "column_start": 9, "column_end": 10 } },
   { "kind": "TokenNewLine", "lexeme": "\\n", "location": { "file_path": "", "line": 1, "column_start": 10, "column_end": 10 } },
   { "kind": "TokenEOF", "lexeme": "", "location": { "file_path": "", "line": 2, "column_start": 0, "column_end": 0 } }
 ]
