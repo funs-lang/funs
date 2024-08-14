@@ -3,6 +3,7 @@ use super::Lexer;
 use super::LexerError;
 use crate::lexer::token::Token;
 use crate::lexer::token::TokenKind;
+use crate::lexer::token::TokenKind::TokenDoubleTick;
 use crate::lexer::token::TokenKind::TokenTick;
 use std::fmt::Debug;
 
@@ -178,7 +179,7 @@ pub struct StateSymbol;
 
 impl StateSymbol {
     fn is_symbol(c: char) -> bool {
-        matches!(c, ':' | '=' | '\n' | '\'')
+        matches!(c, ':' | '=' | '\n' | '\'' | '\"')
     }
 }
 
@@ -188,9 +189,10 @@ impl State for StateSymbol {
             Some('\n') => {
                 let lexeme = cursor.source().content()[cursor.index()..cursor.offset()].to_string();
                 let token_kind = TokenKind::from(&lexeme);
+
                 // NOTE: if a '\n' is found and it was scanning another "symbol" token, the previous was mangled, and only the '\n' is emitted,
-                // right now we need to handle only TokenTick since can be at the end of the line, but this can be extended to other symbols
-                if token_kind == TokenTick {
+                // we need to handle the previous token since can be at the end of the line
+                if [TokenTick, TokenDoubleTick].contains(&token_kind) {
                     return Ok(Lexer::proceed(
                         Box::new(StateStart),
                         TransitionKind::EmitToken(Token::new(
