@@ -1,12 +1,12 @@
 [
-  { "kind": "TokenWord", "lexeme": "_x_float", "location": { "file_path": "", "line": 0, "column_start": 0, "column_end": 8 } },
+  { "kind": "TokenIdentifier", "lexeme": "_x_float", "location": { "file_path": "", "line": 0, "column_start": 0, "column_end": 8 } },
   { "kind": "TokenColon", "lexeme": ":", "location": { "file_path": "", "line": 0, "column_start": 8, "column_end": 9 } },
   { "kind": "TokenSpace", "lexeme": " ", "location": { "file_path": "", "line": 0, "column_start": 9, "column_end": 10 } },
   { "kind": "TokenType", "lexeme": "float", "location": { "file_path": "", "line": 0, "column_start": 10, "column_end": 15 } },
   { "kind": "TokenSpace", "lexeme": " ", "location": { "file_path": "", "line": 0, "column_start": 15, "column_end": 16 } },
   { "kind": "TokenAssign", "lexeme": "=", "location": { "file_path": "", "line": 0, "column_start": 16, "column_end": 17 } },
   { "kind": "TokenSpace", "lexeme": " ", "location": { "file_path": "", "line": 0, "column_start": 17, "column_end": 18 } },
-  { "kind": "TokenFloat", "lexeme": "0.0", "location": { "file_path": "", "line": 0, "column_start": 18, "column_end": 21 } },
+  { "kind": { "TokenLiteral": "Float" }, "lexeme": "0.0", "location": { "file_path": "", "line": 0, "column_start": 18, "column_end": 21 } },
   { "kind": "TokenNewLine", "lexeme": "\\n", "location": { "file_path": "", "line": 0, "column_start": 21, "column_end": 21 } },
   { "kind": "TokenEOF", "lexeme": "", "location": { "file_path": "", "line": 1, "column_start": 0, "column_end": 0 } }
 ]

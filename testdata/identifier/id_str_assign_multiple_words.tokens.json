@@ -6,7 +6,8 @@
   {"kind": "TokenSpace","lexeme": " ","location": {"file_path": "","line": 0,"column_start": 6,"column_end": 7}},
   {"kind": "TokenAssign","lexeme": "=","location": {"file_path": "","line": 0,"column_start": 7,"column_end": 8}},
   {"kind": "TokenSpace","lexeme": " ","location": {"file_path": "","line": 0,"column_start": 8,"column_end": 9}},
-  {"kind": { "TokenLiteral": "Str" },"lexeme": "\"hello\"","location": {"file_path": "","line": 0,"column_start": 9,"column_end": 16}},
-  {"kind": "TokenNewLine","lexeme": "\\n","location": {"file_path": "","line": 0,"column_start": 16,"column_end": 16}},
+  {"kind": { "TokenLiteral": "Str" },"lexeme": "\"Hello, World!\"","location": {"file_path": "","line": 0,"column_start": 9,"column_end": 24}},
+  {"kind": "TokenNewLine","lexeme": "\\n","location": {"file_path": "","line": 0,"column_start": 24,"column_end": 24}},
   {"kind": "TokenEOF","lexeme": "","location": {"file_path": "","line": 1,"column_start": 0,"column_end": 0}}
 ]
+
