@@ -13,24 +13,24 @@ imp { .. } of test # import all
 
 # Native Types
 # With type annotation (no type inference)
+# x_char: char = '👾' # unicode
 x_int: int = 1
 x_float: float = 1.0
-x_bool: bool = True # False
+x_bool: bool = true # false
 x_str: str = "hello 👾"
-x_char: char = '👾' # unicode
 x_list: [int] = [1, 2, 3]
 x_tuple: (int, str) = (1, "hello")
-x_option: option<int> = Just(1) # Nil
+x_option: opt<int> = Just(1) # Nil
 x_f1: () -> unit = () -> print "hello"
 x_f2: () -> int = () -> 1
 x_f3: (T) -> T = (x) -> x # Generic
 
 # Without type annotation (type inference)
+# x_char = '👾' # unicode
 x_int = 1
 x_float = 1.0
-x_bool = True # False
+x_bool = true # false
 x_str = "hello 👾"
-x_char = '👾' # unicode
 x_list = [1, 2, 3]
 x_tuple = (1, "hello")
 x_option = Just(1) # Nil
