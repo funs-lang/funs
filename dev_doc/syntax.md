@@ -20,36 +20,36 @@ imp * of test # import all
 
 # Native Types
 
+- NOT USED: `char` -- Unicode character
 - `()` -- Unit
 - `int` -- 32 bits
 - `float` -- 64 bits
 - `str` -- Unicode string
-- `char` -- Unicode character
 - `bool` -- `True` or `False`
 - `[T]` -- List of `T`
 - `(T, U)` -- Tuple with two elements of type `T` and `U`
-- `option<T>` -- `Just` or `Nil`
+- `opt<T>` -- `Just` or `Nil`
 
 ```python
 # With type annotation
+# x_char: char = '👾' # unicode
 x_int: int = 1
 x_float: float = 1.0
 x_bool: bool = True # False
 x_str: str = "hello 👾"
-x_char: char = '👾' # unicode
-x_list: [int]= [1, 2, 3]
+x_list: [int] = [1, 2, 3]
 x_tuple: (int, str) = (1, "hello")
-x_option: Option<int> = Just(1) # Nil
+x_option: opt<int> = Just(1) # Nil
 x_f1: () -> unit = () -> print "hello" ;
 x_f2: () -> int = () -> 1 ;
 x_f3: (T) -> T = (x) -> x ; # Generic
 
 # Without type annotation
+# x_char = 'a' # unicode
 x_int = 1
 x_float = 1.0
 x_bool = True # False
 x_str = "hello"
-x_char = 'a' # unicode
 x_list = [1, 2, 3]
 x_tuple = (1, "hello")
 x_option = Just(1) # Nil
