@@ -5,32 +5,38 @@ use std::path::{Path, PathBuf};
 const KEYWORD_INT: &str = "int";
 const KEYWORD_FLOAT: &str = "float";
 const KEYWORD_BOOL: &str = "bool";
-const KEYWORD_CHAR: &str = "char";
 const KEYWORD_STR: &str = "str";
 const KEYWORD_BOOL_TRUE: &str = "true";
 const KEYWORD_BOOL_FALSE: &str = "false";
 const COLON: &str = ":";
 const ASSIGN: &str = "=";
-const TICK: &str = "'";
-const DOUBLE_TICK: &str = "\"";
+const SINGLE_QUOTE: &str = "'";
+const DOUBLE_QUOTE: &str = "\"";
+
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
+pub enum Literal {
+    Int,
+    Float,
+    Bool,
+    Str,
+}
 
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 pub enum TokenKind {
-    TokenInt,
-    TokenFloat,
-    TokenBool,
-    TokenWord,
+    TokenLiteral(Literal),
+    TokenIdentifier,
     TokenKeyword,
     TokenType,
     TokenComment,
-    TokenSpace,      // ' '
-    TokenTab,        // \t
-    TokenNewLine,    // \n
-    TokenColon,      // :
-    TokenAssign,     // =
-    TokenTick,       // '
-    TokenDoubleTick, // "
-    TokenEOF,        // End of file
+    TokenSpace,       // ' '
+    TokenTab,         // \t
+    TokenNewLine,     // \n
+    TokenColon,       // :
+    TokenAssign,      // =
+    TokenSingleQuote, // '
+    TokenDoubleQuote, // "
+    TokenEOF,         // End of file
+    TokenUnknown,
 }
 
 impl TokenKind {
@@ -39,21 +45,20 @@ impl TokenKind {
             KEYWORD_INT => Some(TokenKind::TokenType),
             KEYWORD_FLOAT => Some(TokenKind::TokenType),
             KEYWORD_BOOL => Some(TokenKind::TokenType),
-            KEYWORD_CHAR => Some(TokenKind::TokenType),
             KEYWORD_STR => Some(TokenKind::TokenType),
-            KEYWORD_BOOL_TRUE => Some(TokenKind::TokenBool),
-            KEYWORD_BOOL_FALSE => Some(TokenKind::TokenBool),
+            KEYWORD_BOOL_TRUE => Some(TokenKind::TokenLiteral(Literal::Bool)),
+            KEYWORD_BOOL_FALSE => Some(TokenKind::TokenLiteral(Literal::Bool)),
             _ => None,
         }
     }
 
     fn match_number(lexeme: &str) -> Option<TokenKind> {
         if lexeme.chars().all(char::is_numeric) {
-            return Some(TokenKind::TokenInt);
+            return Some(TokenKind::TokenLiteral(Literal::Int));
         }
 
         if lexeme.contains('.') {
-            return Some(TokenKind::TokenFloat);
+            return Some(TokenKind::TokenLiteral(Literal::Float));
         }
 
         None
@@ -63,8 +68,8 @@ impl TokenKind {
         match lexeme {
             COLON => Some(TokenKind::TokenColon),
             ASSIGN => Some(TokenKind::TokenAssign),
-            TICK => Some(TokenKind::TokenTick),
-            DOUBLE_TICK => Some(TokenKind::TokenDoubleTick),
+            SINGLE_QUOTE => Some(TokenKind::TokenSingleQuote),
+            DOUBLE_QUOTE => Some(TokenKind::TokenDoubleQuote),
             _ => None,
         }
     }
@@ -92,7 +97,7 @@ impl From<&String> for TokenKind {
             return number;
         }
 
-        TokenKind::TokenWord
+        TokenKind::TokenIdentifier
     }
 }
 /// The location of a token in the source code in a uman-readable format
@@ -233,13 +238,22 @@ impl Token {
     }
 }
 
+impl std::fmt::Display for Literal {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        match self {
+            Literal::Int => write!(f, "Int"),
+            Literal::Float => write!(f, "Float"),
+            Literal::Bool => write!(f, "Bool"),
+            Literal::Str => write!(f, "Str"),
+        }
+    }
+}
+
 impl std::fmt::Display for TokenKind {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         match self {
-            TokenKind::TokenInt => write!(f, "TokenInt"),
-            TokenKind::TokenFloat => write!(f, "TokenFloat"),
-            TokenKind::TokenBool => write!(f, "TokenBool"),
-            TokenKind::TokenWord => write!(f, "TokenWord"),
+            TokenKind::TokenLiteral(literal) => write!(f, "TokenLiteral({})", literal),
+            TokenKind::TokenIdentifier => write!(f, "TokenIdentifier"),
             TokenKind::TokenKeyword => write!(f, "TokenKeyword"),
             TokenKind::TokenType => write!(f, "TokenType"),
             TokenKind::TokenComment => write!(f, "TokenComment"),
@@ -248,9 +262,10 @@ impl std::fmt::Display for TokenKind {
             TokenKind::TokenNewLine => write!(f, "TokenNewLine"),
             TokenKind::TokenColon => write!(f, "TokenColon"),
             TokenKind::TokenAssign => write!(f, "TokenAssign"),
-            TokenKind::TokenTick => write!(f, "TokenTick"),
-            TokenKind::TokenDoubleTick => write!(f, "TokenDoubleTick"),
+            TokenKind::TokenSingleQuote => write!(f, "TokenTick"),
+            TokenKind::TokenDoubleQuote => write!(f, "TokenDoubleTick"),
             TokenKind::TokenEOF => write!(f, "TokenEOF"),
+            TokenKind::TokenUnknown => write!(f, "TokenUnknown"),
         }
     }
 }

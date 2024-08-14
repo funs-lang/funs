@@ -1,5 +1,5 @@
 [
-  { "kind": "TokenWord", "lexeme": "__test_id", "location": { "file_path": "", "line": 0, "column_start": 0, "column_end": 9 } },
+  { "kind": "TokenIdentifier", "lexeme": "__test_id", "location": { "file_path": "", "line": 0, "column_start": 0, "column_end": 9 } },
   { "kind": "TokenNewLine", "lexeme": "\\n", "location": { "file_path": "", "line": 0, "column_start": 9, "column_end": 9 } },
   { "kind": "TokenEOF", "lexeme": "", "location": { "file_path": "", "line": 1, "column_start": 0, "column_end": 0 } }
 ]
