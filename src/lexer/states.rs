@@ -4,6 +4,9 @@ use super::Lexer;
 use super::LexerError;
 use crate::lexer::token::Token;
 use crate::lexer::token::TokenKind;
+use crate::lexer::token::TokenKind::TokenCloseBrace;
+use crate::lexer::token::TokenKind::TokenCloseBracket;
+use crate::lexer::token::TokenKind::TokenCloseParen;
 use crate::lexer::token::TokenKind::TokenDoubleQuote;
 use crate::lexer::token::TokenKind::TokenSingleQuote;
 use std::fmt::Debug;
@@ -98,7 +101,7 @@ impl State for StateStart {
             )),
             Some(_) => Err(LexerError::UnexpectedToken(Token::new(
                 TokenKind::TokenUnknown,
-                "".to_string(),
+                cursor.source().content()[cursor.index()..cursor.offset()].to_string(),
                 cursor.location().clone(),
             ))),
             None => Ok(Lexer::proceed(Box::new(StateEOF), TransitionKind::Consume)),
@@ -112,6 +115,11 @@ pub struct StateString;
 impl State for StateString {
     fn visit(&self, cursor: &mut Cursor) -> Result<Transition, LexerError> {
         match cursor.peek() {
+            Some(c) if c.eq(&'\n') => Err(LexerError::UnexpectedToken(Token::new(
+                TokenKind::TokenUnknown,
+                "\\n".to_string(),
+                cursor.location().clone(),
+            ))),
             Some(c) if c.ne(&'"') => Ok(Lexer::proceed(
                 Box::new(StateString),
                 TransitionKind::AdvanceOffset,
@@ -172,12 +180,10 @@ impl State for StateNumber {
                 let lexeme = cursor.source().content()[cursor.index()..cursor.offset()].to_string();
                 let location = cursor.location().clone();
                 let token_kind = TokenKind::from(&lexeme);
-                Ok(Transition {
-                    state: Box::new(StateStart),
-                    transition_kind: TransitionKind::EmitToken(Token::new(
-                        token_kind, lexeme, location,
-                    )),
-                })
+                Ok(Lexer::proceed(
+                    Box::new(StateStart),
+                    TransitionKind::EmitToken(Token::new(token_kind, lexeme, location)),
+                ))
             }
         }
     }
@@ -214,7 +220,10 @@ pub struct StateSymbol;
 
 impl StateSymbol {
     fn is_symbol(c: char) -> bool {
-        matches!(c, ':' | '=' | '\n')
+        matches!(
+            c,
+            ':' | '=' | '\n' | '(' | ')' | '{' | '}' | '[' | ']' | ','
+        )
     }
 }
 
@@ -227,7 +236,14 @@ impl State for StateSymbol {
 
                 // NOTE: if a '\n' is found and it was scanning another "symbol" token, the previous was mangled, and only the '\n' is emitted,
                 // we need to handle the previous token since can be at the end of the line
-                if [TokenSingleQuote, TokenDoubleQuote].contains(&token_kind) {
+                let valid_last_token = vec![
+                    TokenCloseBracket,
+                    TokenCloseParen,
+                    TokenCloseBrace,
+                    TokenDoubleQuote,
+                    TokenSingleQuote,
+                ];
+                if valid_last_token.contains(&token_kind) {
                     return Ok(Lexer::proceed(
                         Box::new(StateStart),
                         TransitionKind::EmitToken(Token::new(

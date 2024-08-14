@@ -12,6 +12,13 @@ const COLON: &str = ":";
 const ASSIGN: &str = "=";
 const SINGLE_QUOTE: &str = "'";
 const DOUBLE_QUOTE: &str = "\"";
+const OPEN_PAREN: &str = "(";
+const CLOSE_PAREN: &str = ")";
+const OPEN_BRACKET: &str = "{";
+const CLOSE_BRACKET: &str = "}";
+const OPEN_BRACE: &str = "[";
+const CLOSE_BRACE: &str = "]";
+const COMMA: &str = ",";
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
 pub enum Literal {
@@ -28,14 +35,21 @@ pub enum TokenKind {
     TokenKeyword,
     TokenType,
     TokenComment,
-    TokenSpace,       // ' '
-    TokenTab,         // \t
-    TokenNewLine,     // \n
-    TokenColon,       // :
-    TokenAssign,      // =
-    TokenSingleQuote, // '
-    TokenDoubleQuote, // "
-    TokenEOF,         // End of file
+    TokenSpace,        // ' '
+    TokenTab,          // \t
+    TokenNewLine,      // \n
+    TokenColon,        // :
+    TokenAssign,       // =
+    TokenSingleQuote,  // '
+    TokenDoubleQuote,  // "
+    TokenOpenParen,    // (
+    TokenCloseParen,   // )
+    TokenOpenBrace,    // {
+    TokenCloseBrace,   // }
+    TokenOpenBracket,  // [
+    TokenCloseBracket, // ]
+    TokenComma,        // ,
+    TokenEOF,          // End of file
     TokenUnknown,
 }
 
@@ -70,6 +84,13 @@ impl TokenKind {
             ASSIGN => Some(TokenKind::TokenAssign),
             SINGLE_QUOTE => Some(TokenKind::TokenSingleQuote),
             DOUBLE_QUOTE => Some(TokenKind::TokenDoubleQuote),
+            OPEN_PAREN => Some(TokenKind::TokenOpenParen),
+            CLOSE_PAREN => Some(TokenKind::TokenCloseParen),
+            OPEN_BRACE => Some(TokenKind::TokenOpenBrace),
+            CLOSE_BRACE => Some(TokenKind::TokenCloseBrace),
+            OPEN_BRACKET => Some(TokenKind::TokenOpenBracket),
+            CLOSE_BRACKET => Some(TokenKind::TokenCloseBracket),
+            COMMA => Some(TokenKind::TokenComma),
             _ => None,
         }
     }
@@ -264,6 +285,13 @@ impl std::fmt::Display for TokenKind {
             TokenKind::TokenAssign => write!(f, "TokenAssign"),
             TokenKind::TokenSingleQuote => write!(f, "TokenTick"),
             TokenKind::TokenDoubleQuote => write!(f, "TokenDoubleTick"),
+            TokenKind::TokenOpenParen => write!(f, "TokenOpenParen"),
+            TokenKind::TokenCloseParen => write!(f, "TokenCloseParen"),
+            TokenKind::TokenOpenBrace => write!(f, "TokenOpenBrace"),
+            TokenKind::TokenCloseBrace => write!(f, "TokenCloseBrace"),
+            TokenKind::TokenOpenBracket => write!(f, "TokenOpenBracket"),
+            TokenKind::TokenCloseBracket => write!(f, "TokenCloseBracket"),
+            TokenKind::TokenComma => write!(f, "TokenComma"),
             TokenKind::TokenEOF => write!(f, "TokenEOF"),
             TokenKind::TokenUnknown => write!(f, "TokenUnknown"),
         }
