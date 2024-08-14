@@ -13,18 +13,13 @@ const ASSIGN: &str = "=";
 const TICK: &str = "'";
 
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
-pub enum Literal {
-    Int(i64),
-    Float(f64),
-    Bool(bool),
-    Char(char),
-}
-
-#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 pub enum TokenKind {
-    TokenLiteral(Literal),
-    TokenIdentifier,
+    TokenInt,
+    TokenFloat,
+    TokenBool,
+    TokenWord,
     TokenKeyword,
+    TokenType,
     TokenComment,
     TokenSpace,   // ' '
     TokenTab,     // \t
@@ -38,28 +33,23 @@ pub enum TokenKind {
 impl TokenKind {
     fn match_keyword(lexeme: &str) -> Option<TokenKind> {
         match lexeme {
-            KEYWORD_INT => Some(TokenKind::TokenKeyword),
-            KEYWORD_FLOAT => Some(TokenKind::TokenKeyword),
-            KEYWORD_BOOL => Some(TokenKind::TokenKeyword),
-            KEYWORD_CHAR => Some(TokenKind::TokenKeyword),
-            KEYWORD_BOOL_TRUE => Some(TokenKind::TokenLiteral(Literal::Bool(true))),
-            KEYWORD_BOOL_FALSE => Some(TokenKind::TokenLiteral(Literal::Bool(false))),
+            KEYWORD_INT => Some(TokenKind::TokenType),
+            KEYWORD_FLOAT => Some(TokenKind::TokenType),
+            KEYWORD_BOOL => Some(TokenKind::TokenType),
+            KEYWORD_CHAR => Some(TokenKind::TokenType),
+            KEYWORD_BOOL_TRUE => Some(TokenKind::TokenBool),
+            KEYWORD_BOOL_FALSE => Some(TokenKind::TokenBool),
             _ => None,
         }
     }
 
     fn match_number(lexeme: &str) -> Option<TokenKind> {
         if lexeme.chars().all(char::is_numeric) {
-            return match lexeme.parse() {
-                Ok(value) => Some(TokenKind::TokenLiteral(Literal::Int(value))),
-                Err(_) => None,
-            };
+            return Some(TokenKind::TokenInt);
         }
 
         if lexeme.contains('.') {
-            return Some(TokenKind::TokenLiteral(Literal::Float(
-                lexeme.parse().unwrap(),
-            )));
+            return Some(TokenKind::TokenFloat);
         }
 
         None
@@ -97,7 +87,7 @@ impl From<&String> for TokenKind {
             return number;
         }
 
-        TokenKind::TokenIdentifier
+        TokenKind::TokenWord
     }
 }
 /// The location of a token in the source code in a uman-readable format
@@ -238,22 +228,15 @@ impl Token {
     }
 }
 
-impl std::fmt::Display for Literal {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        match self {
-            Literal::Int(value) => write!(f, "Int({})", value),
-            Literal::Float(value) => write!(f, "Float({})", value),
-            Literal::Bool(value) => write!(f, "Bool({})", value),
-            Literal::Char(value) => write!(f, "Char({})", value),
-        }
-    }
-}
 impl std::fmt::Display for TokenKind {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         match self {
-            TokenKind::TokenLiteral(literal) => write!(f, "TokenLiteral({})", literal),
-            TokenKind::TokenIdentifier => write!(f, "TokenIdentifier"),
+            TokenKind::TokenInt => write!(f, "TokenInt"),
+            TokenKind::TokenFloat => write!(f, "TokenFloat"),
+            TokenKind::TokenBool => write!(f, "TokenBool"),
+            TokenKind::TokenWord => write!(f, "TokenWord"),
             TokenKind::TokenKeyword => write!(f, "TokenKeyword"),
+            TokenKind::TokenType => write!(f, "TokenType"),
             TokenKind::TokenComment => write!(f, "TokenComment"),
             TokenKind::TokenSpace => write!(f, "TokenSpace"),
             TokenKind::TokenTab => write!(f, "TokenTab"),
