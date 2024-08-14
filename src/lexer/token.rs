@@ -6,11 +6,13 @@ const KEYWORD_INT: &str = "int";
 const KEYWORD_FLOAT: &str = "float";
 const KEYWORD_BOOL: &str = "bool";
 const KEYWORD_CHAR: &str = "char";
+const KEYWORD_STR: &str = "str";
 const KEYWORD_BOOL_TRUE: &str = "true";
 const KEYWORD_BOOL_FALSE: &str = "false";
 const COLON: &str = ":";
 const ASSIGN: &str = "=";
 const TICK: &str = "'";
+const DOUBLE_TICK: &str = "\"";
 
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 pub enum TokenKind {
@@ -21,13 +23,14 @@ pub enum TokenKind {
     TokenKeyword,
     TokenType,
     TokenComment,
-    TokenSpace,   // ' '
-    TokenTab,     // \t
-    TokenNewLine, // \n
-    TokenColon,   // :
-    TokenAssign,  // =
-    TokenTick,    // '
-    TokenEOF,     // End of file
+    TokenSpace,      // ' '
+    TokenTab,        // \t
+    TokenNewLine,    // \n
+    TokenColon,      // :
+    TokenAssign,     // =
+    TokenTick,       // '
+    TokenDoubleTick, // "
+    TokenEOF,        // End of file
 }
 
 impl TokenKind {
@@ -37,6 +40,7 @@ impl TokenKind {
             KEYWORD_FLOAT => Some(TokenKind::TokenType),
             KEYWORD_BOOL => Some(TokenKind::TokenType),
             KEYWORD_CHAR => Some(TokenKind::TokenType),
+            KEYWORD_STR => Some(TokenKind::TokenType),
             KEYWORD_BOOL_TRUE => Some(TokenKind::TokenBool),
             KEYWORD_BOOL_FALSE => Some(TokenKind::TokenBool),
             _ => None,
@@ -60,6 +64,7 @@ impl TokenKind {
             COLON => Some(TokenKind::TokenColon),
             ASSIGN => Some(TokenKind::TokenAssign),
             TICK => Some(TokenKind::TokenTick),
+            DOUBLE_TICK => Some(TokenKind::TokenDoubleTick),
             _ => None,
         }
     }
@@ -244,6 +249,7 @@ impl std::fmt::Display for TokenKind {
             TokenKind::TokenColon => write!(f, "TokenColon"),
             TokenKind::TokenAssign => write!(f, "TokenAssign"),
             TokenKind::TokenTick => write!(f, "TokenTick"),
+            TokenKind::TokenDoubleTick => write!(f, "TokenDoubleTick"),
             TokenKind::TokenEOF => write!(f, "TokenEOF"),
         }
     }
