@@ -2,14 +2,18 @@ use crate::utils::color;
 use serde::{Deserialize, Serialize};
 use std::path::{Path, PathBuf};
 
+const KEYWORD_UNIT: &str = "unit";
 const KEYWORD_INT: &str = "int";
 const KEYWORD_FLOAT: &str = "float";
 const KEYWORD_BOOL: &str = "bool";
 const KEYWORD_STR: &str = "str";
 const KEYWORD_BOOL_TRUE: &str = "true";
 const KEYWORD_BOOL_FALSE: &str = "false";
+
 const COLON: &str = ":";
+const SEMICOLON: &str = ";";
 const ASSIGN: &str = "=";
+const NEW_LINE: &str = "\n";
 const SINGLE_QUOTE: &str = "'";
 const DOUBLE_QUOTE: &str = "\"";
 const OPEN_PAREN: &str = "(";
@@ -19,6 +23,8 @@ const CLOSE_BRACKET: &str = "}";
 const OPEN_BRACE: &str = "[";
 const CLOSE_BRACE: &str = "]";
 const COMMA: &str = ",";
+const MINUS: &str = "-";
+const RIGHT_ARROW: &str = "->";
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
 pub enum Literal {
@@ -32,13 +38,13 @@ pub enum Literal {
 pub enum TokenKind {
     TokenLiteral(Literal),
     TokenIdentifier,
-    TokenKeyword,
     TokenType,
     TokenComment,
     TokenSpace,        // ' '
     TokenTab,          // \t
     TokenNewLine,      // \n
     TokenColon,        // :
+    TokenSemicolon,    // ;
     TokenAssign,       // =
     TokenSingleQuote,  // '
     TokenDoubleQuote,  // "
@@ -49,13 +55,40 @@ pub enum TokenKind {
     TokenOpenBracket,  // [
     TokenCloseBracket, // ]
     TokenComma,        // ,
+    TokenRightArrow,   // ->
     TokenEOF,          // End of file
     TokenUnknown,
 }
 
 impl TokenKind {
+    pub fn is_start_of_symbol(c: &str) -> bool {
+        matches!(
+            c,
+            COLON
+                | SEMICOLON
+                | ASSIGN
+                | SINGLE_QUOTE
+                | DOUBLE_QUOTE
+                | OPEN_PAREN
+                | CLOSE_PAREN
+                | OPEN_BRACE
+                | CLOSE_BRACE
+                | OPEN_BRACKET
+                | CLOSE_BRACKET
+                | COMMA
+                | MINUS
+                | RIGHT_ARROW
+                | NEW_LINE
+        )
+    }
+
+    pub fn can_be_followed_by_symbol(c: &str) -> bool {
+        matches!(c, MINUS)
+    }
+
     fn match_keyword(lexeme: &str) -> Option<TokenKind> {
         match lexeme {
+            KEYWORD_UNIT => Some(TokenKind::TokenType),
             KEYWORD_INT => Some(TokenKind::TokenType),
             KEYWORD_FLOAT => Some(TokenKind::TokenType),
             KEYWORD_BOOL => Some(TokenKind::TokenType),
@@ -81,6 +114,7 @@ impl TokenKind {
     fn match_separator(lexeme: &str) -> Option<TokenKind> {
         match lexeme {
             COLON => Some(TokenKind::TokenColon),
+            SEMICOLON => Some(TokenKind::TokenSemicolon),
             ASSIGN => Some(TokenKind::TokenAssign),
             SINGLE_QUOTE => Some(TokenKind::TokenSingleQuote),
             DOUBLE_QUOTE => Some(TokenKind::TokenDoubleQuote),
@@ -91,6 +125,7 @@ impl TokenKind {
             OPEN_BRACKET => Some(TokenKind::TokenOpenBracket),
             CLOSE_BRACKET => Some(TokenKind::TokenCloseBracket),
             COMMA => Some(TokenKind::TokenComma),
+            RIGHT_ARROW => Some(TokenKind::TokenRightArrow),
             _ => None,
         }
     }
@@ -275,12 +310,12 @@ impl std::fmt::Display for TokenKind {
         match self {
             TokenKind::TokenLiteral(literal) => write!(f, "TokenLiteral({})", literal),
             TokenKind::TokenIdentifier => write!(f, "TokenIdentifier"),
-            TokenKind::TokenKeyword => write!(f, "TokenKeyword"),
             TokenKind::TokenType => write!(f, "TokenType"),
             TokenKind::TokenComment => write!(f, "TokenComment"),
             TokenKind::TokenSpace => write!(f, "TokenSpace"),
             TokenKind::TokenTab => write!(f, "TokenTab"),
             TokenKind::TokenNewLine => write!(f, "TokenNewLine"),
+            TokenKind::TokenSemicolon => write!(f, "TokenSemicolon"),
             TokenKind::TokenColon => write!(f, "TokenColon"),
             TokenKind::TokenAssign => write!(f, "TokenAssign"),
             TokenKind::TokenSingleQuote => write!(f, "TokenTick"),
@@ -292,6 +327,7 @@ impl std::fmt::Display for TokenKind {
             TokenKind::TokenOpenBracket => write!(f, "TokenOpenBracket"),
             TokenKind::TokenCloseBracket => write!(f, "TokenCloseBracket"),
             TokenKind::TokenComma => write!(f, "TokenComma"),
+            TokenKind::TokenRightArrow => write!(f, "TokenRightArrow"),
             TokenKind::TokenEOF => write!(f, "TokenEOF"),
             TokenKind::TokenUnknown => write!(f, "TokenUnknown"),
         }

@@ -84,7 +84,7 @@ impl State for StateStart {
                 Box::new(StateString),
                 TransitionKind::AdvanceOffset,
             )),
-            Some(c) if StateSymbol::is_symbol(c) => {
+            Some(c) if TokenKind::is_start_of_symbol(c.to_string().as_str()) => {
                 Ok(Lexer::proceed(Box::new(StateSymbol), TransitionKind::Empty))
             }
             Some('#') => Ok(Lexer::proceed(
@@ -218,15 +218,6 @@ impl State for StateWord {
 #[derive(Debug)]
 pub struct StateSymbol;
 
-impl StateSymbol {
-    fn is_symbol(c: char) -> bool {
-        matches!(
-            c,
-            ':' | '=' | '\n' | '(' | ')' | '{' | '}' | '[' | ']' | ','
-        )
-    }
-}
-
 impl State for StateSymbol {
     fn visit(&self, cursor: &mut Cursor) -> Result<Transition, LexerError> {
         match cursor.peek() {
@@ -265,20 +256,19 @@ impl State for StateSymbol {
                 cursor.new_line();
                 Ok(transition)
             }
-            Some(c) if StateSymbol::is_symbol(c) => Ok(Lexer::proceed(
-                Box::new(StateSymbol),
-                TransitionKind::AdvanceOffset,
-            )),
+            Some(c) if TokenKind::can_be_followed_by_symbol(c.to_string().as_str()) => Ok(
+                Lexer::proceed(Box::new(StateSymbol), TransitionKind::AdvanceOffset),
+            ),
             _ => {
-                let lexeme = cursor.source().content()[cursor.index()..cursor.offset()].to_string();
+                let lexeme =
+                    cursor.source().content()[cursor.index()..cursor.offset() + 1].to_string();
                 let token_kind = TokenKind::from(&lexeme);
+                cursor.advance_offset();
                 let location = cursor.location().clone();
-                Ok(Transition {
-                    state: Box::new(StateStart),
-                    transition_kind: TransitionKind::EmitToken(Token::new(
-                        token_kind, lexeme, location,
-                    )),
-                })
+                Ok(Lexer::proceed(
+                    Box::new(StateStart),
+                    TransitionKind::EmitToken(Token::new(token_kind, lexeme, location)),
+                ))
             }
         }
     }
