@@ -9,3 +9,6 @@ _x_bool: bool = true
 _x_bool2: bool = false
 x_str: str = "hello"
 x_list: [int] = [1, 2, 3]
+x_tuple: (int, int) = (1, 2)
+x_func: () -> unit = () -> print "hello" ;
+x_func: (int) -> int = (x) -> x ;
