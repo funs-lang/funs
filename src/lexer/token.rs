@@ -24,6 +24,10 @@ const OPEN_BRACE: &str = "[";
 const CLOSE_BRACE: &str = "]";
 const COMMA: &str = ",";
 const MINUS: &str = "-";
+const PLUS: &str = "+";
+const MULTIPLY: &str = "*";
+const DIVIDE: &str = "/";
+const GREATER: &str = ">";
 const RIGHT_ARROW: &str = "->";
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
@@ -55,12 +59,41 @@ pub enum TokenKind {
     TokenOpenBracket,  // [
     TokenCloseBracket, // ]
     TokenComma,        // ,
+    TokenGreater,      // >
     TokenRightArrow,   // ->
     TokenEOF,          // End of file
+    // Operators
+    TokenPlus,     // +
+    TokenMinus,    // -
+    TokenMultiply, // *
+    TokenDivide,   // /
     TokenUnknown,
 }
 
 impl TokenKind {
+    pub fn is_symbol(c: &str) -> bool {
+        matches!(
+            c,
+            COLON
+                | SEMICOLON
+                | ASSIGN
+                | SINGLE_QUOTE
+                | DOUBLE_QUOTE
+                | OPEN_PAREN
+                | CLOSE_PAREN
+                | OPEN_BRACE
+                | CLOSE_BRACE
+                | OPEN_BRACKET
+                | CLOSE_BRACKET
+                | COMMA
+                | MINUS
+                | PLUS
+                | MULTIPLY
+                | DIVIDE
+                | GREATER
+        )
+    }
+
     pub fn is_start_of_symbol(c: &str) -> bool {
         matches!(
             c,
@@ -77,8 +110,11 @@ impl TokenKind {
                 | CLOSE_BRACKET
                 | COMMA
                 | MINUS
-                | RIGHT_ARROW
+                | PLUS
+                | MULTIPLY
+                | DIVIDE
                 | NEW_LINE
+                | RIGHT_ARROW
         )
     }
 
@@ -125,6 +161,10 @@ impl TokenKind {
             OPEN_BRACKET => Some(TokenKind::TokenOpenBracket),
             CLOSE_BRACKET => Some(TokenKind::TokenCloseBracket),
             COMMA => Some(TokenKind::TokenComma),
+            PLUS => Some(TokenKind::TokenPlus),
+            MINUS => Some(TokenKind::TokenMinus),
+            MULTIPLY => Some(TokenKind::TokenMultiply),
+            DIVIDE => Some(TokenKind::TokenDivide),
             RIGHT_ARROW => Some(TokenKind::TokenRightArrow),
             _ => None,
         }
@@ -326,9 +366,14 @@ impl std::fmt::Display for TokenKind {
             TokenKind::TokenCloseBrace => write!(f, "TokenCloseBrace"),
             TokenKind::TokenOpenBracket => write!(f, "TokenOpenBracket"),
             TokenKind::TokenCloseBracket => write!(f, "TokenCloseBracket"),
+            TokenKind::TokenGreater => write!(f, "TokenGreater"),
             TokenKind::TokenComma => write!(f, "TokenComma"),
             TokenKind::TokenRightArrow => write!(f, "TokenRightArrow"),
             TokenKind::TokenEOF => write!(f, "TokenEOF"),
+            TokenKind::TokenPlus => write!(f, "TokenPlus"),
+            TokenKind::TokenMinus => write!(f, "TokenMinus"),
+            TokenKind::TokenMultiply => write!(f, "TokenMultiply"),
+            TokenKind::TokenDivide => write!(f, "TokenDivide"),
             TokenKind::TokenUnknown => write!(f, "TokenUnknown"),
         }
     }

@@ -4,11 +4,6 @@ use super::Lexer;
 use super::LexerError;
 use crate::lexer::token::Token;
 use crate::lexer::token::TokenKind;
-use crate::lexer::token::TokenKind::TokenCloseBrace;
-use crate::lexer::token::TokenKind::TokenCloseBracket;
-use crate::lexer::token::TokenKind::TokenCloseParen;
-use crate::lexer::token::TokenKind::TokenDoubleQuote;
-use crate::lexer::token::TokenKind::TokenSingleQuote;
 use std::fmt::Debug;
 
 pub trait State: Debug {
@@ -222,29 +217,6 @@ impl State for StateSymbol {
     fn visit(&self, cursor: &mut Cursor) -> Result<Transition, LexerError> {
         match cursor.peek() {
             Some('\n') => {
-                let lexeme = cursor.source().content()[cursor.index()..cursor.offset()].to_string();
-                let token_kind = TokenKind::from(&lexeme);
-
-                // NOTE: if a '\n' is found and it was scanning another "symbol" token, the previous was mangled, and only the '\n' is emitted,
-                // we need to handle the previous token since can be at the end of the line
-                let valid_last_token = vec![
-                    TokenCloseBracket,
-                    TokenCloseParen,
-                    TokenCloseBrace,
-                    TokenDoubleQuote,
-                    TokenSingleQuote,
-                ];
-                if valid_last_token.contains(&token_kind) {
-                    return Ok(Lexer::proceed(
-                        Box::new(StateStart),
-                        TransitionKind::EmitToken(Token::new(
-                            token_kind,
-                            lexeme,
-                            cursor.location().clone(),
-                        )),
-                    ));
-                }
-
                 let transition = Lexer::proceed(
                     Box::new(StateStart),
                     TransitionKind::EmitToken(Token::new(
@@ -259,7 +231,7 @@ impl State for StateSymbol {
             Some(c) if TokenKind::can_be_followed_by_symbol(c.to_string().as_str()) => Ok(
                 Lexer::proceed(Box::new(StateSymbol), TransitionKind::AdvanceOffset),
             ),
-            _ => {
+            Some(_) if TokenKind::is_symbol(cursor.peek().unwrap().to_string().as_str()) => {
                 let lexeme =
                     cursor.source().content()[cursor.index()..cursor.offset() + 1].to_string();
                 let token_kind = TokenKind::from(&lexeme);
@@ -270,6 +242,24 @@ impl State for StateSymbol {
                     TransitionKind::EmitToken(Token::new(token_kind, lexeme, location)),
                 ))
             }
+            Some(_) if !TokenKind::is_symbol(cursor.peek().unwrap().to_string().as_str()) => {
+                let lexeme = cursor.source().content()[cursor.index()..cursor.offset()].to_string();
+                let token_kind = TokenKind::from(&lexeme);
+                let location = cursor.location().clone();
+                Ok(Lexer::proceed(
+                    Box::new(StateStart),
+                    TransitionKind::EmitToken(Token::new(token_kind, lexeme, location)),
+                ))
+            }
+            Some(c) => Ok(Lexer::proceed(
+                Box::new(StateStart),
+                TransitionKind::EmitToken(Token::new(
+                    TokenKind::TokenUnknown,
+                    c.to_string(),
+                    cursor.location().clone(),
+                )),
+            )),
+            None => Ok(Lexer::proceed(Box::new(StateEOF), TransitionKind::Consume)),
         }
     }
 }

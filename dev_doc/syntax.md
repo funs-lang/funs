@@ -4,6 +4,19 @@
 - the `;` character is the function/match terminator
 - the difference between "variables" and "functions" is the `(args) ->` part
 
+# Stdlib
+
+- `print: str -> unit` -- print a string to the console
+
+# List
+- `hd: [T] -> T` -- get the head of a list
+- `tl: [T] -> [T]` -- get the tail of a list
+
+## Option
+- `Opt<T>` -- a type that can be `Just` or `Nil`
+- `Just: T -> Opt<T>` -- create a `Just` value
+- `Nil: Opt<T>` -- create a `Nil` value
+
 # Imports
 ```python
 imp test # use: test.<name>
@@ -28,7 +41,6 @@ imp * of test # import all
 - `bool` -- `True` or `False`
 - `[T]` -- List of `T`
 - `(T, U)` -- Tuple with two elements of type `T` and `U`
-- `opt<T>` -- `Just` or `Nil`
 
 ```python
 # With type annotation
@@ -39,7 +51,6 @@ x_bool: bool = True # False
 x_str: str = "hello 👾"
 x_list: [int] = [1, 2, 3]
 x_tuple: (int, str) = (1, "hello")
-x_option: opt<int> = Just(1) # Nil
 x_f1: () -> unit = () -> print "hello" ;
 x_f2: () -> int = () -> 1 ;
 x_f3: (T) -> T = (x) -> x ; # Generic
