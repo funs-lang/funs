@@ -21,7 +21,7 @@ imp * of test # import all
 # Native Types
 
 - NOT USED: `char` -- Unicode character
-- `()` -- Unit
+- `unit` -- Unit
 - `int` -- 32 bits
 - `float` -- 64 bits
 - `str` -- Unicode string
