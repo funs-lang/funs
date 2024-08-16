@@ -13,6 +13,7 @@ const KEYWORD_MATCH: &str = "match";
 const KEYWORD_IF: &str = "if";
 const KEYWORD_THEN: &str = "then";
 const KEYWORD_ELSE: &str = "else";
+const KEYWORD_DATA: &str = "data";
 
 const COLON: &str = ":";
 const SEMICOLON: &str = ";";
@@ -56,6 +57,7 @@ pub enum Keyword {
     If,
     Then,
     Else,
+    Data,
 }
 
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
@@ -159,6 +161,7 @@ impl TokenKind {
             KEYWORD_IF => Some(TokenKind::TokenKeyword(Keyword::If)),
             KEYWORD_THEN => Some(TokenKind::TokenKeyword(Keyword::Then)),
             KEYWORD_ELSE => Some(TokenKind::TokenKeyword(Keyword::Else)),
+            KEYWORD_DATA => Some(TokenKind::TokenKeyword(Keyword::Data)),
             _ => None,
         }
     }
@@ -388,6 +391,7 @@ impl std::fmt::Display for Keyword {
             Keyword::If => write!(f, "If"),
             Keyword::Then => write!(f, "Then"),
             Keyword::Else => write!(f, "Else"),
+            Keyword::Data => write!(f, "Data"),
         }
     }
 }
