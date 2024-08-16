@@ -195,7 +195,7 @@ mod tests {
     #[test]
     fn tuples() {
         let fs_files = collect_fs_files("./testdata/tuples", true);
-        assert_eq!(fs_files.len(), 2);
+        assert_eq!(fs_files.len(), 3);
 
         for path in fs_files {
             info!("file -> {:?}", path);
