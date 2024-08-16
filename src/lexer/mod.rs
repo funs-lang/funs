@@ -173,7 +173,7 @@ mod tests {
     #[test]
     fn record() {
         let fs_files = collect_fs_files("./testdata/record", true);
-        assert_eq!(fs_files.len(), 1);
+        assert_eq!(fs_files.len(), 2);
 
         for path in fs_files {
             info!("file -> {:?}", path);
