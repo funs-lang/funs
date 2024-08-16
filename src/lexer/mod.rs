@@ -129,7 +129,7 @@ mod tests {
     #[test]
     fn identifier() {
         let fs_files = collect_fs_files("./testdata/identifier", true);
-        assert_eq!(fs_files.len(), 28);
+        assert_eq!(fs_files.len(), 29);
 
         for path in fs_files {
             info!("file -> {:?}", path);

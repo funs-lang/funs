@@ -34,6 +34,7 @@ const DIVIDE: &str = "/";
 const GREATER: &str = ">";
 const RIGHT_ARROW: &str = "->";
 const RIGHT_DOUBLE_ARROW: &str = "=>";
+const PLUS_PLUS: &str = "++"; // concat for list
 const UNDERSCORE: &str = "_";
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
@@ -81,6 +82,7 @@ pub enum TokenKind {
     TokenGreater,          // >
     TokenRightArrow,       // ->
     TokenRightDoubleArrow, // =>
+    TokenPlusPlus,         // ++
     TokenUnderscore,       // _
     TokenEOF,              // End of file
     // Operators
@@ -141,7 +143,7 @@ impl TokenKind {
     }
 
     pub fn can_be_followed_by_symbol(c: &str) -> bool {
-        matches!(c, MINUS | ASSIGN)
+        matches!(c, MINUS | ASSIGN | PLUS)
     }
 
     fn match_keyword(lexeme: &str) -> Option<TokenKind> {
@@ -194,6 +196,7 @@ impl TokenKind {
             DIVIDE => Some(TokenKind::TokenDivide),
             RIGHT_ARROW => Some(TokenKind::TokenRightArrow),
             RIGHT_DOUBLE_ARROW => Some(TokenKind::TokenRightDoubleArrow),
+            PLUS_PLUS => Some(TokenKind::TokenPlusPlus),
             _ => None,
         }
     }
@@ -414,6 +417,7 @@ impl std::fmt::Display for TokenKind {
             TokenKind::TokenComma => write!(f, "TokenComma"),
             TokenKind::TokenRightArrow => write!(f, "TokenRightArrow"),
             TokenKind::TokenRightDoubleArrow => write!(f, "TokenRightDoubleArrow"),
+            TokenKind::TokenPlusPlus => write!(f, "TokenPlusPlus"),
             TokenKind::TokenUnderscore => write!(f, "TokenUnderscore"),
             TokenKind::TokenEOF => write!(f, "TokenEOF"),
             TokenKind::TokenPlus => write!(f, "TokenPlus"),
