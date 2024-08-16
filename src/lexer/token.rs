@@ -10,6 +10,9 @@ const KEYWORD_STR: &str = "str";
 const KEYWORD_BOOL_TRUE: &str = "true";
 const KEYWORD_BOOL_FALSE: &str = "false";
 const KEYWORD_MATCH: &str = "match";
+const KEYWORD_IF: &str = "if";
+const KEYWORD_THEN: &str = "then";
+const KEYWORD_ELSE: &str = "else";
 
 const COLON: &str = ":";
 const SEMICOLON: &str = ";";
@@ -31,6 +34,7 @@ const DIVIDE: &str = "/";
 const GREATER: &str = ">";
 const RIGHT_ARROW: &str = "->";
 const RIGHT_DOUBLE_ARROW: &str = "=>";
+const UNDERSCORE: &str = "_";
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
 pub enum Literal {
@@ -48,6 +52,9 @@ pub enum Keyword {
     BoolType,
     StrType,
     Match,
+    If,
+    Then,
+    Else,
 }
 
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
@@ -74,6 +81,7 @@ pub enum TokenKind {
     TokenGreater,          // >
     TokenRightArrow,       // ->
     TokenRightDoubleArrow, // =>
+    TokenUnderscore,       // _
     TokenEOF,              // End of file
     // Operators
     TokenPlus,     // +
@@ -98,6 +106,7 @@ impl TokenKind {
                 | CLOSE_BRACE
                 | OPEN_BRACKET
                 | CLOSE_BRACKET
+                | UNDERSCORE
                 | COMMA
                 | MINUS
                 | PLUS
@@ -121,6 +130,7 @@ impl TokenKind {
                 | CLOSE_BRACE
                 | OPEN_BRACKET
                 | CLOSE_BRACKET
+                | UNDERSCORE
                 | COMMA
                 | MINUS
                 | PLUS
@@ -144,6 +154,9 @@ impl TokenKind {
             KEYWORD_BOOL => Some(TokenKind::TokenKeyword(Keyword::BoolType)),
             KEYWORD_STR => Some(TokenKind::TokenKeyword(Keyword::StrType)),
             KEYWORD_MATCH => Some(TokenKind::TokenKeyword(Keyword::Match)),
+            KEYWORD_IF => Some(TokenKind::TokenKeyword(Keyword::If)),
+            KEYWORD_THEN => Some(TokenKind::TokenKeyword(Keyword::Then)),
+            KEYWORD_ELSE => Some(TokenKind::TokenKeyword(Keyword::Else)),
             _ => None,
         }
     }
@@ -173,6 +186,7 @@ impl TokenKind {
             CLOSE_BRACE => Some(TokenKind::TokenCloseBrace),
             OPEN_BRACKET => Some(TokenKind::TokenOpenBracket),
             CLOSE_BRACKET => Some(TokenKind::TokenCloseBracket),
+            UNDERSCORE => Some(TokenKind::TokenUnderscore),
             COMMA => Some(TokenKind::TokenComma),
             PLUS => Some(TokenKind::TokenPlus),
             MINUS => Some(TokenKind::TokenMinus),
@@ -368,6 +382,9 @@ impl std::fmt::Display for Keyword {
             Keyword::BoolType => write!(f, "BoolType"),
             Keyword::StrType => write!(f, "StrType"),
             Keyword::Match => write!(f, "Match"),
+            Keyword::If => write!(f, "If"),
+            Keyword::Then => write!(f, "Then"),
+            Keyword::Else => write!(f, "Else"),
         }
     }
 }
@@ -397,6 +414,7 @@ impl std::fmt::Display for TokenKind {
             TokenKind::TokenComma => write!(f, "TokenComma"),
             TokenKind::TokenRightArrow => write!(f, "TokenRightArrow"),
             TokenKind::TokenRightDoubleArrow => write!(f, "TokenRightDoubleArrow"),
+            TokenKind::TokenUnderscore => write!(f, "TokenUnderscore"),
             TokenKind::TokenEOF => write!(f, "TokenEOF"),
             TokenKind::TokenPlus => write!(f, "TokenPlus"),
             TokenKind::TokenMinus => write!(f, "TokenMinus"),

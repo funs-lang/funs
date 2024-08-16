@@ -104,9 +104,9 @@ second = Second
 third = Third(1)
 match_variant: MyVariant -> str = (v) ->
   match v
-  | First -> "first"
-  | Second -> "second"
-  | Third(n) -> "third"
+    First -> "first"
+    Second -> "second"
+    Third(n) -> "third"
   ;
 ;
 ```

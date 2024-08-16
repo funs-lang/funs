@@ -79,6 +79,10 @@ impl State for StateStart {
                 Box::new(StateString),
                 TransitionKind::AdvanceOffset,
             )),
+            Some(c) if c.is_alphabetic() || c.eq(&'_') => Ok(Lexer::proceed(
+                Box::new(StateWord),
+                TransitionKind::AdvanceOffset,
+            )),
             Some(c) if TokenKind::is_start_of_symbol(c.to_string().as_str()) => {
                 Ok(Lexer::proceed(Box::new(StateSymbol), TransitionKind::Empty))
             }
@@ -88,10 +92,6 @@ impl State for StateStart {
             )),
             Some(c) if c.is_ascii_digit() => Ok(Lexer::proceed(
                 Box::new(StateNumber),
-                TransitionKind::AdvanceOffset,
-            )),
-            Some(c) if c.is_alphabetic() || c.eq(&'_') => Ok(Lexer::proceed(
-                Box::new(StateWord),
                 TransitionKind::AdvanceOffset,
             )),
             Some(c) => Err(LexerError::UnexpectedToken(Token::new(
@@ -191,7 +191,7 @@ pub struct StateWord;
 impl State for StateWord {
     fn visit(&self, cursor: &mut Cursor) -> Result<Transition, LexerError> {
         match cursor.peek() {
-            Some(c) if c.is_alphabetic() || c.eq(&'_') => Ok(Lexer::proceed(
+            Some(c) if c.is_alphanumeric() || c.eq(&'_') => Ok(Lexer::proceed(
                 Box::new(StateWord),
                 TransitionKind::AdvanceOffset,
             )),
