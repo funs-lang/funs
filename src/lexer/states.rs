@@ -83,7 +83,7 @@ impl State for StateStart {
                 Box::new(StateWord),
                 TransitionKind::AdvanceOffset,
             )),
-            Some(c) if TokenKind::is_start_of_symbol(c.to_string().as_str()) => {
+            Some(c) if TokenKind::is_symbol(c.to_string().as_str()) => {
                 Ok(Lexer::proceed(Box::new(StateSymbol), TransitionKind::Empty))
             }
             Some('#') => Ok(Lexer::proceed(
@@ -218,6 +218,22 @@ impl State for StateSymbol {
     fn visit(&self, cursor: &mut Cursor) -> Result<Transition, LexerError> {
         match cursor.peek() {
             Some('\n') => {
+                let lexeme = cursor.source().content()[cursor.index()..cursor.offset()].to_string();
+                let token_kind = TokenKind::from(&lexeme);
+
+                let valid_token_at_end_of_line = [TokenKind::TokenAssign];
+
+                if valid_token_at_end_of_line.contains(&token_kind) {
+                    return Ok(Lexer::proceed(
+                        Box::new(StateStart),
+                        TransitionKind::EmitToken(Token::new(
+                            token_kind,
+                            lexeme,
+                            cursor.location().clone(),
+                        )),
+                    ));
+                }
+
                 let transition = Lexer::proceed(
                     Box::new(StateStart),
                     TransitionKind::EmitToken(Token::new(
@@ -229,7 +245,7 @@ impl State for StateSymbol {
                 cursor.new_line();
                 Ok(transition)
             }
-            Some(c) if TokenKind::can_be_followed_by_symbol(c.to_string().as_str()) => Ok(
+            Some(c) if TokenKind::can_be_followed_by_another_symbol(c.to_string().as_str()) => Ok(
                 Lexer::proceed(Box::new(StateSymbol), TransitionKind::AdvanceOffset),
             ),
             Some(_) if TokenKind::is_symbol(cursor.peek().unwrap().to_string().as_str()) => {

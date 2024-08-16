@@ -100,6 +100,10 @@ pub enum TokenKind {
 }
 
 impl TokenKind {
+    pub fn can_be_followed_by_another_symbol(c: &str) -> bool {
+        matches!(c, MINUS | ASSIGN | PLUS)
+    }
+
     pub fn is_symbol(c: &str) -> bool {
         matches!(
             c,
@@ -123,37 +127,8 @@ impl TokenKind {
                 | MULTIPLY
                 | DIVIDE
                 | GREATER
-        )
-    }
-
-    pub fn is_start_of_symbol(c: &str) -> bool {
-        matches!(
-            c,
-            COLON
-                | DOT
-                | SEMICOLON
-                | ASSIGN
-                | SINGLE_QUOTE
-                | DOUBLE_QUOTE
-                | OPEN_PAREN
-                | CLOSE_PAREN
-                | OPEN_BRACE
-                | CLOSE_BRACE
-                | OPEN_BRACKET
-                | CLOSE_BRACKET
-                | UNDERSCORE
-                | PIPE
-                | COMMA
-                | MINUS
-                | PLUS
-                | MULTIPLY
-                | DIVIDE
                 | NEW_LINE
         )
-    }
-
-    pub fn can_be_followed_by_symbol(c: &str) -> bool {
-        matches!(c, MINUS | ASSIGN | PLUS)
     }
 
     fn match_keyword(lexeme: &str) -> Option<TokenKind> {
