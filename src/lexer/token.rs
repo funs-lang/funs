@@ -38,6 +38,7 @@ const RIGHT_ARROW: &str = "->";
 const RIGHT_DOUBLE_ARROW: &str = "=>";
 const PLUS_PLUS: &str = "++"; // concat for list
 const UNDERSCORE: &str = "_";
+const PIPE: &str = "|";
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
 pub enum Literal {
@@ -88,6 +89,7 @@ pub enum TokenKind {
     TokenRightDoubleArrow, // =>
     TokenPlusPlus,         // ++
     TokenUnderscore,       // _
+    TokenPipe,             // |
     TokenEOF,              // End of file
     // Operators
     TokenPlus,     // +
@@ -114,6 +116,7 @@ impl TokenKind {
                 | OPEN_BRACKET
                 | CLOSE_BRACKET
                 | UNDERSCORE
+                | PIPE
                 | COMMA
                 | MINUS
                 | PLUS
@@ -139,6 +142,7 @@ impl TokenKind {
                 | OPEN_BRACKET
                 | CLOSE_BRACKET
                 | UNDERSCORE
+                | PIPE
                 | COMMA
                 | MINUS
                 | PLUS
@@ -205,6 +209,7 @@ impl TokenKind {
             RIGHT_ARROW => Some(TokenKind::TokenRightArrow),
             RIGHT_DOUBLE_ARROW => Some(TokenKind::TokenRightDoubleArrow),
             PLUS_PLUS => Some(TokenKind::TokenPlusPlus),
+            PIPE => Some(TokenKind::TokenPipe),
             _ => None,
         }
     }
@@ -429,6 +434,7 @@ impl std::fmt::Display for TokenKind {
             TokenKind::TokenRightDoubleArrow => write!(f, "TokenRightDoubleArrow"),
             TokenKind::TokenPlusPlus => write!(f, "TokenPlusPlus"),
             TokenKind::TokenUnderscore => write!(f, "TokenUnderscore"),
+            TokenKind::TokenPipe => write!(f, "TokenPipe"),
             TokenKind::TokenEOF => write!(f, "TokenEOF"),
             TokenKind::TokenPlus => write!(f, "TokenPlus"),
             TokenKind::TokenMinus => write!(f, "TokenMinus"),

@@ -80,16 +80,27 @@ data MyRecord = {
   c: int
   d: mut str
 }
-record: MyRecord = {a: 1, b: "a", c: 2, d: "b"}
+record: MyRecord = MyRecord {a: 1, b: "a", c: 2, d: "b"}
 a = record.a
 b = record.b
 c = record.c
 d = record.d
-{a, b, c, d} = record
+a, b, c, d: int, str, int, str = record
 record.a = 3 # Error: record.a is immutable
 record.b = "c" # OK
 record.c = 4 # Error: record.c is immutable
 record.d = "d" # OK
+```
+
+# Tuples Overview
+
+```python
+tuple: (int, str, int, str) = (1, "a", 2, "b") # immutable
+first: int = tuple.0
+second: str = tuple.1
+third: str = tuple.2
+fourth: str = tuple.3
+one, a, two, b: int, str, int, str = tuple
 ```
 
 ## Variant
@@ -99,14 +110,14 @@ data MyVariant =
 | Second
 | Third(int)
 ;
-first = First
-second = Second
-third = Third(1)
+first: MyVariant = First
+second: MyVariant = Second
+third: MyVariant = Third(1)
 match_variant: MyVariant -> str = (v) ->
   match v
-    First -> "first"
-    Second -> "second"
-    Third(n) -> "third"
+  | First -> "first"
+  | Second -> "second"
+  | Third(_) -> "third"
   ;
 ;
 ```
@@ -122,9 +133,9 @@ f_base: (int, int) -> int = (a, b) ->
 
 f_match: (int) -> str = (a) ->
   match a
-    0 => "zero"
-    1 => "one"
-    _ => "other"
+  | 0 => "zero"
+  | 1 => "one"
+  | _ => "other"
   ;
 ;
 
@@ -223,13 +234,3 @@ filter: ((T) -> Bool, [T]) -> [T] = (f, l) ->
 ;
 ```
 
-# Tuples Overview
-
-```python
-tuple: (int, str, int, str) = (1, "a", 2, "b") # immutable
-first = tuple.0
-second = tuple.1
-third = tuple.2
-fourth = tuple.3
-one, a, two, b = tuple
-```
