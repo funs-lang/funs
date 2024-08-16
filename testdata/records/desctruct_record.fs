@@ -12,7 +12,4 @@ my_record: MyRecord = MyRecord {
   d: "world"
 }
 
-a: int = my_record.a
-b: str = my_record.b
-c: int = my_record.c
-d: str = my_record.d
+a, b, c, d: int, str, int, str = my_record
