@@ -94,9 +94,9 @@ impl State for StateStart {
                 Box::new(StateWord),
                 TransitionKind::AdvanceOffset,
             )),
-            Some(_) => Err(LexerError::UnexpectedToken(Token::new(
+            Some(c) => Err(LexerError::UnexpectedToken(Token::new(
                 TokenKind::TokenUnknown,
-                cursor.source().content()[cursor.index()..cursor.offset()].to_string(),
+                c.to_string(),
                 cursor.location().clone(),
             ))),
             None => Ok(Lexer::proceed(Box::new(StateEOF), TransitionKind::Consume)),
@@ -130,11 +130,12 @@ impl State for StateString {
                     )),
                 ))
             }
-            _ => Err(LexerError::UnexpectedToken(Token::new(
+            Some(c) => Err(LexerError::UnexpectedToken(Token::new(
                 TokenKind::TokenUnknown,
-                "".to_string(),
+                c.to_string(),
                 cursor.location().clone(),
             ))),
+            None => Ok(Lexer::proceed(Box::new(StateEOF), TransitionKind::Consume)),
         }
     }
 }
