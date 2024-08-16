@@ -1,1 +1,7 @@
-x_func: (int) -> int = (x) -> x - 1 ;
+f_match: (int) -> str = (a) ->
+  match a
+    0 => "zero"
+    1 => "one"
+    _ => "other"
+  ;
+;

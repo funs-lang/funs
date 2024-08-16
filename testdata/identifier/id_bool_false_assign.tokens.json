@@ -2,7 +2,7 @@
   { "kind": "TokenIdentifier", "lexeme": "_x_bool", "location": { "file_path": "", "line": 0, "column_start": 0, "column_end": 7 } },
   { "kind": "TokenColon", "lexeme": ":", "location": { "file_path": "", "line": 0, "column_start": 7, "column_end": 8 } },
   { "kind": "TokenSpace", "lexeme": " ", "location": { "file_path": "", "line": 0, "column_start": 8, "column_end": 9 } },
-  { "kind": "TokenType", "lexeme": "bool", "location": { "file_path": "", "line": 0, "column_start": 9, "column_end": 13 } },
+  { "kind": {"TokenKeyword": "BoolType"}, "lexeme": "bool", "location": { "file_path": "", "line": 0, "column_start": 9, "column_end": 13 } },
   { "kind": "TokenSpace", "lexeme": " ", "location": { "file_path": "", "line": 0, "column_start": 13, "column_end": 14 } },
   { "kind": "TokenAssign", "lexeme": "=", "location": { "file_path": "", "line": 0, "column_start": 14, "column_end": 15 } },
   { "kind": "TokenSpace", "lexeme": " ", "location": { "file_path": "", "line": 0, "column_start": 15, "column_end": 16 } },

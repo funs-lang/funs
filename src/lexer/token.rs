@@ -9,6 +9,7 @@ const KEYWORD_BOOL: &str = "bool";
 const KEYWORD_STR: &str = "str";
 const KEYWORD_BOOL_TRUE: &str = "true";
 const KEYWORD_BOOL_FALSE: &str = "false";
+const KEYWORD_MATCH: &str = "match";
 
 const COLON: &str = ":";
 const SEMICOLON: &str = ";";
@@ -38,11 +39,21 @@ pub enum Literal {
     Str,
 }
 
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
+pub enum Keyword {
+    UnitType,
+    IntType,
+    FloatType,
+    BoolType,
+    StrType,
+    Match,
+}
+
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 pub enum TokenKind {
     TokenLiteral(Literal),
+    TokenKeyword(Keyword),
     TokenIdentifier,
-    TokenType,
     TokenComment,
     TokenSpace,        // ' '
     TokenTab,          // \t
@@ -124,13 +135,14 @@ impl TokenKind {
 
     fn match_keyword(lexeme: &str) -> Option<TokenKind> {
         match lexeme {
-            KEYWORD_UNIT => Some(TokenKind::TokenType),
-            KEYWORD_INT => Some(TokenKind::TokenType),
-            KEYWORD_FLOAT => Some(TokenKind::TokenType),
-            KEYWORD_BOOL => Some(TokenKind::TokenType),
-            KEYWORD_STR => Some(TokenKind::TokenType),
             KEYWORD_BOOL_TRUE => Some(TokenKind::TokenLiteral(Literal::Bool)),
             KEYWORD_BOOL_FALSE => Some(TokenKind::TokenLiteral(Literal::Bool)),
+            KEYWORD_UNIT => Some(TokenKind::TokenKeyword(Keyword::UnitType)),
+            KEYWORD_INT => Some(TokenKind::TokenKeyword(Keyword::IntType)),
+            KEYWORD_FLOAT => Some(TokenKind::TokenKeyword(Keyword::FloatType)),
+            KEYWORD_BOOL => Some(TokenKind::TokenKeyword(Keyword::BoolType)),
+            KEYWORD_STR => Some(TokenKind::TokenKeyword(Keyword::StrType)),
+            KEYWORD_MATCH => Some(TokenKind::TokenKeyword(Keyword::Match)),
             _ => None,
         }
     }
@@ -345,12 +357,25 @@ impl std::fmt::Display for Literal {
     }
 }
 
+impl std::fmt::Display for Keyword {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        match self {
+            Keyword::UnitType => write!(f, "UnitType"),
+            Keyword::IntType => write!(f, "IntType"),
+            Keyword::FloatType => write!(f, "FloatType"),
+            Keyword::BoolType => write!(f, "BoolType"),
+            Keyword::StrType => write!(f, "StrType"),
+            Keyword::Match => write!(f, "Match"),
+        }
+    }
+}
+
 impl std::fmt::Display for TokenKind {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         match self {
             TokenKind::TokenLiteral(literal) => write!(f, "TokenLiteral({})", literal),
             TokenKind::TokenIdentifier => write!(f, "TokenIdentifier"),
-            TokenKind::TokenType => write!(f, "TokenType"),
+            TokenKind::TokenKeyword(keyword) => write!(f, "TokenKeyword({})", keyword),
             TokenKind::TokenComment => write!(f, "TokenComment"),
             TokenKind::TokenSpace => write!(f, "TokenSpace"),
             TokenKind::TokenTab => write!(f, "TokenTab"),
