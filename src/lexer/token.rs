@@ -30,6 +30,7 @@ const MULTIPLY: &str = "*";
 const DIVIDE: &str = "/";
 const GREATER: &str = ">";
 const RIGHT_ARROW: &str = "->";
+const RIGHT_DOUBLE_ARROW: &str = "=>";
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
 pub enum Literal {
@@ -55,24 +56,25 @@ pub enum TokenKind {
     TokenKeyword(Keyword),
     TokenIdentifier,
     TokenComment,
-    TokenSpace,        // ' '
-    TokenTab,          // \t
-    TokenNewLine,      // \n
-    TokenColon,        // :
-    TokenSemicolon,    // ;
-    TokenAssign,       // =
-    TokenSingleQuote,  // '
-    TokenDoubleQuote,  // "
-    TokenOpenParen,    // (
-    TokenCloseParen,   // )
-    TokenOpenBrace,    // {
-    TokenCloseBrace,   // }
-    TokenOpenBracket,  // [
-    TokenCloseBracket, // ]
-    TokenComma,        // ,
-    TokenGreater,      // >
-    TokenRightArrow,   // ->
-    TokenEOF,          // End of file
+    TokenSpace,            // ' '
+    TokenTab,              // \t
+    TokenNewLine,          // \n
+    TokenColon,            // :
+    TokenSemicolon,        // ;
+    TokenAssign,           // =
+    TokenSingleQuote,      // '
+    TokenDoubleQuote,      // "
+    TokenOpenParen,        // (
+    TokenCloseParen,       // )
+    TokenOpenBrace,        // {
+    TokenCloseBrace,       // }
+    TokenOpenBracket,      // [
+    TokenCloseBracket,     // ]
+    TokenComma,            // ,
+    TokenGreater,          // >
+    TokenRightArrow,       // ->
+    TokenRightDoubleArrow, // =>
+    TokenEOF,              // End of file
     // Operators
     TokenPlus,     // +
     TokenMinus,    // -
@@ -125,12 +127,11 @@ impl TokenKind {
                 | MULTIPLY
                 | DIVIDE
                 | NEW_LINE
-                | RIGHT_ARROW
         )
     }
 
     pub fn can_be_followed_by_symbol(c: &str) -> bool {
-        matches!(c, MINUS)
+        matches!(c, MINUS | ASSIGN)
     }
 
     fn match_keyword(lexeme: &str) -> Option<TokenKind> {
@@ -178,6 +179,7 @@ impl TokenKind {
             MULTIPLY => Some(TokenKind::TokenMultiply),
             DIVIDE => Some(TokenKind::TokenDivide),
             RIGHT_ARROW => Some(TokenKind::TokenRightArrow),
+            RIGHT_DOUBLE_ARROW => Some(TokenKind::TokenRightDoubleArrow),
             _ => None,
         }
     }
@@ -394,6 +396,7 @@ impl std::fmt::Display for TokenKind {
             TokenKind::TokenGreater => write!(f, "TokenGreater"),
             TokenKind::TokenComma => write!(f, "TokenComma"),
             TokenKind::TokenRightArrow => write!(f, "TokenRightArrow"),
+            TokenKind::TokenRightDoubleArrow => write!(f, "TokenRightDoubleArrow"),
             TokenKind::TokenEOF => write!(f, "TokenEOF"),
             TokenKind::TokenPlus => write!(f, "TokenPlus"),
             TokenKind::TokenMinus => write!(f, "TokenMinus"),
