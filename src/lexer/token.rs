@@ -15,6 +15,7 @@ const KEYWORD_THEN: &str = "then";
 const KEYWORD_ELSE: &str = "else";
 const KEYWORD_DATA: &str = "data";
 
+const DOT: &str = ".";
 const COLON: &str = ":";
 const SEMICOLON: &str = ";";
 const ASSIGN: &str = "=";
@@ -69,6 +70,7 @@ pub enum TokenKind {
     TokenSpace,            // ' '
     TokenTab,              // \t
     TokenNewLine,          // \n
+    TokenDot,              // .
     TokenColon,            // :
     TokenSemicolon,        // ;
     TokenAssign,           // =
@@ -100,6 +102,7 @@ impl TokenKind {
         matches!(
             c,
             COLON
+                | DOT
                 | SEMICOLON
                 | ASSIGN
                 | SINGLE_QUOTE
@@ -124,6 +127,7 @@ impl TokenKind {
         matches!(
             c,
             COLON
+                | DOT
                 | SEMICOLON
                 | ASSIGN
                 | SINGLE_QUOTE
@@ -180,6 +184,7 @@ impl TokenKind {
 
     fn match_separator(lexeme: &str) -> Option<TokenKind> {
         match lexeme {
+            DOT => Some(TokenKind::TokenDot),
             COLON => Some(TokenKind::TokenColon),
             SEMICOLON => Some(TokenKind::TokenSemicolon),
             ASSIGN => Some(TokenKind::TokenAssign),
@@ -406,6 +411,7 @@ impl std::fmt::Display for TokenKind {
             TokenKind::TokenSpace => write!(f, "TokenSpace"),
             TokenKind::TokenTab => write!(f, "TokenTab"),
             TokenKind::TokenNewLine => write!(f, "TokenNewLine"),
+            TokenKind::TokenDot => write!(f, "TokenDot"),
             TokenKind::TokenSemicolon => write!(f, "TokenSemicolon"),
             TokenKind::TokenColon => write!(f, "TokenColon"),
             TokenKind::TokenAssign => write!(f, "TokenAssign"),
