@@ -127,9 +127,9 @@ mod tests {
     use pretty_assertions::assert_eq;
 
     #[test]
-    fn identifier() {
-        let fs_files = collect_fs_files("./testdata/identifier", true);
-        assert_eq!(fs_files.len(), 25);
+    fn native_types() {
+        let fs_files = collect_fs_files("./testdata/native_types", true);
+        assert_eq!(fs_files.len(), 16);
 
         for path in fs_files {
             info!("file -> {:?}", path);
@@ -149,8 +149,30 @@ mod tests {
     }
 
     #[test]
-    fn list() {
-        let fs_files = collect_fs_files("./testdata/list", true);
+    fn functions() {
+        let fs_files = collect_fs_files("./testdata/functions", true);
+        assert_eq!(fs_files.len(), 9);
+
+        for path in fs_files {
+            info!("file -> {:?}", path);
+            eprintln!("file -> {:?}", path);
+            let input = std::fs::File::open(path.clone()).unwrap();
+            let content = std::io::read_to_string(input).unwrap();
+            let source = Source::from(content);
+            let lexer = Lexer::new(&source);
+            let output_tokens = lexer.collect::<Vec<Token>>();
+
+            let tokens_file = path.to_str().unwrap();
+            let tokens_file = tokens_file.to_string().replace(".fs", ".tokens.json");
+            let tokens = std::fs::File::open(tokens_file).unwrap();
+            let expected_tokens: Vec<Token> = serde_json::from_reader(tokens).unwrap();
+            assert_eq!(output_tokens, expected_tokens);
+        }
+    }
+
+    #[test]
+    fn lists() {
+        let fs_files = collect_fs_files("./testdata/lists", true);
         assert_eq!(fs_files.len(), 3);
 
         for path in fs_files {
@@ -171,8 +193,8 @@ mod tests {
     }
 
     #[test]
-    fn tuple() {
-        let fs_files = collect_fs_files("./testdata/tuple", true);
+    fn tuples() {
+        let fs_files = collect_fs_files("./testdata/tuples", true);
         assert_eq!(fs_files.len(), 2);
 
         for path in fs_files {
@@ -193,8 +215,8 @@ mod tests {
     }
 
     #[test]
-    fn record() {
-        let fs_files = collect_fs_files("./testdata/record", true);
+    fn records() {
+        let fs_files = collect_fs_files("./testdata/records", true);
         assert_eq!(fs_files.len(), 2);
 
         for path in fs_files {
