@@ -48,7 +48,7 @@
   { "kind": "TokenSpace", "lexeme": " ", "location": { "file_path": "", "line": 4, "column_start": 1, "column_end": 2 } },
   { "kind": "TokenSpace", "lexeme": " ", "location": { "file_path": "", "line": 4, "column_start": 2, "column_end": 3 } },
   { "kind": "TokenSpace", "lexeme": " ", "location": { "file_path": "", "line": 4, "column_start": 3, "column_end": 4 } },
-  { "kind": "TokenIdentifier", "lexeme": "_", "location": { "file_path": "", "line": 4, "column_start": 4, "column_end": 5 } },
+  { "kind": "TokenUnderscore", "lexeme": "_", "location": { "file_path": "", "line": 4, "column_start": 4, "column_end": 5 } },
   { "kind": "TokenSpace", "lexeme": " ", "location": { "file_path": "", "line": 4, "column_start": 5, "column_end": 6 } },
   { "kind": "TokenRightDoubleArrow", "lexeme": "=>", "location": { "file_path": "", "line": 4, "column_start": 6, "column_end": 8 } },
   { "kind": "TokenSpace", "lexeme": " ", "location": { "file_path": "", "line": 4, "column_start": 8, "column_end": 9 } },
