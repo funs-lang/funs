@@ -231,5 +231,5 @@ first = tuple.0
 second = tuple.1
 third = tuple.2
 fourth = tuple.3
-(one, a, two, b) = tuple
+one, a, two, b = tuple
 ```
