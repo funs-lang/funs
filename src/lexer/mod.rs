@@ -235,4 +235,26 @@ mod tests {
             assert_eq!(output_tokens, expected_tokens);
         }
     }
+
+    #[test]
+    fn variants() {
+        let fs_files = collect_fs_files("./testdata/variants", true);
+        assert_eq!(fs_files.len(), 1);
+
+        for path in fs_files {
+            info!("file -> {:?}", path);
+            eprintln!("file -> {:?}", path);
+            let input = std::fs::File::open(path.clone()).unwrap();
+            let content = std::io::read_to_string(input).unwrap();
+            let source = Source::from(content);
+            let lexer = Lexer::new(&source);
+            let output_tokens = lexer.collect::<Vec<Token>>();
+
+            let tokens_file = path.to_str().unwrap();
+            let tokens_file = tokens_file.to_string().replace(".fs", ".tokens.json");
+            let tokens = std::fs::File::open(tokens_file).unwrap();
+            let expected_tokens: Vec<Token> = serde_json::from_reader(tokens).unwrap();
+            assert_eq!(output_tokens, expected_tokens);
+        }
+    }
 }
