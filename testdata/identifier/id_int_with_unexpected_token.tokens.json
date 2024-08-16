@@ -8,7 +8,7 @@
   { "kind": "TokenSpace", "lexeme": " ", "location": { "file_path": "", "line": 0, "column_start": 11, "column_end": 12 } },
   { "kind": "TokenSpace", "lexeme": " ", "location": { "file_path": "", "line": 0, "column_start": 12, "column_end": 13 } },
   { "kind": "TokenSpace", "lexeme": " ", "location": { "file_path": "", "line": 0, "column_start": 13, "column_end": 14 } },
-  { "kind": "TokenType", "lexeme": "int", "location": { "file_path": "", "line": 0, "column_start": 14, "column_end": 17 } },
+  { "kind": {"TokenKeyword": "IntType"}, "lexeme": "int", "location": { "file_path": "", "line": 0, "column_start": 14, "column_end": 17 } },
   { "kind": "TokenSpace", "lexeme": " ", "location": { "file_path": "", "line": 0, "column_start": 17, "column_end": 18 } }
 ]
 

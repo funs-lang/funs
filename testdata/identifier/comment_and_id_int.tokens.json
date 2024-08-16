@@ -4,7 +4,7 @@
   { "kind": "TokenIdentifier", "lexeme": "x", "location": { "file_path": "", "line": 1, "column_start": 0, "column_end": 1 } },
   { "kind": "TokenColon", "lexeme": ":", "location": { "file_path": "", "line": 1, "column_start": 1, "column_end": 2 } },
   { "kind": "TokenSpace", "lexeme": " ", "location": { "file_path": "", "line": 1, "column_start": 2, "column_end": 3 } },
-  { "kind": "TokenType", "lexeme": "int", "location": { "file_path": "", "line": 1, "column_start": 3, "column_end": 6 } },
+  { "kind": {"TokenKeyword": "IntType"}, "lexeme": "int", "location": { "file_path": "", "line": 1, "column_start": 3, "column_end": 6 } },
   { "kind": "TokenSpace", "lexeme": " ", "location": { "file_path": "", "line": 1, "column_start": 6, "column_end": 7 } },
   { "kind": "TokenAssign", "lexeme": "=", "location": { "file_path": "", "line": 1, "column_start": 7, "column_end": 8 } },
   { "kind": "TokenSpace", "lexeme": " ", "location": { "file_path": "", "line": 1, "column_start": 8, "column_end": 9 } },

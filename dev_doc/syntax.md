@@ -59,7 +59,7 @@ x_f3: (T) -> T = (x) -> x ; # Generic
 # x_char = 'a' # unicode
 x_int = 1
 x_float = 1.0
-x_bool = True # False
+x_bool = true # false
 x_str = "hello"
 x_list = [1, 2, 3]
 x_tuple = (1, "hello")
@@ -120,11 +120,11 @@ f_base: (int, int) -> int = (a, b) ->
   square_a + square_b # return
 ;
 
-f_match: (int) -> Str = (a) ->
+f_match: (int) -> str = (a) ->
   match a
-  | 0 => "zero"
-  | 1 => "one"
-  | _ => "other"
+    0 => "zero"
+    1 => "one"
+    _ => "other"
   ;
 ;
 
@@ -144,7 +144,7 @@ f3 = (a, b) ->
         else
             b * b # return
     ;
-    f_inner(a, b)
+    f_inner a b
 ;
 
 f4 = (a, b) ->
