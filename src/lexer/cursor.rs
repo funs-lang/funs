@@ -110,7 +110,7 @@ impl Cursor {
     ///     ^_____ column_end = 3
     /// ```
     pub fn align(&mut self) {
-        self.location.set_column_start(self.location.column_end());
+        self.location.set_column_start(self.location.column_end);
         self.index = self.offset;
     }
 
@@ -172,8 +172,8 @@ mod tests {
         let source = Source::from("test_id".to_string());
         let mut cursor = Cursor::from(&source);
         cursor.consume();
-        assert_eq!(cursor.location().column_start(), 1);
-        assert_eq!(cursor.location().column_end(), 1);
+        assert_eq!(cursor.location().column_start, 1);
+        assert_eq!(cursor.location().column_end, 1);
     }
 
     #[test]
@@ -181,8 +181,8 @@ mod tests {
         let source = Source::from("test_id".to_string());
         let mut cursor = Cursor::from(&source);
         cursor.advance_offset();
-        assert_eq!(cursor.location().column_start(), 0);
-        assert_eq!(cursor.location().column_end(), 1);
+        assert_eq!(cursor.location().column_start, 0);
+        assert_eq!(cursor.location().column_end, 1);
     }
 
     #[test]
@@ -191,7 +191,7 @@ mod tests {
         let mut cursor = Cursor::from(&source);
         cursor.advance_offset();
         cursor.align();
-        assert_eq!(cursor.location().column_start(), 1);
-        assert_eq!(cursor.location().column_end(), 1);
+        assert_eq!(cursor.location().column_start, 1);
+        assert_eq!(cursor.location().column_end, 1);
     }
 }

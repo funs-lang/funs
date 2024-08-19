@@ -1,5 +1,6 @@
-use crate::source::Source;
+use crate::{lexer::token::TokenLocation, source::Source};
 
+#[derive(Debug)]
 pub struct Ast {
     pub source: Source,
     pub root: Block,
@@ -12,11 +13,7 @@ pub struct Block {
 
 #[derive(Debug)]
 pub enum Stmt {
-    Assign {
-        ident: Identifier,
-        type_: Type,
-        expr: Expr,
-    },
+    Assign { lhs: Expr, type_: Type, rhs: Expr },
     Expr(Expr),
 }
 
@@ -30,8 +27,14 @@ pub enum Type {
 
 #[derive(Debug)]
 pub enum Expr {
-    Literal(Literal),
-    Identifier(Identifier),
+    Literal {
+        literal: Literal,
+        location: TokenLocation,
+    },
+    Identifier {
+        name: String,
+        location: TokenLocation,
+    },
 }
 
 #[derive(Debug)]
@@ -42,78 +45,8 @@ pub enum Literal {
     Str(String),
 }
 
-#[derive(Debug)]
-pub struct Identifier {
-    pub name: String,
-}
-
 impl Ast {
     pub fn new(source: Source, root: Block) -> Ast {
         Ast { source, root }
-    }
-}
-
-impl std::fmt::Display for Ast {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(f, "Block [{}]", self.root)
-    }
-}
-
-impl std::fmt::Display for Block {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        for stmt in self.stmts.iter() {
-            write!(f, " {} ", stmt)?;
-        }
-        Ok(())
-    }
-}
-
-impl std::fmt::Display for Stmt {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        match self {
-            Stmt::Assign { ident, type_, expr } => write!(
-                f,
-                "Stmt::Assign {{ ident: {}, type: {}, expr: {} }}",
-                ident, type_, expr
-            ),
-            Stmt::Expr(expr) => write!(f, "Stmt::Expr({})", expr),
-        }
-    }
-}
-
-impl std::fmt::Display for Type {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        match self {
-            Type::Int => write!(f, "int"),
-            Type::Float => write!(f, "float"),
-            Type::Bool => write!(f, "bool"),
-            Type::Str => write!(f, "str"),
-        }
-    }
-}
-
-impl std::fmt::Display for Expr {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        match self {
-            Expr::Literal(literal) => write!(f, "{}", literal),
-            Expr::Identifier(ident) => write!(f, "{}", ident),
-        }
-    }
-}
-
-impl std::fmt::Display for Literal {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        match self {
-            Literal::Int(int) => write!(f, "{}", int),
-            Literal::Float(float) => write!(f, "{}", float),
-            Literal::Bool(bool) => write!(f, "{}", bool),
-            Literal::Str(string) => write!(f, "{}", string),
-        }
-    }
-}
-
-impl std::fmt::Display for Identifier {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(f, "{}", self.name)
     }
 }

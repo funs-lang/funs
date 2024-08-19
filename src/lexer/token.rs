@@ -217,10 +217,10 @@ impl From<&String> for TokenKind {
 /// The location of a token in the source code in a uman-readable format
 #[derive(Debug, Clone, Eq, PartialEq, Deserialize, Serialize)]
 pub struct TokenLocation {
-    file_path: PathBuf,
-    line: usize,
-    column_start: usize, // Inclusive
-    column_end: usize,   // Exclusive
+    pub file_path: PathBuf,
+    pub line: usize,
+    pub column_start: usize, // Inclusive
+    pub column_end: usize,   // Exclusive
 }
 
 impl TokenLocation {
@@ -236,18 +236,6 @@ impl TokenLocation {
             column_start,
             column_end,
         }
-    }
-
-    pub fn line(&self) -> usize {
-        self.line
-    }
-
-    pub fn column_start(&self) -> usize {
-        self.column_start
-    }
-
-    pub fn column_end(&self) -> usize {
-        self.column_end
     }
 
     pub fn advance_line(&mut self) {
@@ -325,9 +313,9 @@ pub struct Token {
     /// For example:
     /// - the lexeme of the token `TokenLiteral(Literal::Int(42))` is "42"
     /// - the lexeme of the token `TokenColon` is ":"
-    lexeme: String,
+    pub lexeme: String,
     /// The location of the token in the source code
-    location: TokenLocation,
+    pub location: TokenLocation,
 }
 
 impl Token {
@@ -337,18 +325,6 @@ impl Token {
             lexeme,
             location,
         }
-    }
-
-    pub fn kind(&self) -> &TokenKind {
-        &self.kind
-    }
-
-    pub fn lexeme(&self) -> &String {
-        &self.lexeme
-    }
-
-    pub fn location(&self) -> &TokenLocation {
-        &self.location
     }
 }
 

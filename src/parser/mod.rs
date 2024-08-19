@@ -75,7 +75,7 @@ impl<I: IntoIterator<Item = Token, IntoIter = Lexer>> Parser<I> {
                 ..
             }) => {
                 let stms = self.parse_identifier_stmt();
-                info!("Parsed identifier - {}", stms);
+                info!("Parsed identifier - {:?}", stms);
                 Some(stms)
             }
             Some(Token {
@@ -87,8 +87,8 @@ impl<I: IntoIterator<Item = Token, IntoIter = Lexer>> Parser<I> {
     }
 
     fn parse_identifier_stmt(&mut self) -> ast::Stmt {
-        let token = self.curr_token.clone().unwrap(); // Safe to unwrap because we checked for Some
-                                                      // in parse_stmt
+        let lhs = self.curr_token.clone().unwrap(); // Safe to unwrap because we checked for Some
+                                                    // in parse_stmt
 
         self.consume();
         self.skip_skippable();
@@ -115,7 +115,7 @@ impl<I: IntoIterator<Item = Token, IntoIter = Lexer>> Parser<I> {
                             }) => {
                                 self.consume();
                                 self.skip_skippable();
-                                let expr = self.parse_expr();
+                                let rhs = self.parse_expr();
                                 self.consume();
                                 self.skip_skippable();
                                 match self.curr_token {
@@ -126,11 +126,12 @@ impl<I: IntoIterator<Item = Token, IntoIter = Lexer>> Parser<I> {
                                         self.consume();
                                         self.skip_skippable();
                                         ast::Stmt::Assign {
-                                            ident: ast::Identifier {
-                                                name: token.lexeme().to_string(),
+                                            lhs: ast::Expr::Identifier {
+                                                name: lhs.lexeme,
+                                                location: lhs.location,
                                             },
                                             type_,
-                                            expr,
+                                            rhs,
                                         }
                                     }
                                     _ => todo!(),
@@ -184,11 +185,14 @@ impl<I: IntoIterator<Item = Token, IntoIter = Lexer>> Parser<I> {
                 ..
             }) => match literal {
                 Literal::Int => {
-                    let int = match token.lexeme().parse::<i64>() {
+                    let int = match token.lexeme.parse::<i64>() {
                         Ok(int) => int,
                         Err(_) => todo!(), // Error of invalid integer
                     };
-                    ast::Expr::Literal(ast::Literal::Int(int))
+                    ast::Expr::Literal {
+                        literal: ast::Literal::Int(int),
+                        location: token.location,
+                    }
                 }
                 _ => todo!(),
             },

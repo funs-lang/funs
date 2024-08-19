@@ -60,7 +60,7 @@ impl Iterator for Lexer {
                     self.errors.push(err.clone());
                     return match err {
                         LexerError::UnexpectedToken(token) => {
-                            error!("Unexpected token: {}", token);
+                            error!("Unexpected token: {:?}", token);
                             // TODO: return a transition to continue lexing (for error recovery)
                             None
                         }
@@ -72,7 +72,7 @@ impl Iterator for Lexer {
             self.state = state;
             transition_kind.apply(&mut self.cursor);
             if let TransitionKind::EmitToken(token) = transition_kind {
-                info!("Emitting token - {}", token);
+                info!("Emitting token - {:?}", token);
                 return Some(token.clone());
             }
             if let TransitionKind::End = transition_kind {

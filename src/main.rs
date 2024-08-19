@@ -40,5 +40,5 @@ fn main() {
     // }
     let mut parser = Parser::new(lexer);
     // let _ast = (&mut parser).collect::<Vec<parser::ast::Block>>();
-    println!("{}", parser.parse());
+    println!("{:#?}", parser.parse());
 }
