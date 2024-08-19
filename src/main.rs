@@ -2,6 +2,7 @@ pub mod lexer;
 pub mod logger;
 pub mod parser;
 pub mod source;
+pub mod tests;
 pub mod utils;
 
 use lexer::Lexer;

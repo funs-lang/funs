@@ -1,23 +1,24 @@
 use crate::{lexer::token::TokenLocation, source::Source};
+use serde::{Deserialize, Serialize};
 
-#[derive(Debug)]
+#[derive(Debug, Deserialize, Serialize, PartialEq)]
 pub struct Ast {
     pub source: Source,
     pub root: Block,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Deserialize, Serialize, PartialEq)]
 pub struct Block {
     pub stmts: Box<[Stmt]>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Deserialize, Serialize, PartialEq)]
 pub enum Stmt {
     Assign { lhs: Expr, type_: Type, rhs: Expr },
     Expr(Expr),
 }
 
-#[derive(Debug)]
+#[derive(Debug, Deserialize, Serialize, PartialEq)]
 pub enum Type {
     Int,
     Float,
@@ -25,7 +26,7 @@ pub enum Type {
     Str,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Deserialize, Serialize, PartialEq)]
 pub enum Expr {
     Literal {
         literal: Literal,
@@ -37,7 +38,7 @@ pub enum Expr {
     },
 }
 
-#[derive(Debug)]
+#[derive(Debug, Deserialize, Serialize, PartialEq)]
 pub enum Literal {
     Int(i64),
     Float(f64),
