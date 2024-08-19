@@ -1,14 +1,32 @@
 [
-  { "kind": "TokenSpace", "lexeme": " ", "location": { "file_path": "", "line": 0, "column_start": 0, "column_end": 1 } },
-  { "kind": "TokenSpace", "lexeme": " ", "location": { "file_path": "", "line": 0, "column_start": 1, "column_end": 2 } },
-  { "kind": "TokenSpace", "lexeme": " ", "location": { "file_path": "", "line": 0, "column_start": 2, "column_end": 3 } },
-  { "kind": "TokenSpace", "lexeme": " ", "location": { "file_path": "", "line": 0, "column_start": 3, "column_end": 4 } },
-  { "kind": "TokenSpace", "lexeme": " ", "location": { "file_path": "", "line": 0, "column_start": 4, "column_end": 5 } },
-  { "kind": "TokenSpace", "lexeme": " ", "location": { "file_path": "", "line": 0, "column_start": 5, "column_end": 6 } },
-  { "kind": "TokenSpace", "lexeme": " ", "location": { "file_path": "", "line": 0, "column_start": 6, "column_end": 7 } },
-  { "kind": "TokenSpace", "lexeme": " ", "location": { "file_path": "", "line": 0, "column_start": 7, "column_end": 8 } },
-  { "kind": "TokenSpace", "lexeme": " ", "location": { "file_path": "", "line": 0, "column_start": 8, "column_end": 9 } },
-  { "kind": "TokenIdentifier", "lexeme": "__test_id", "location": { "file_path": "", "line": 0, "column_start": 9, "column_end": 18 } },
-  { "kind": "TokenNewLine", "lexeme": "\\n", "location": { "file_path": "", "line": 0, "column_start": 18, "column_end": 18 } },
-  { "kind": "TokenEOF", "lexeme": "", "location": { "file_path": "", "line": 1, "column_start": 0, "column_end": 0 } }
+  {
+    "kind": "TokenIdentifier",
+    "lexeme": "__test_id",
+    "location": {
+      "file_path": "",
+      "line": 0,
+      "column_start": 9,
+      "column_end": 18
+    }
+  },
+  {
+    "kind": "TokenNewLine",
+    "lexeme": "\\n",
+    "location": {
+      "file_path": "",
+      "line": 0,
+      "column_start": 18,
+      "column_end": 18
+    }
+  },
+  {
+    "kind": "TokenEOF",
+    "lexeme": "",
+    "location": {
+      "file_path": "",
+      "line": 1,
+      "column_start": 0,
+      "column_end": 0
+    }
+  }
 ]

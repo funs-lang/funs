@@ -1,13 +1,76 @@
 [
-  { "kind": "TokenIdentifier", "lexeme": "i", "location": { "file_path": "", "line": 0, "column_start": 0, "column_end": 1 } },
-  { "kind": "TokenColon", "lexeme": ":", "location": { "file_path": "", "line": 0, "column_start": 1, "column_end": 2 } },
-  { "kind": "TokenSpace", "lexeme": " ", "location": { "file_path": "", "line": 0, "column_start": 2, "column_end": 3 } },
-  { "kind": {"TokenKeyword": "IntType"}, "lexeme": "int", "location": { "file_path": "", "line": 0, "column_start": 3, "column_end": 6 } },
-  { "kind": "TokenSpace", "lexeme": " ", "location": { "file_path": "", "line": 0, "column_start": 6, "column_end": 7 } },
-  { "kind": "TokenAssign", "lexeme": "=", "location": { "file_path": "", "line": 0, "column_start": 7, "column_end": 8 } },
-  { "kind": "TokenSpace", "lexeme": " ", "location": { "file_path": "", "line": 0, "column_start": 8, "column_end": 9 } },
-  { "kind": { "TokenLiteral": "Int" }, "lexeme": "1", "location": { "file_path": "", "line": 0, "column_start": 9, "column_end": 10 } },
-  { "kind": "TokenNewLine", "lexeme": "\\n", "location": { "file_path": "", "line": 0, "column_start": 10, "column_end": 10 } },
-  { "kind": "TokenEOF", "lexeme": "", "location": { "file_path": "", "line": 1, "column_start": 0, "column_end": 0 } }
+  {
+    "kind": "TokenIdentifier",
+    "lexeme": "i",
+    "location": {
+      "file_path": "",
+      "line": 0,
+      "column_start": 0,
+      "column_end": 1
+    }
+  },
+  {
+    "kind": "TokenColon",
+    "lexeme": ":",
+    "location": {
+      "file_path": "",
+      "line": 0,
+      "column_start": 1,
+      "column_end": 2
+    }
+  },
+  {
+    "kind": {
+      "TokenKeyword": "IntType"
+    },
+    "lexeme": "int",
+    "location": {
+      "file_path": "",
+      "line": 0,
+      "column_start": 3,
+      "column_end": 6
+    }
+  },
+  {
+    "kind": "TokenAssign",
+    "lexeme": "=",
+    "location": {
+      "file_path": "",
+      "line": 0,
+      "column_start": 7,
+      "column_end": 8
+    }
+  },
+  {
+    "kind": {
+      "TokenLiteral": "Int"
+    },
+    "lexeme": "1",
+    "location": {
+      "file_path": "",
+      "line": 0,
+      "column_start": 9,
+      "column_end": 10
+    }
+  },
+  {
+    "kind": "TokenNewLine",
+    "lexeme": "\\n",
+    "location": {
+      "file_path": "",
+      "line": 0,
+      "column_start": 10,
+      "column_end": 10
+    }
+  },
+  {
+    "kind": "TokenEOF",
+    "lexeme": "",
+    "location": {
+      "file_path": "",
+      "line": 1,
+      "column_start": 0,
+      "column_end": 0
+    }
+  }
 ]
-

@@ -1,41 +1,252 @@
 [
-  { "kind": {"TokenKeyword": "Data"}, "lexeme": "data", "location": { "file_path": "", "line": 0, "column_start": 0, "column_end": 4 } },
-  { "kind": "TokenSpace", "lexeme": " ", "location": { "file_path": "", "line": 0, "column_start": 4, "column_end": 5 } },
-  { "kind": "TokenIdentifier", "lexeme": "MyRecord", "location": { "file_path": "", "line": 0, "column_start": 5, "column_end": 13 } },
-  { "kind": "TokenSpace", "lexeme": " ", "location": { "file_path": "", "line": 0, "column_start": 13, "column_end": 14 } },
-  { "kind": "TokenAssign", "lexeme": "=", "location": { "file_path": "", "line": 0, "column_start": 14, "column_end": 15 } },
-  { "kind": "TokenSpace", "lexeme": " ", "location": { "file_path": "", "line": 0, "column_start": 15, "column_end": 16 } },
-  { "kind": "TokenOpenBracket", "lexeme": "{", "location": { "file_path": "", "line": 0, "column_start": 16, "column_end": 17 } },
-  { "kind": "TokenNewLine", "lexeme": "\\n", "location": { "file_path": "", "line": 0, "column_start": 17, "column_end": 17 } },
-  { "kind": "TokenSpace", "lexeme": " ", "location": { "file_path": "", "line": 1, "column_start": 0, "column_end": 1 } },
-  { "kind": "TokenSpace", "lexeme": " ", "location": { "file_path": "", "line": 1, "column_start": 1, "column_end": 2 } },
-  { "kind": "TokenIdentifier", "lexeme": "a", "location": { "file_path": "", "line": 1, "column_start": 2, "column_end": 3 } },
-  { "kind": "TokenColon", "lexeme": ":", "location": { "file_path": "", "line": 1, "column_start": 3, "column_end": 4 } },
-  { "kind": "TokenSpace", "lexeme": " ", "location": { "file_path": "", "line": 1, "column_start": 4, "column_end": 5 } },
-  { "kind": {"TokenKeyword": "IntType"}, "lexeme": "int", "location": { "file_path": "", "line": 1, "column_start": 5, "column_end": 8 } },
-  { "kind": "TokenNewLine", "lexeme": "\\n", "location": { "file_path": "", "line": 1, "column_start": 8, "column_end": 8 } },
-  { "kind": "TokenSpace", "lexeme": " ", "location": { "file_path": "", "line": 2, "column_start": 0, "column_end": 1 } },
-  { "kind": "TokenSpace", "lexeme": " ", "location": { "file_path": "", "line": 2, "column_start": 1, "column_end": 2 } },
-  { "kind": "TokenIdentifier", "lexeme": "b", "location": { "file_path": "", "line": 2, "column_start": 2, "column_end": 3 } },
-  { "kind": "TokenColon", "lexeme": ":", "location": { "file_path": "", "line": 2, "column_start": 3, "column_end": 4 } },
-  { "kind": "TokenSpace", "lexeme": " ", "location": { "file_path": "", "line": 2, "column_start": 4, "column_end": 5 } },
-  { "kind": {"TokenKeyword": "StrType"}, "lexeme": "str", "location": { "file_path": "", "line": 2, "column_start": 5, "column_end": 8 } },
-  { "kind": "TokenNewLine", "lexeme": "\\n", "location": { "file_path": "", "line": 2, "column_start": 8, "column_end": 8 } },
-  { "kind": "TokenSpace", "lexeme": " ", "location": { "file_path": "", "line": 3, "column_start": 0, "column_end": 1 } },
-  { "kind": "TokenSpace", "lexeme": " ", "location": { "file_path": "", "line": 3, "column_start": 1, "column_end": 2 } },
-  { "kind": "TokenIdentifier", "lexeme": "c", "location": { "file_path": "", "line": 3, "column_start": 2, "column_end": 3 } },
-  { "kind": "TokenColon", "lexeme": ":", "location": { "file_path": "", "line": 3, "column_start": 3, "column_end": 4 } },
-  { "kind": "TokenSpace", "lexeme": " ", "location": { "file_path": "", "line": 3, "column_start": 4, "column_end": 5 } },
-  { "kind": {"TokenKeyword": "IntType"}, "lexeme": "int", "location": { "file_path": "", "line": 3, "column_start": 5, "column_end": 8 } },
-  { "kind": "TokenNewLine", "lexeme": "\\n", "location": { "file_path": "", "line": 3, "column_start": 8, "column_end": 8 } },
-  { "kind": "TokenSpace", "lexeme": " ", "location": { "file_path": "", "line": 4, "column_start": 0, "column_end": 1 } },
-  { "kind": "TokenSpace", "lexeme": " ", "location": { "file_path": "", "line": 4, "column_start": 1, "column_end": 2 } },
-  { "kind": "TokenIdentifier", "lexeme": "d", "location": { "file_path": "", "line": 4, "column_start": 2, "column_end": 3 } },
-  { "kind": "TokenColon", "lexeme": ":", "location": { "file_path": "", "line": 4, "column_start": 3, "column_end": 4 } },
-  { "kind": "TokenSpace", "lexeme": " ", "location": { "file_path": "", "line": 4, "column_start": 4, "column_end": 5 } },
-  { "kind": {"TokenKeyword": "StrType"}, "lexeme": "str", "location": { "file_path": "", "line": 4, "column_start": 5, "column_end": 8 } },
-  { "kind": "TokenNewLine", "lexeme": "\\n", "location": { "file_path": "", "line": 4, "column_start": 8, "column_end": 8 } },
-  { "kind": "TokenCloseBracket", "lexeme": "}", "location": { "file_path": "", "line": 5, "column_start": 0, "column_end": 1 } },
-  { "kind": "TokenNewLine", "lexeme": "\\n", "location": { "file_path": "", "line": 5, "column_start": 1, "column_end": 1 } },
-  { "kind": "TokenEOF", "lexeme": "", "location": { "file_path": "", "line": 6, "column_start": 0, "column_end": 0 } }
+  {
+    "kind": {
+      "TokenKeyword": "Data"
+    },
+    "lexeme": "data",
+    "location": {
+      "file_path": "",
+      "line": 0,
+      "column_start": 0,
+      "column_end": 4
+    }
+  },
+  {
+    "kind": "TokenIdentifier",
+    "lexeme": "MyRecord",
+    "location": {
+      "file_path": "",
+      "line": 0,
+      "column_start": 5,
+      "column_end": 13
+    }
+  },
+  {
+    "kind": "TokenAssign",
+    "lexeme": "=",
+    "location": {
+      "file_path": "",
+      "line": 0,
+      "column_start": 14,
+      "column_end": 15
+    }
+  },
+  {
+    "kind": "TokenOpenBracket",
+    "lexeme": "{",
+    "location": {
+      "file_path": "",
+      "line": 0,
+      "column_start": 16,
+      "column_end": 17
+    }
+  },
+  {
+    "kind": "TokenNewLine",
+    "lexeme": "\\n",
+    "location": {
+      "file_path": "",
+      "line": 0,
+      "column_start": 17,
+      "column_end": 17
+    }
+  },
+  {
+    "kind": "TokenIdentifier",
+    "lexeme": "a",
+    "location": {
+      "file_path": "",
+      "line": 1,
+      "column_start": 2,
+      "column_end": 3
+    }
+  },
+  {
+    "kind": "TokenColon",
+    "lexeme": ":",
+    "location": {
+      "file_path": "",
+      "line": 1,
+      "column_start": 3,
+      "column_end": 4
+    }
+  },
+  {
+    "kind": {
+      "TokenKeyword": "IntType"
+    },
+    "lexeme": "int",
+    "location": {
+      "file_path": "",
+      "line": 1,
+      "column_start": 5,
+      "column_end": 8
+    }
+  },
+  {
+    "kind": "TokenNewLine",
+    "lexeme": "\\n",
+    "location": {
+      "file_path": "",
+      "line": 1,
+      "column_start": 8,
+      "column_end": 8
+    }
+  },
+  {
+    "kind": "TokenIdentifier",
+    "lexeme": "b",
+    "location": {
+      "file_path": "",
+      "line": 2,
+      "column_start": 2,
+      "column_end": 3
+    }
+  },
+  {
+    "kind": "TokenColon",
+    "lexeme": ":",
+    "location": {
+      "file_path": "",
+      "line": 2,
+      "column_start": 3,
+      "column_end": 4
+    }
+  },
+  {
+    "kind": {
+      "TokenKeyword": "StrType"
+    },
+    "lexeme": "str",
+    "location": {
+      "file_path": "",
+      "line": 2,
+      "column_start": 5,
+      "column_end": 8
+    }
+  },
+  {
+    "kind": "TokenNewLine",
+    "lexeme": "\\n",
+    "location": {
+      "file_path": "",
+      "line": 2,
+      "column_start": 8,
+      "column_end": 8
+    }
+  },
+  {
+    "kind": "TokenIdentifier",
+    "lexeme": "c",
+    "location": {
+      "file_path": "",
+      "line": 3,
+      "column_start": 2,
+      "column_end": 3
+    }
+  },
+  {
+    "kind": "TokenColon",
+    "lexeme": ":",
+    "location": {
+      "file_path": "",
+      "line": 3,
+      "column_start": 3,
+      "column_end": 4
+    }
+  },
+  {
+    "kind": {
+      "TokenKeyword": "IntType"
+    },
+    "lexeme": "int",
+    "location": {
+      "file_path": "",
+      "line": 3,
+      "column_start": 5,
+      "column_end": 8
+    }
+  },
+  {
+    "kind": "TokenNewLine",
+    "lexeme": "\\n",
+    "location": {
+      "file_path": "",
+      "line": 3,
+      "column_start": 8,
+      "column_end": 8
+    }
+  },
+  {
+    "kind": "TokenIdentifier",
+    "lexeme": "d",
+    "location": {
+      "file_path": "",
+      "line": 4,
+      "column_start": 2,
+      "column_end": 3
+    }
+  },
+  {
+    "kind": "TokenColon",
+    "lexeme": ":",
+    "location": {
+      "file_path": "",
+      "line": 4,
+      "column_start": 3,
+      "column_end": 4
+    }
+  },
+  {
+    "kind": {
+      "TokenKeyword": "StrType"
+    },
+    "lexeme": "str",
+    "location": {
+      "file_path": "",
+      "line": 4,
+      "column_start": 5,
+      "column_end": 8
+    }
+  },
+  {
+    "kind": "TokenNewLine",
+    "lexeme": "\\n",
+    "location": {
+      "file_path": "",
+      "line": 4,
+      "column_start": 8,
+      "column_end": 8
+    }
+  },
+  {
+    "kind": "TokenCloseBracket",
+    "lexeme": "}",
+    "location": {
+      "file_path": "",
+      "line": 5,
+      "column_start": 0,
+      "column_end": 1
+    }
+  },
+  {
+    "kind": "TokenNewLine",
+    "lexeme": "\\n",
+    "location": {
+      "file_path": "",
+      "line": 5,
+      "column_start": 1,
+      "column_end": 1
+    }
+  },
+  {
+    "kind": "TokenEOF",
+    "lexeme": "",
+    "location": {
+      "file_path": "",
+      "line": 6,
+      "column_start": 0,
+      "column_end": 0
+    }
+  }
 ]
