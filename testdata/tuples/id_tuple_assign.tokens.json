@@ -1,22 +1,160 @@
 [
-  { "kind": "TokenIdentifier", "lexeme": "x_tuple", "location": { "file_path": "", "line": 0, "column_start": 0, "column_end": 7 } },
-  { "kind": "TokenColon", "lexeme": ":", "location": { "file_path": "", "line": 0, "column_start": 7, "column_end": 8 } },
-  { "kind": "TokenSpace", "lexeme": " ", "location": { "file_path": "", "line": 0, "column_start": 8, "column_end": 9 } },
-  { "kind": "TokenOpenParen", "lexeme": "(", "location": { "file_path": "", "line": 0, "column_start": 9, "column_end": 10 } },
-  { "kind": {"TokenKeyword": "IntType"}, "lexeme": "int", "location": { "file_path": "", "line": 0, "column_start": 10, "column_end": 13 } },
-  { "kind": "TokenComma", "lexeme": ",", "location": { "file_path": "", "line": 0, "column_start": 13, "column_end": 14 } },
-  { "kind": "TokenSpace", "lexeme": " ", "location": { "file_path": "", "line": 0, "column_start": 14, "column_end": 15 } },
-  { "kind": {"TokenKeyword": "StrType"}, "lexeme": "str", "location": { "file_path": "", "line": 0, "column_start": 15, "column_end": 18 } },
-  { "kind": "TokenCloseParen", "lexeme": ")", "location": { "file_path": "", "line": 0, "column_start": 18, "column_end": 19 } },
-  { "kind": "TokenSpace", "lexeme": " ", "location": { "file_path": "", "line": 0, "column_start": 19, "column_end": 20 } },
-  { "kind": "TokenAssign", "lexeme": "=", "location": { "file_path": "", "line": 0, "column_start": 20, "column_end": 21 } },
-  { "kind": "TokenSpace", "lexeme": " ", "location": { "file_path": "", "line": 0, "column_start": 21, "column_end": 22 } },
-  { "kind": "TokenOpenParen", "lexeme": "(", "location": { "file_path": "", "line": 0, "column_start": 22, "column_end": 23 } },
-  { "kind": { "TokenLiteral" : "Int" }, "lexeme": "1", "location": { "file_path": "", "line": 0, "column_start": 23, "column_end": 24 } },
-  { "kind": "TokenComma", "lexeme": ",", "location": { "file_path": "", "line": 0, "column_start": 24, "column_end": 25 } },
-  { "kind": "TokenSpace", "lexeme": " ", "location": { "file_path": "", "line": 0, "column_start": 25, "column_end": 26 } },
-  { "kind": { "TokenLiteral": "Str" }, "lexeme": "\"hello\"", "location": { "file_path": "", "line": 0, "column_start": 26, "column_end": 33 } },
-  { "kind": "TokenCloseParen", "lexeme": ")", "location": { "file_path": "", "line": 0, "column_start": 33, "column_end": 34 } },
-  { "kind": "TokenNewLine", "lexeme": "\\n", "location": { "file_path": "", "line": 0, "column_start": 34, "column_end": 34 } },
-  { "kind": "TokenEOF", "lexeme": "", "location": { "file_path": "", "line": 1, "column_start": 0, "column_end": 0 } }
+  {
+    "kind": "TokenIdentifier",
+    "lexeme": "x_tuple",
+    "location": {
+      "file_path": "",
+      "line": 0,
+      "column_start": 0,
+      "column_end": 7
+    }
+  },
+  {
+    "kind": "TokenColon",
+    "lexeme": ":",
+    "location": {
+      "file_path": "",
+      "line": 0,
+      "column_start": 7,
+      "column_end": 8
+    }
+  },
+  {
+    "kind": "TokenOpenParen",
+    "lexeme": "(",
+    "location": {
+      "file_path": "",
+      "line": 0,
+      "column_start": 9,
+      "column_end": 10
+    }
+  },
+  {
+    "kind": {
+      "TokenKeyword": "IntType"
+    },
+    "lexeme": "int",
+    "location": {
+      "file_path": "",
+      "line": 0,
+      "column_start": 10,
+      "column_end": 13
+    }
+  },
+  {
+    "kind": "TokenComma",
+    "lexeme": ",",
+    "location": {
+      "file_path": "",
+      "line": 0,
+      "column_start": 13,
+      "column_end": 14
+    }
+  },
+  {
+    "kind": {
+      "TokenKeyword": "StrType"
+    },
+    "lexeme": "str",
+    "location": {
+      "file_path": "",
+      "line": 0,
+      "column_start": 15,
+      "column_end": 18
+    }
+  },
+  {
+    "kind": "TokenCloseParen",
+    "lexeme": ")",
+    "location": {
+      "file_path": "",
+      "line": 0,
+      "column_start": 18,
+      "column_end": 19
+    }
+  },
+  {
+    "kind": "TokenAssign",
+    "lexeme": "=",
+    "location": {
+      "file_path": "",
+      "line": 0,
+      "column_start": 20,
+      "column_end": 21
+    }
+  },
+  {
+    "kind": "TokenOpenParen",
+    "lexeme": "(",
+    "location": {
+      "file_path": "",
+      "line": 0,
+      "column_start": 22,
+      "column_end": 23
+    }
+  },
+  {
+    "kind": {
+      "TokenLiteral": "Int"
+    },
+    "lexeme": "1",
+    "location": {
+      "file_path": "",
+      "line": 0,
+      "column_start": 23,
+      "column_end": 24
+    }
+  },
+  {
+    "kind": "TokenComma",
+    "lexeme": ",",
+    "location": {
+      "file_path": "",
+      "line": 0,
+      "column_start": 24,
+      "column_end": 25
+    }
+  },
+  {
+    "kind": {
+      "TokenLiteral": "Str"
+    },
+    "lexeme": "\"hello\"",
+    "location": {
+      "file_path": "",
+      "line": 0,
+      "column_start": 26,
+      "column_end": 33
+    }
+  },
+  {
+    "kind": "TokenCloseParen",
+    "lexeme": ")",
+    "location": {
+      "file_path": "",
+      "line": 0,
+      "column_start": 33,
+      "column_end": 34
+    }
+  },
+  {
+    "kind": "TokenNewLine",
+    "lexeme": "\\n",
+    "location": {
+      "file_path": "",
+      "line": 0,
+      "column_start": 34,
+      "column_end": 34
+    }
+  },
+  {
+    "kind": "TokenEOF",
+    "lexeme": "",
+    "location": {
+      "file_path": "",
+      "line": 1,
+      "column_start": 0,
+      "column_end": 0
+    }
+  }
 ]

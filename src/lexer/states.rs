@@ -61,15 +61,13 @@ impl State for StateStart {
     fn visit(&self, cursor: &mut Cursor) -> Result<Transition, LexerError> {
         match cursor.peek() {
             Some(c) if c.eq(&' ') || c.eq(&'\t') => {
-                cursor.advance_offset();
                 Ok(Lexer::proceed(
                     Box::new(StateStart),
-                    TransitionKind::EmitToken(Token::new(
-                        TokenKind::from(&c.to_string()),
-                        c.to_string(),
-                        cursor.location().clone(),
-                    )),
+                    TransitionKind::Consume,
                 ))
+                // Uncomment to emit whitespace tokens
+                // cursor.advance_offset();
+                // Ok(Lexer::proceed(Box::new(StateStart),TransitionKind::EmitToken(Token::new(TokenKind::from(&c.to_string()),c.to_string(),cursor.location().clone(),)),))
             }
             Some(c) if c.eq(&'\r') => {
                 cursor.remove_carriage_return();
