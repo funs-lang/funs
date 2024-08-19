@@ -31,6 +31,7 @@ impl<I: IntoIterator<Item = Token, IntoIter = Lexer>> Parser<I> {
 
     fn consume(&mut self) {
         self.curr_token = self.lexer.next();
+        self.consume_until(&[TokenKind::TokenSpace, TokenKind::TokenTab]);
     }
 
     fn consume_until(&mut self, kinds: &[TokenKind]) {
@@ -43,12 +44,6 @@ impl<I: IntoIterator<Item = Token, IntoIter = Lexer>> Parser<I> {
         }
     }
 
-    // The skippable tokens are space and tab for now
-    // TODO: Add continuation character `\` as skippable
-    fn skip_skippable(&mut self) {
-        self.consume_until(&[TokenKind::TokenSpace, TokenKind::TokenTab]);
-    }
-
     pub fn parse(&mut self) -> ast::Ast {
         let source = self.source.clone();
         let ast::Block { stmts } = self.parse_block().unwrap();
@@ -58,10 +53,21 @@ impl<I: IntoIterator<Item = Token, IntoIter = Lexer>> Parser<I> {
 
     fn parse_block(&mut self) -> Option<ast::Block> {
         let mut stmts = Vec::new();
-        let stmt = self.parse_stmt();
-        match stmt {
-            Some(stmt) => stmts.push(stmt),
-            None => return None,
+        loop {
+            match self.curr_token {
+                Some(Token {
+                    kind: TokenKind::TokenEOF,
+                    ..
+                }) => break,
+                Some(_) => {
+                    let stmt = self.parse_stmt();
+                    match stmt {
+                        Some(stmt) => stmts.push(stmt),
+                        None => break,
+                    }
+                }
+                _ => (),
+            }
         }
         Some(ast::Block {
             stmts: stmts.into_boxed_slice(),
@@ -78,10 +84,6 @@ impl<I: IntoIterator<Item = Token, IntoIter = Lexer>> Parser<I> {
                 info!("Parsed identifier - {:?}", stms);
                 Some(stms)
             }
-            Some(Token {
-                kind: TokenKind::TokenEOF,
-                ..
-            }) => None,
             _ => todo!(),
         }
     }
@@ -89,9 +91,7 @@ impl<I: IntoIterator<Item = Token, IntoIter = Lexer>> Parser<I> {
     fn parse_identifier_stmt(&mut self) -> ast::Stmt {
         let lhs = self.curr_token.clone().unwrap(); // Safe to unwrap because we checked for Some
                                                     // in parse_stmt
-
         self.consume();
-        self.skip_skippable();
 
         match self.curr_token {
             Some(Token {
@@ -99,7 +99,6 @@ impl<I: IntoIterator<Item = Token, IntoIter = Lexer>> Parser<I> {
                 ..
             }) => {
                 self.consume();
-                self.skip_skippable();
                 match self.curr_token {
                     Some(Token {
                         kind: TokenKind::TokenKeyword(_),
@@ -107,24 +106,20 @@ impl<I: IntoIterator<Item = Token, IntoIter = Lexer>> Parser<I> {
                     }) => {
                         let type_ = self.parse_type();
                         self.consume();
-                        self.skip_skippable();
                         match self.curr_token {
                             Some(Token {
                                 kind: TokenKind::TokenAssign,
                                 ..
                             }) => {
                                 self.consume();
-                                self.skip_skippable();
                                 let rhs = self.parse_expr();
                                 self.consume();
-                                self.skip_skippable();
                                 match self.curr_token {
                                     Some(Token {
                                         kind: TokenKind::TokenNewLine,
                                         ..
                                     }) => {
                                         self.consume();
-                                        self.skip_skippable();
                                         ast::Stmt::Assign {
                                             lhs: ast::Expr::Identifier {
                                                 name: lhs.lexeme,
@@ -191,6 +186,16 @@ impl<I: IntoIterator<Item = Token, IntoIter = Lexer>> Parser<I> {
                     };
                     ast::Expr::Literal {
                         literal: ast::Literal::Int(int),
+                        location: token.location,
+                    }
+                }
+                Literal::Float => {
+                    let float = match token.lexeme.parse::<f64>() {
+                        Ok(float) => float,
+                        Err(_) => todo!(), // Error of invalid float
+                    };
+                    ast::Expr::Literal {
+                        literal: ast::Literal::Float(float),
                         location: token.location,
                     }
                 }
