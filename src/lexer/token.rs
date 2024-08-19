@@ -1,4 +1,3 @@
-use crate::utils::color;
 use serde::{Deserialize, Serialize};
 use std::path::{Path, PathBuf};
 
@@ -320,7 +319,7 @@ impl From<&PathBuf> for TokenLocation {
 #[derive(Clone, Debug, PartialEq, serde::Deserialize, serde::Serialize)]
 pub struct Token {
     /// The kind of the token
-    kind: TokenKind,
+    pub kind: TokenKind,
     /// The lexeme is the string representation of the token
     ///
     /// For example:
@@ -435,13 +434,14 @@ impl std::fmt::Display for TokenLocation {
 
 impl std::fmt::Display for Token {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        // use crate::utils::color;
         write!(
             f,
-            "{} {{ {}, \"{}\", {} }}",
-            color::cyan("Token"),
-            color::yellow(&format!("{}", self.kind)),
-            color::magenta(&self.lexeme),
-            color::blue(&format!("{}", self.location))
+            "Token {{ {}, \"{}\", {} }}",
+            // color::cyan("Token"),
+            self.kind,     // color::yellow(&format!("{}", self.kind)),
+            self.lexeme,   // color::magenta(&self.lexeme),
+            self.location, // color::blue(&format!("{}", self.location))
         )
     }
 }

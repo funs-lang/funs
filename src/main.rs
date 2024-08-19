@@ -1,10 +1,12 @@
 pub mod lexer;
 pub mod logger;
+pub mod parser;
 pub mod source;
 pub mod utils;
 
-use lexer::{token::Token, Lexer};
+use lexer::Lexer;
 use logger::Logger;
+use parser::Parser;
 use source::Source;
 use std::{env, path::PathBuf};
 
@@ -29,7 +31,14 @@ fn main() {
 
     let file_path: &str = &args[0];
     let source = Source::new(file_path);
-    let mut lexer = Lexer::new(&source);
-    let _tokens = (&mut lexer).collect::<Vec<Token>>();
-    lexer.emit_errors();
+    let lexer = Lexer::new(&source);
+    // let _tokens = (&mut lexer).collect::<Vec<Token>>();
+    // if lexer.errors().is_empty() {
+    //     println!("No errors found");
+    // } else {
+    //     lexer.emit_errors();
+    // }
+    let mut parser = Parser::new(lexer);
+    // let _ast = (&mut parser).collect::<Vec<parser::ast::Block>>();
+    println!("{}", parser.parse());
 }
