@@ -25,6 +25,10 @@ impl Lexer {
         lexer
     }
 
+    pub fn cursor(&self) -> &Cursor {
+        &self.cursor
+    }
+
     fn proceed(state: Box<dyn State>, transition_kind: TransitionKind) -> Transition {
         Transition::new(state, transition_kind)
     }

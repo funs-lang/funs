@@ -268,14 +268,11 @@ impl State for StateSymbol {
                     TransitionKind::EmitToken(Token::new(token_kind, lexeme, location)),
                 ))
             }
-            Some(c) => Ok(Lexer::proceed(
-                Box::new(StateStart),
-                TransitionKind::EmitToken(Token::new(
-                    TokenKind::TokenUnknown,
-                    c.to_string(),
-                    cursor.location().clone(),
-                )),
-            )),
+            Some(c) => Err(LexerError::UnexpectedToken(Token::new(
+                TokenKind::TokenUnknown,
+                c.to_string(),
+                cursor.location().clone(),
+            ))),
             None => Ok(Lexer::proceed(Box::new(StateEOF), TransitionKind::Consume)),
         }
     }
