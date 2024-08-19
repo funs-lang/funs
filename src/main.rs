@@ -4,7 +4,7 @@ pub mod parser;
 pub mod source;
 pub mod utils;
 
-use lexer::{token::Token, Lexer};
+use lexer::Lexer;
 use logger::Logger;
 use parser::Parser;
 use source::Source;
@@ -31,14 +31,14 @@ fn main() {
 
     let file_path: &str = &args[0];
     let source = Source::new(file_path);
-    let mut lexer = Lexer::new(&source);
-    let _tokens = (&mut lexer).collect::<Vec<Token>>();
+    let lexer = Lexer::new(&source);
+    // let tokens = (&mut lexer).collect::<Vec<Token>>();
     // if lexer.errors().is_empty() {
     //     println!("No errors found");
     // } else {
     //     lexer.emit_errors();
     // }
-    let mut parser = Parser::new(lexer);
-    let _ast = (&mut parser).collect::<Vec<parser::ast::Block>>();
-    println!("{:#?}", parser.parse());
+    let mut parser = Parser::new(source, lexer); // It can accepts lexer or tokens
+    let ast = parser.parse();
+    println!("{:#?}", ast);
 }
