@@ -1,10 +1,7 @@
 pub mod ast;
 
 use crate::{
-    lexer::{
-        token::{Keyword, Literal, Token, TokenKind},
-        Lexer,
-    },
+    lexer::token::{Keyword, Literal, Token, TokenKind},
     source::Source,
 };
 use std::iter::Peekable;
@@ -16,10 +13,10 @@ pub struct Parser<I: IntoIterator> {
     source: Source,
 }
 
-impl<I: IntoIterator<Item = Token, IntoIter = Lexer>> Parser<I> {
-    pub fn new(lexer: I) -> Parser<I> {
-        let mut lexer: Lexer = lexer.into_iter();
-        let source = lexer.cursor().source().clone();
+impl<I: IntoIterator<Item = Token>> Parser<I> {
+    pub fn new(source: Source, lexer: I) -> Parser<I> {
+        let mut lexer = lexer.into_iter();
+        let source = source.clone();
         info!("Created Parser");
         let curr_token = lexer.next();
         Parser {
@@ -31,17 +28,6 @@ impl<I: IntoIterator<Item = Token, IntoIter = Lexer>> Parser<I> {
 
     fn consume(&mut self) {
         self.curr_token = self.lexer.next();
-        self.consume_until(&[TokenKind::TokenSpace, TokenKind::TokenTab]);
-    }
-
-    fn consume_until(&mut self, kinds: &[TokenKind]) {
-        while let Some(token) = self.curr_token.clone() {
-            if kinds.contains(&token.kind) {
-                self.consume();
-            } else {
-                break;
-            }
-        }
     }
 
     pub fn parse(&mut self) -> ast::Ast {
@@ -206,14 +192,6 @@ impl<I: IntoIterator<Item = Token, IntoIter = Lexer>> Parser<I> {
     }
 }
 
-impl Iterator for Parser<Lexer> {
-    type Item = ast::Block;
-
-    fn next(&mut self) -> Option<Self::Item> {
-        self.parse_block()
-    }
-}
-
 #[cfg(test)]
 pub mod tests {
     use crate::{
@@ -227,17 +205,22 @@ pub mod tests {
         let fs_files = collect_fs_files("./testdata/native_types", true);
         assert_eq!(fs_files.len(), 16);
 
-        let fs_files = fs_files.iter().filter(|p| p.ends_with("id_int_assign.fs"));
+        let fs_files = fs_files
+            .iter()
+            .filter(|p| p.ends_with("id_int_assign.fs") || p.ends_with("id_float_assign.fs"));
 
         for path in fs_files {
             info!("file -> {:?}", path);
             eprintln!("file -> {:?}", path);
             let input = std::fs::File::open(path.clone()).unwrap();
             let content = std::io::read_to_string(input).unwrap();
+            #[cfg(target_os = "windows")]
+            let content = content.replace("\r\n", "\n");
             let source = Source::from(content);
 
             let fs_file = path.to_str().unwrap();
-            let output_ast = Parser::new(Lexer::new(&source)).parse();
+
+            let output_ast = Parser::new(source.clone(), Lexer::new(&source)).parse();
             let ast_file = fs_file.to_string().replace(".fs", ".ast.json");
             let ast = std::fs::File::open(ast_file).unwrap();
             // println!("{}", serde_json::to_string(&output_ast).unwrap());
