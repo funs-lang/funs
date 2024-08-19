@@ -2,7 +2,7 @@ use std::fs;
 use std::path::{Path, PathBuf};
 use tracing::info;
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct Source {
     file_path: PathBuf,
     content: String,
