@@ -223,9 +223,9 @@ pub mod tests {
             let output_ast = Parser::new(source.clone(), Lexer::new(&source)).parse();
             let ast_file = fs_file.to_string().replace(".fs", ".ast.json");
             let ast = std::fs::File::open(ast_file).unwrap();
-            // println!("{}", serde_json::to_string(&output_ast).unwrap());
+            // println!("{}", serde_json::to_string(&output_ast.root).unwrap());
             let expected_ast = serde_json::from_reader(ast).unwrap();
-            assert_eq!(output_ast, expected_ast);
+            assert_eq!(output_ast.root, expected_ast);
         }
     }
 

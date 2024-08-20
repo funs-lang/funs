@@ -1,39 +1,33 @@
 {
-  "source": {
-    "file_path": "",
-    "content": "_x_float: float = 0.0\n"
-  },
-  "root": {
-    "stmts": [
-      {
-        "Assign": {
-          "lhs": {
-            "Identifier": {
-              "name": "_x_float",
-              "location": {
-                "file_path": "",
-                "line": 0,
-                "column_start": 0,
-                "column_end": 8
-              }
+  "stmts": [
+    {
+      "Assign": {
+        "lhs": {
+          "Identifier": {
+            "name": "_x_float",
+            "location": {
+              "file_path": "",
+              "line": 0,
+              "column_start": 0,
+              "column_end": 8
             }
-          },
-          "type_": "Float",
-          "rhs": {
-            "Literal": {
-              "literal": {
-                "Float": 0.0
-              },
-              "location": {
-                "file_path": "",
-                "line": 0,
-                "column_start": 18,
-                "column_end": 21
-              }
+          }
+        },
+        "type_": "Float",
+        "rhs": {
+          "Literal": {
+            "literal": {
+              "Float": 0.0
+            },
+            "location": {
+              "file_path": "",
+              "line": 0,
+              "column_start": 18,
+              "column_end": 21
             }
           }
         }
       }
-    ]
-  }
+    }
+  ]
 }
