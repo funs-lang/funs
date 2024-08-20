@@ -1,0 +1,33 @@
+{
+  "stmts": [
+    {
+      "Assign": {
+        "lhs": {
+          "Identifier": {
+            "name": "x",
+            "location": {
+              "file_path": "",
+              "line": 0,
+              "column_start": 0,
+              "column_end": 1
+            }
+          }
+        },
+        "type_": "Str",
+        "rhs": {
+          "Literal": {
+            "literal": {
+              "Str": "\"hello\""
+            },
+            "location": {
+              "file_path": "",
+              "line": 0,
+              "column_start": 9,
+              "column_end": 16
+            }
+          }
+        }
+      }
+    }
+  ]
+}

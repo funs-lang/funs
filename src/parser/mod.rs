@@ -194,7 +194,13 @@ impl<I: IntoIterator<Item = Token>> Parser<I> {
                         location: token.location,
                     }
                 }
-                _ => todo!(),
+                Literal::Str => {
+                    let str_ = token.lexeme.clone();
+                    ast::Expr::Literal {
+                        literal: ast::Literal::Str(str_),
+                        location: token.location,
+                    }
+                }
             },
             _ => todo!(),
         }
@@ -219,6 +225,8 @@ pub mod tests {
                 || p.ends_with("id_float_assign.fs")
                 || p.ends_with("id_bool_true_assign.fs")
                 || p.ends_with("id_bool_false_assign.fs")
+                || p.ends_with("id_str_assign.fs")
+                || p.ends_with("id_str_assign_multiple_words.fs")
         });
 
         for path in fs_files {
