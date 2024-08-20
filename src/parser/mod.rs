@@ -4,11 +4,10 @@ use crate::{
     lexer::token::{Keyword, Literal, Token, TokenKind},
     source::Source,
 };
-use std::iter::Peekable;
 use tracing::info;
 
 pub struct Parser<I: IntoIterator> {
-    lexer: Peekable<I::IntoIter>,
+    lexer: I::IntoIter,
     curr_token: Option<Token>,
     source: Source,
 }
@@ -20,7 +19,7 @@ impl<I: IntoIterator<Item = Token>> Parser<I> {
         info!("Created Parser");
         let curr_token = lexer.next();
         Parser {
-            lexer: lexer.peekable(),
+            lexer,
             curr_token,
             source,
         }
@@ -185,6 +184,16 @@ impl<I: IntoIterator<Item = Token>> Parser<I> {
                         location: token.location,
                     }
                 }
+                Literal::Bool => {
+                    let bool_ = match token.lexeme.parse::<bool>() {
+                        Ok(bool_) => bool_,
+                        Err(_) => todo!(), // Error of invalid bool
+                    };
+                    ast::Expr::Literal {
+                        literal: ast::Literal::Bool(bool_),
+                        location: token.location,
+                    }
+                }
                 _ => todo!(),
             },
             _ => todo!(),
@@ -205,9 +214,12 @@ pub mod tests {
         let fs_files = collect_fs_files("./testdata/native_types", true);
         assert_eq!(fs_files.len(), 16);
 
-        let fs_files = fs_files
-            .iter()
-            .filter(|p| p.ends_with("id_int_assign.fs") || p.ends_with("id_float_assign.fs"));
+        let fs_files = fs_files.iter().filter(|p| {
+            p.ends_with("id_int_assign.fs")
+                || p.ends_with("id_float_assign.fs")
+                || p.ends_with("id_bool_true_assign.fs")
+                || p.ends_with("id_bool_false_assign.fs")
+        });
 
         for path in fs_files {
             info!("file -> {:?}", path);
