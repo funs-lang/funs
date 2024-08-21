@@ -54,13 +54,23 @@
     }
   },
   {
-    "kind": "TokenEOF",
-    "lexeme": "",
+    "kind": "TokenNewLine",
+    "lexeme": "\\n",
     "location": {
       "file_path": "",
       "line": 0,
       "column_start": 23,
       "column_end": 23
+    }
+  },
+  {
+    "kind": "TokenEOF",
+    "lexeme": "",
+    "location": {
+      "file_path": "",
+      "line": 1,
+      "column_start": 0,
+      "column_end": 0
     }
   }
 ]

@@ -14,8 +14,16 @@ pub struct Block {
 
 #[derive(Debug, Deserialize, Serialize, PartialEq)]
 pub enum Stmt {
-    Assign { lhs: Expr, type_: Type, rhs: Expr },
+    Assign {
+        lhs: Expr,
+        type_: Type,
+        rhs: Expr,
+    },
     Expr(Expr),
+    Comment {
+        comment: String,
+        location: TokenLocation,
+    },
 }
 
 #[derive(Debug, Deserialize, Serialize, PartialEq)]

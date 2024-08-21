@@ -123,7 +123,7 @@ pub mod tests {
             let tokens_file = fs_file.to_string().replace(".fs", ".tokens.json");
             let tokens = std::fs::File::open(tokens_file.clone()).unwrap();
             let expected_tokens: Vec<Token> = serde_json::from_reader(tokens).unwrap();
-            println!("{}", serde_json::to_string(&output_tokens).unwrap());
+            // println!("{}", serde_json::to_string(&output_tokens).unwrap());
             assert_eq!(output_tokens, expected_tokens);
         }
     }
@@ -233,7 +233,7 @@ pub mod tests {
             let fs_file = path.to_str().unwrap();
             let tokens_file = fs_file.to_string().replace(".fs", ".tokens.json");
             let tokens = std::fs::File::open(tokens_file).unwrap();
-            println!("{}", serde_json::to_string(&output_tokens).unwrap());
+            // println!("{}", serde_json::to_string(&output_tokens).unwrap());
             let expected_tokens: Vec<Token> = serde_json::from_reader(tokens).unwrap();
             assert_eq!(output_tokens, expected_tokens);
         }

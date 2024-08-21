@@ -1,0 +1,33 @@
+{
+  "stmts": [
+    {
+      "Assign": {
+        "lhs": {
+          "Identifier": {
+            "name": "_x_int",
+            "location": {
+              "file_path": "",
+              "line": 0,
+              "column_start": 4,
+              "column_end": 10
+            }
+          }
+        },
+        "type_": "Int",
+        "rhs": {
+          "Literal": {
+            "literal": {
+              "Int": 0
+            },
+            "location": {
+              "file_path": "",
+              "line": 0,
+              "column_start": 22,
+              "column_end": 23
+            }
+          }
+        }
+      }
+    }
+  ]
+}
