@@ -1,0 +1,33 @@
+{
+  "stmts": [
+    {
+      "Assign": {
+        "lhs": {
+          "Identifier": {
+            "name": "i",
+            "location": {
+              "file_path": "",
+              "line": 0,
+              "column_start": 0,
+              "column_end": 1
+            }
+          }
+        },
+        "type_": "Int",
+        "rhs": {
+          "Literal": {
+            "literal": {
+              "Int": 1
+            },
+            "location": {
+              "file_path": "",
+              "line": 0,
+              "column_start": 9,
+              "column_end": 10
+            }
+          }
+        }
+      }
+    }
+  ]
+}

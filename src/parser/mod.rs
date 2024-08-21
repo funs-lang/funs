@@ -69,13 +69,20 @@ impl<I: IntoIterator<Item = Token>> Parser<I> {
                 info!("Parsed identifier - {:?}", stms);
                 Some(stms)
             }
+            Some(Token {
+                kind: TokenKind::TokenComment,
+                ..
+            }) => {
+                let comment = self.parse_comment_stmt();
+                info!("Parsed comment - {:?}", comment);
+                Some(comment)
+            }
             _ => todo!(),
         }
     }
 
     fn parse_identifier_stmt(&mut self) -> ast::Stmt {
-        let lhs = self.curr_token.clone().unwrap(); // Safe to unwrap because we checked for Some
-                                                    // in parse_stmt
+        let lhs = self.curr_token.clone().unwrap(); // Safe to unwrap
         self.consume();
 
         match self.curr_token {
@@ -88,39 +95,61 @@ impl<I: IntoIterator<Item = Token>> Parser<I> {
                     Some(Token {
                         kind: TokenKind::TokenKeyword(_),
                         ..
+                    }) => self.parse_assign_stmt(lhs),
+                    _ => todo!(), // Match `(` and parse a function
+                }
+            }
+            _ => todo!(),
+        }
+    }
+
+    fn parse_assign_stmt(&mut self, lhs: Token) -> ast::Stmt {
+        let type_ = self.parse_type();
+        info!("Parsed type - {:?}", type_);
+        self.consume();
+        match self.curr_token {
+            Some(Token {
+                kind: TokenKind::TokenAssign,
+                ..
+            }) => {
+                self.consume();
+                let rhs = self.parse_expr();
+                info!("Parsed expr - {:?}", rhs);
+                self.consume();
+                match self.curr_token {
+                    Some(Token {
+                        kind: TokenKind::TokenNewLine,
+                        ..
                     }) => {
-                        let type_ = self.parse_type();
                         self.consume();
-                        match self.curr_token {
-                            Some(Token {
-                                kind: TokenKind::TokenAssign,
-                                ..
-                            }) => {
-                                self.consume();
-                                let rhs = self.parse_expr();
-                                self.consume();
-                                match self.curr_token {
-                                    Some(Token {
-                                        kind: TokenKind::TokenNewLine,
-                                        ..
-                                    }) => {
-                                        self.consume();
-                                        ast::Stmt::Assign {
-                                            lhs: ast::Expr::Identifier {
-                                                name: lhs.lexeme,
-                                                location: lhs.location,
-                                            },
-                                            type_,
-                                            rhs,
-                                        }
-                                    }
-                                    _ => todo!(),
-                                }
-                            }
-                            _ => todo!(),
+                        ast::Stmt::Assign {
+                            lhs: ast::Expr::Identifier {
+                                name: lhs.lexeme,
+                                location: lhs.location,
+                            },
+                            type_,
+                            rhs,
                         }
                     }
-                    _ => todo!(), // Match `(` and parse a function
+                    _ => todo!(),
+                }
+            }
+            _ => todo!(),
+        }
+    }
+
+    fn parse_comment_stmt(&mut self) -> ast::Stmt {
+        let comment = self.curr_token.clone().unwrap(); // Safe to unwrap
+        self.consume();
+        match self.curr_token {
+            Some(Token {
+                kind: TokenKind::TokenNewLine,
+                ..
+            }) => {
+                self.consume();
+                ast::Stmt::Comment {
+                    comment: comment.lexeme,
+                    location: comment.location,
                 }
             }
             _ => todo!(),
@@ -222,11 +251,16 @@ pub mod tests {
 
         let fs_files = fs_files.iter().filter(|p| {
             p.ends_with("id_int_assign.fs")
+                || p.ends_with("id_int_assign_2.fs")
+                || p.ends_with("id_int_assign_with_len_one.fs")
+                || p.ends_with("id_int_assign_with_spaces.fs")
                 || p.ends_with("id_float_assign.fs")
                 || p.ends_with("id_bool_true_assign.fs")
                 || p.ends_with("id_bool_false_assign.fs")
                 || p.ends_with("id_str_assign.fs")
                 || p.ends_with("id_str_assign_multiple_words.fs")
+                || p.ends_with("comment.fs")
+                || p.ends_with("comment_and_id_int.fs")
         });
 
         for path in fs_files {
@@ -243,7 +277,7 @@ pub mod tests {
             let output_ast = Parser::new(source.clone(), Lexer::new(&source)).parse();
             let ast_file = fs_file.to_string().replace(".fs", ".ast.json");
             let ast = std::fs::File::open(ast_file).unwrap();
-            // println!("{}", serde_json::to_string(&output_ast.root).unwrap());
+            println!("{}", serde_json::to_string(&output_ast.root).unwrap());
             let expected_ast = serde_json::from_reader(ast).unwrap();
             assert_eq!(output_ast.root, expected_ast);
         }

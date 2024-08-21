@@ -1,0 +1,15 @@
+{
+  "stmts": [
+    {
+      "Comment": {
+        "comment": "# this is a comment",
+        "location": {
+          "file_path": "",
+          "line": 0,
+          "column_start": 0,
+          "column_end": 19
+        }
+      }
+    }
+  ]
+}
