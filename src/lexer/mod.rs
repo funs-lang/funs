@@ -2,8 +2,8 @@ pub mod cursor;
 pub mod states;
 pub mod token;
 
+use crate::lexer::token::Token;
 use crate::source::Source;
-use crate::{lexer::token::Token, utils::color};
 use cursor::Cursor;
 use states::{State, StateStart, Transition, TransitionKind};
 use tracing::{error, info};
@@ -11,7 +11,6 @@ use tracing::{error, info};
 pub struct Lexer {
     cursor: Cursor,
     state: Box<dyn State>,
-    errors: Vec<LexerError>,
 }
 
 impl Lexer {
@@ -19,7 +18,6 @@ impl Lexer {
         let lexer = Lexer {
             cursor: Cursor::from(source),
             state: Box::new(StateStart),
-            errors: Vec::new(),
         };
         info!("Created Lexer");
         lexer
@@ -32,21 +30,6 @@ impl Lexer {
     fn proceed(state: Box<dyn State>, transition_kind: TransitionKind) -> Transition {
         Transition::new(state, transition_kind)
     }
-
-    pub fn errors(&self) -> &Vec<LexerError> {
-        &self.errors
-    }
-
-    pub fn emit_errors(&self) {
-        if self.errors.is_empty() {
-            return;
-        }
-
-        eprintln!("{}", color::red("Errors:"));
-        for error in &self.errors {
-            eprintln!("  {}", error);
-        }
-    }
 }
 
 impl Iterator for Lexer {
@@ -57,14 +40,8 @@ impl Iterator for Lexer {
             let transition = match self.state.visit(&mut self.cursor) {
                 Ok(transition) => transition,
                 Err(err) => {
-                    self.errors.push(err.clone());
-                    return match err {
-                        LexerError::UnexpectedToken(token) => {
-                            error!("Unexpected token: {:?}", token);
-                            // TODO: return a transition to continue lexing (for error recovery)
-                            None
-                        }
-                    };
+                    error!("{}", err);
+                    return None;
                 }
             };
             let (state, transition_kind) = transition.into_parts();
@@ -84,14 +61,12 @@ impl Iterator for Lexer {
 
 #[derive(Clone, Debug, PartialEq)]
 pub enum LexerError {
-    UnexpectedToken(Token),
+    LexerError,
 }
 
 impl std::fmt::Display for LexerError {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        match self {
-            LexerError::UnexpectedToken(token) => write!(f, "Unexpected token: {}", token),
-        }
+        write!(f, "LexerError")
     }
 }
 
@@ -106,9 +81,9 @@ pub mod tests {
     use tracing::info;
 
     #[test]
-    fn native_types() {
+    fn test_lexer_native_types() {
         let fs_files = collect_fs_files("./testdata/native_types", true);
-        assert_eq!(fs_files.len(), 16);
+        assert_eq!(fs_files.len(), 15);
 
         for path in fs_files {
             info!("file -> {:?}", path);
@@ -129,7 +104,7 @@ pub mod tests {
     }
 
     #[test]
-    fn functions() {
+    fn test_lexer_functions() {
         let fs_files = collect_fs_files("./testdata/functions", true);
         assert_eq!(fs_files.len(), 9);
 
@@ -151,7 +126,7 @@ pub mod tests {
     }
 
     #[test]
-    fn lists() {
+    fn text_lexer_lists() {
         let fs_files = collect_fs_files("./testdata/lists", true);
         assert_eq!(fs_files.len(), 3);
 
@@ -173,7 +148,7 @@ pub mod tests {
     }
 
     #[test]
-    fn tuples() {
+    fn test_lexer_tuples() {
         let fs_files = collect_fs_files("./testdata/tuples", true);
         assert_eq!(fs_files.len(), 3);
 
@@ -195,7 +170,7 @@ pub mod tests {
     }
 
     #[test]
-    fn records() {
+    fn test_lexer_records() {
         let fs_files = collect_fs_files("./testdata/records", true);
         assert_eq!(fs_files.len(), 3);
 
@@ -217,7 +192,7 @@ pub mod tests {
     }
 
     #[test]
-    fn variants() {
+    fn test_lexer_variants() {
         let fs_files = collect_fs_files("./testdata/variants", true);
         assert_eq!(fs_files.len(), 1);
 
@@ -233,7 +208,28 @@ pub mod tests {
             let fs_file = path.to_str().unwrap();
             let tokens_file = fs_file.to_string().replace(".fs", ".tokens.json");
             let tokens = std::fs::File::open(tokens_file).unwrap();
-            // println!("{}", serde_json::to_string(&output_tokens).unwrap());
+            let expected_tokens: Vec<Token> = serde_json::from_reader(tokens).unwrap();
+            assert_eq!(output_tokens, expected_tokens);
+        }
+    }
+
+    #[test]
+    fn test_lexer_panics() {
+        let fs_files = collect_fs_files("./testdata/panics", true);
+        assert_eq!(fs_files.len(), 1);
+
+        for path in fs_files {
+            info!("file -> {:?}", path);
+            eprintln!("file -> {:?}", path);
+            let input = std::fs::File::open(path.clone()).unwrap();
+            let content = std::io::read_to_string(input).unwrap();
+            let source = Source::from(content);
+            let lexer = Lexer::new(&source);
+            let output_tokens = lexer.collect::<Vec<Token>>();
+
+            let fs_file = path.to_str().unwrap();
+            let tokens_file = fs_file.to_string().replace(".fs", ".tokens.json");
+            let tokens = std::fs::File::open(tokens_file).unwrap();
             let expected_tokens: Vec<Token> = serde_json::from_reader(tokens).unwrap();
             assert_eq!(output_tokens, expected_tokens);
         }
