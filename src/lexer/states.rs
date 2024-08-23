@@ -92,11 +92,17 @@ impl State for StateStart {
                 Box::new(StateNumber),
                 TransitionKind::AdvanceOffset,
             )),
-            Some(c) => Err(LexerError::UnexpectedToken(Token::new(
-                TokenKind::TokenUnknown,
-                c.to_string(),
-                cursor.location().clone(),
-            ))),
+            Some(c) => {
+                cursor.advance_offset();
+                Ok(Lexer::proceed(
+                    Box::new(StateStart),
+                    TransitionKind::EmitToken(Token::new(
+                        TokenKind::TokenUnknown,
+                        c.to_string(),
+                        cursor.location().clone(),
+                    )),
+                ))
+            }
             None => Ok(Lexer::proceed(Box::new(StateEOF), TransitionKind::Consume)),
         }
     }
@@ -108,11 +114,6 @@ pub struct StateString;
 impl State for StateString {
     fn visit(&self, cursor: &mut Cursor) -> Result<Transition, LexerError> {
         match cursor.peek() {
-            Some(c) if c.eq(&'\n') => Err(LexerError::UnexpectedToken(Token::new(
-                TokenKind::TokenUnknown,
-                "\\n".to_string(),
-                cursor.location().clone(),
-            ))),
             Some(c) if c.ne(&'"') => Ok(Lexer::proceed(
                 Box::new(StateString),
                 TransitionKind::AdvanceOffset,
@@ -128,11 +129,14 @@ impl State for StateString {
                     )),
                 ))
             }
-            Some(c) => Err(LexerError::UnexpectedToken(Token::new(
-                TokenKind::TokenUnknown,
-                c.to_string(),
-                cursor.location().clone(),
-            ))),
+            Some(c) => Ok(Lexer::proceed(
+                Box::new(StateStart),
+                TransitionKind::EmitToken(Token::new(
+                    TokenKind::TokenUnknown,
+                    c.to_string(),
+                    cursor.location().clone(),
+                )),
+            )),
             None => Ok(Lexer::proceed(Box::new(StateEOF), TransitionKind::Consume)),
         }
     }
@@ -266,11 +270,14 @@ impl State for StateSymbol {
                     TransitionKind::EmitToken(Token::new(token_kind, lexeme, location)),
                 ))
             }
-            Some(c) => Err(LexerError::UnexpectedToken(Token::new(
-                TokenKind::TokenUnknown,
-                c.to_string(),
-                cursor.location().clone(),
-            ))),
+            Some(c) => Ok(Lexer::proceed(
+                Box::new(StateStart),
+                TransitionKind::EmitToken(Token::new(
+                    TokenKind::TokenUnknown,
+                    c.to_string(),
+                    cursor.location().clone(),
+                )),
+            )),
             None => Ok(Lexer::proceed(Box::new(StateEOF), TransitionKind::Consume)),
         }
     }
