@@ -1,0 +1,67 @@
+{
+  "stmts": [
+    {
+      "Assign": {
+        "lhs": {
+          "Identifier": {
+            "name": "x",
+            "location": {
+              "file_path": "",
+              "line": 0,
+              "column_start": 0,
+              "column_end": 1
+            }
+          }
+        },
+        "type_": "Int",
+        "rhs": {
+          "Err": {
+            "UnexpectedToken": {
+              "token": {
+                "kind": "TokenUnknown",
+                "lexeme": "~",
+                "location": {
+                  "file_path": "",
+                  "line": 0,
+                  "column_start": 7,
+                  "column_end": 8
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "Assign": {
+        "lhs": {
+          "Identifier": {
+            "name": "y",
+            "location": {
+              "file_path": "",
+              "line": 1,
+              "column_start": 0,
+              "column_end": 1
+            }
+          }
+        },
+        "type_": "Int",
+        "rhs": {
+          "Ok": {
+            "Literal": {
+              "literal": {
+                "Int": 100
+              },
+              "location": {
+                "file_path": "",
+                "line": 1,
+                "column_start": 9,
+                "column_end": 12
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}
