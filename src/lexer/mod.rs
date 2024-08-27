@@ -216,7 +216,7 @@ pub mod tests {
     #[test]
     fn test_lexer_errors() {
         let fs_files = collect_fs_files("./testdata/errors", true);
-        assert_eq!(fs_files.len(), 1);
+        assert_eq!(fs_files.len(), 2);
 
         for path in fs_files {
             info!("file -> {:?}", path);
