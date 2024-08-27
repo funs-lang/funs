@@ -3,6 +3,7 @@ use crate::{
     lexer::token::{Keyword, Literal, Token, TokenKind},
     source::Source,
 };
+use tracing::error;
 use tracing::info;
 
 pub struct Parser<I: IntoIterator> {
@@ -15,8 +16,8 @@ impl<I: IntoIterator<Item = Token>> Parser<I> {
     pub fn new(source: Source, lexer: I) -> Parser<I> {
         let mut lexer = lexer.into_iter();
         let source = source.clone();
-        info!("Created Parser");
         let curr_token = lexer.next();
+        info!("Created Parser");
         Parser {
             lexer,
             curr_token,
@@ -30,12 +31,12 @@ impl<I: IntoIterator<Item = Token>> Parser<I> {
 
     pub fn parse(&mut self) -> ast::Ast {
         let source = self.source.clone();
-        let ast::Block { stmts } = self.parse_block().unwrap();
+        let ast::Block { stmts } = self.parse_block();
         let root = ast::Block { stmts };
         ast::Ast::new(source, root)
     }
 
-    fn parse_block(&mut self) -> Option<ast::Block> {
+    fn parse_block(&mut self) -> ast::Block {
         let mut stmts = Vec::new();
         loop {
             match self.curr_token {
@@ -45,28 +46,25 @@ impl<I: IntoIterator<Item = Token>> Parser<I> {
                 }) => break,
                 Some(_) => {
                     let stmt = self.parse_stmt();
-                    match stmt {
-                        Some(stmt) => stmts.push(stmt),
-                        None => break,
-                    }
+                    stmts.push(stmt);
                 }
                 _ => (),
             }
         }
-        Some(ast::Block {
+        ast::Block {
             stmts: stmts.into_boxed_slice(),
-        })
+        }
     }
 
-    fn parse_stmt(&mut self) -> Option<ast::Stmt> {
-        match self.curr_token {
+    fn parse_stmt(&mut self) -> ast::Stmt {
+        match &self.curr_token {
             Some(Token {
                 kind: TokenKind::TokenIdentifier,
                 ..
             }) => {
                 let stms = self.parse_identifier_stmt();
                 info!("Parsed identifier - {:?}", stms);
-                Some(stms)
+                stms
             }
             Some(Token {
                 kind: TokenKind::TokenComment,
@@ -74,9 +72,9 @@ impl<I: IntoIterator<Item = Token>> Parser<I> {
             }) => {
                 let comment = self.parse_comment_stmt();
                 info!("Parsed comment - {:?}", comment);
-                Some(comment)
+                comment
             }
-            _ => todo!(),
+            c => todo!("{:?}", c),
         }
     }
 
@@ -103,6 +101,10 @@ impl<I: IntoIterator<Item = Token>> Parser<I> {
     }
 
     fn parse_assign_stmt(&mut self, lhs: Token) -> ast::Stmt {
+        let lhs = ast::Expr::Identifier {
+            name: lhs.lexeme,
+            location: lhs.location,
+        };
         let type_ = self.parse_type();
         info!("Parsed type - {:?}", type_);
         self.consume();
@@ -122,12 +124,9 @@ impl<I: IntoIterator<Item = Token>> Parser<I> {
                     }) => {
                         self.consume();
                         ast::Stmt::Assign {
-                            lhs: ast::Expr::Identifier {
-                                name: lhs.lexeme,
-                                location: lhs.location,
-                            },
+                            lhs,
                             type_,
-                            rhs,
+                            rhs: Ok(rhs),
                         }
                     }
                     _ => todo!(),
@@ -136,7 +135,20 @@ impl<I: IntoIterator<Item = Token>> Parser<I> {
             Some(Token {
                 kind: TokenKind::TokenUnknown,
                 ..
-            }) => panic!("Unexpected token {:?}", self.curr_token),
+            }) => {
+                let err = ast::AstError::UnexpectedToken {
+                    token: self.curr_token.clone().unwrap(),
+                };
+                error!("{}", err);
+
+                self.consume_until_new_statement();
+
+                ast::Stmt::Assign {
+                    lhs,
+                    type_,
+                    rhs: Err(err),
+                }
+            }
             _ => todo!(),
         }
     }
@@ -237,6 +249,21 @@ impl<I: IntoIterator<Item = Token>> Parser<I> {
             _ => todo!(),
         }
     }
+
+    fn consume_until_new_statement(&mut self) {
+        // Consume all tokens until a newline token is found
+        while self.curr_token.is_some() {
+            if let Some(Token {
+                kind: TokenKind::TokenNewLine,
+                ..
+            }) = self.curr_token
+            {
+                self.consume();
+                break;
+            }
+            self.consume();
+        }
+    }
 }
 
 #[cfg(test)]
@@ -287,9 +314,8 @@ pub mod tests {
     }
 
     #[test]
-    #[should_panic]
-    fn test_parser_panics() {
-        let fs_files = collect_fs_files("./testdata/panics", true);
+    fn test_parser_errors() {
+        let fs_files = collect_fs_files("./testdata/errors", true);
         assert_eq!(fs_files.len(), 1);
 
         for path in fs_files {
@@ -301,14 +327,14 @@ pub mod tests {
             let content = content.replace("\r\n", "\n");
             let source = Source::from(content);
 
-            let _fs_file = path.to_str().unwrap();
+            let fs_file = path.to_str().unwrap();
 
-            let _output_ast = Parser::new(source.clone(), Lexer::new(&source)).parse();
-            // let ast_file = fs_file.to_string().replace(".fs", ".ast.json");
-            // let ast = std::fs::File::open(ast_file).unwrap();
+            let output_ast = Parser::new(source.clone(), Lexer::new(&source)).parse();
+            let ast_file = fs_file.to_string().replace(".fs", ".ast.json");
+            let ast = std::fs::File::open(ast_file).unwrap();
             // println!("{}", serde_json::to_string(&output_ast.root).unwrap());
-            // let expected_ast = serde_json::from_reader(ast).unwrap();
-            // assert_eq!(output_ast.root, expected_ast);
+            let expected_ast = serde_json::from_reader(ast).unwrap();
+            assert_eq!(output_ast.root, expected_ast);
         }
     }
 }

@@ -26,15 +26,17 @@
         },
         "type_": "Int",
         "rhs": {
-          "Literal": {
-            "literal": {
-              "Int": 0
-            },
-            "location": {
-              "file_path": "",
-              "line": 1,
-              "column_start": 9,
-              "column_end": 10
+          "Ok": {
+            "Literal": {
+              "literal": {
+                "Int": 0
+              },
+              "location": {
+                "file_path": "",
+                "line": 1,
+                "column_start": 9,
+                "column_end": 10
+              }
             }
           }
         }
