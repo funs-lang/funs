@@ -15,16 +15,17 @@
         },
         "type_": "Int",
         "rhs": {
-          "Ok": {
-            "Literal": {
-              "literal": {
-                "Int": 0
-              },
-              "location": {
-                "file_path": "",
-                "line": 0,
-                "column_start": 22,
-                "column_end": 23
+          "Err": {
+            "UnexpectedToken": {
+              "token": {
+                "kind": "TokenUnknown",
+                "lexeme": "~",
+                "location": {
+                  "file_path": "",
+                  "line": 0,
+                  "column_start": 18,
+                  "column_end": 19
+                }
               }
             }
           }

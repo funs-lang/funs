@@ -15,15 +15,17 @@
         },
         "type_": "Str",
         "rhs": {
-          "Literal": {
-            "literal": {
-              "Str": "\"hello\""
-            },
-            "location": {
-              "file_path": "",
-              "line": 0,
-              "column_start": 9,
-              "column_end": 16
+          "Ok": {
+            "Literal": {
+              "literal": {
+                "Str": "\"hello\""
+              },
+              "location": {
+                "file_path": "",
+                "line": 0,
+                "column_start": 9,
+                "column_end": 16
+              }
             }
           }
         }

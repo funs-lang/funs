@@ -214,8 +214,8 @@ pub mod tests {
     }
 
     #[test]
-    fn test_lexer_panics() {
-        let fs_files = collect_fs_files("./testdata/panics", true);
+    fn test_lexer_errors() {
+        let fs_files = collect_fs_files("./testdata/errors", true);
         assert_eq!(fs_files.len(), 1);
 
         for path in fs_files {

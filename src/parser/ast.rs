@@ -1,5 +1,23 @@
-use crate::{lexer::token::TokenLocation, source::Source};
+use crate::{
+    lexer::token::{Token, TokenLocation},
+    source::Source,
+};
 use serde::{Deserialize, Serialize};
+
+#[derive(Debug, Deserialize, Serialize, PartialEq)]
+pub enum AstError {
+    UnexpectedToken { token: Token },
+}
+
+impl std::fmt::Display for AstError {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        match self {
+            AstError::UnexpectedToken { token } => {
+                write!(f, "Unexpected token: {}", token)
+            }
+        }
+    }
+}
 
 #[derive(Debug, Deserialize, Serialize, PartialEq)]
 pub struct Ast {
@@ -17,7 +35,7 @@ pub enum Stmt {
     Assign {
         lhs: Expr,
         type_: Type,
-        rhs: Expr,
+        rhs: Result<Expr, AstError>,
     },
     Expr(Expr),
     Comment {

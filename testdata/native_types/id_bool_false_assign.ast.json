@@ -15,15 +15,17 @@
         },
         "type_": "Bool",
         "rhs": {
-          "Literal": {
-            "literal": {
-              "Bool": false
-            },
-            "location": {
-              "file_path": "",
-              "line": 0,
-              "column_start": 16,
-              "column_end": 21
+          "Ok": {
+            "Literal": {
+              "literal": {
+                "Bool": false
+              },
+              "location": {
+                "file_path": "",
+                "line": 0,
+                "column_start": 16,
+                "column_end": 21
+              }
             }
           }
         }
