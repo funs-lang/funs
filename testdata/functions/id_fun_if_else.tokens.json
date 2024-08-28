@@ -184,7 +184,7 @@
     }
   },
   {
-    "kind": "TokenMultiply",
+    "kind": "TokenStar",
     "lexeme": "*",
     "location": {
       "file_path": "",
@@ -276,7 +276,7 @@
     }
   },
   {
-    "kind": "TokenMultiply",
+    "kind": "TokenStar",
     "lexeme": "*",
     "location": {
       "file_path": "",

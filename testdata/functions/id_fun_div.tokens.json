@@ -134,7 +134,7 @@
     }
   },
   {
-    "kind": "TokenDivide",
+    "kind": "TokenSlash",
     "lexeme": "/",
     "location": {
       "file_path": "",

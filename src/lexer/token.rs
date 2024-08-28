@@ -30,8 +30,8 @@ const CLOSE_BRACE: &str = "]";
 const COMMA: &str = ",";
 const MINUS: &str = "-";
 const PLUS: &str = "+";
-const MULTIPLY: &str = "*";
-const DIVIDE: &str = "/";
+const STAR: &str = "*";
+const SLASH: &str = "/";
 const GREATER: &str = ">";
 const RIGHT_ARROW: &str = "->";
 const RIGHT_DOUBLE_ARROW: &str = "=>";
@@ -91,10 +91,10 @@ pub enum TokenKind {
     TokenPipe,             // |
     TokenEOF,              // End of file
     // Operators
-    TokenPlus,     // +
-    TokenMinus,    // -
-    TokenMultiply, // *
-    TokenDivide,   // /
+    TokenPlus,  // +
+    TokenMinus, // -
+    TokenStar,  // *
+    TokenSlash, // /
     TokenUnknown,
 }
 
@@ -123,8 +123,8 @@ impl TokenKind {
                 | COMMA
                 | MINUS
                 | PLUS
-                | MULTIPLY
-                | DIVIDE
+                | STAR
+                | SLASH
                 | GREATER
                 | NEW_LINE
         )
@@ -178,8 +178,8 @@ impl TokenKind {
             COMMA => Some(TokenKind::TokenComma),
             PLUS => Some(TokenKind::TokenPlus),
             MINUS => Some(TokenKind::TokenMinus),
-            MULTIPLY => Some(TokenKind::TokenMultiply),
-            DIVIDE => Some(TokenKind::TokenDivide),
+            STAR => Some(TokenKind::TokenStar),
+            SLASH => Some(TokenKind::TokenSlash),
             RIGHT_ARROW => Some(TokenKind::TokenRightArrow),
             RIGHT_DOUBLE_ARROW => Some(TokenKind::TokenRightDoubleArrow),
             PLUS_PLUS => Some(TokenKind::TokenPlusPlus),
@@ -388,8 +388,8 @@ impl std::fmt::Display for TokenKind {
             TokenKind::TokenEOF => write!(f, "TokenEOF"),
             TokenKind::TokenPlus => write!(f, "TokenPlus"),
             TokenKind::TokenMinus => write!(f, "TokenMinus"),
-            TokenKind::TokenMultiply => write!(f, "TokenMultiply"),
-            TokenKind::TokenDivide => write!(f, "TokenDivide"),
+            TokenKind::TokenStar => write!(f, "TokenMultiply"),
+            TokenKind::TokenSlash => write!(f, "TokenDivide"),
             TokenKind::TokenUnknown => write!(f, "TokenUnknown"),
         }
     }
