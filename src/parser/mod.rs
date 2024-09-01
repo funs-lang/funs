@@ -1,5 +1,5 @@
+// pub mod old_parser;
 pub mod ast;
-pub mod old_parser; // TODO: Remove
 
 use crate::lexer::token::Token;
 use crate::lexer::token::TokenKind;
@@ -15,8 +15,7 @@ enum TreeKind {
     ErrorTree,
     File,
     Block,
-    FunctionDecl,
-    StmtDecl,
+    StmtVarDecl,
 }
 
 enum Child {
@@ -34,9 +33,45 @@ struct MarkOpened {
     index: usize,
 }
 
-const INITIAL_FUEL: u32 = 256;
+// Grammar:
+//
+// File = (Stmt | Comment)*
+//
+// Stmt =
+//   StmtVarDecl
+// | StmtFunDecl
+// | Expr
+//
+// StmtDeclVar = Ident: Type "=" Expr "\n"
+// Comment = "#" [^\n]*
+//
+// Expr =
+//   Ident
+// | ExprLiteral
+// | ExprBinary
+// | ExprUnary
+// | ExprParen
+// | ExprFunCall
+//
+// ExprLiteral = Int | Float | Bool | Str
+// ExprBinary = Expr ("+" | "-" | "*" | "/") Expr
+// ExprUnary = ("+" | "-") Expr
+// ExprParen = "(" Expr ")"
+//
+// Ident = [a-zA-Z_][a-zA-Z0-9_]*
+// Int = [0-9]+
+// Float = [0-9]+\.[0-9]+
+// Bool = "true" | "false"
+// Str = "\"" [^\n]* "\""
+//
+// ExprFunCall = Ident Expr*
+//
+// --- TODO ---
+// DeclFun = Ident ":" ParamList "->" Type = (Ident) "->" (Expr | Block) ";"
+// TypeParamList = "(" ((Type | "unit") ("," Type)*)? ")"
 
-struct Parser {
+const INITIAL_FUEL: u32 = 256;
+pub struct Parser {
     /// The tokens that the parser is consuming.
     tokens: Vec<Token>,
     /// The current fuel of the parser.
@@ -49,9 +84,9 @@ struct Parser {
 }
 
 impl Parser {
-    fn new(lexer: impl IntoIterator<Item = Token, IntoIter = Vec<Token>>) -> Self {
+    pub fn new(lexer: impl IntoIterator<Item = Token>) -> Self {
         Parser {
-            tokens: lexer.into_iter(),
+            tokens: lexer.into_iter().collect(),
             fuel: Cell::new(INITIAL_FUEL),
             pos: 0,
             events: Vec::new(),
@@ -130,7 +165,7 @@ impl Parser {
         eprintln!("Expected {kind:?}");
     }
 
-    fn advence_with_error(&mut self, error: &str) {
+    fn advance_with_error(&mut self, error: &str) {
         let m = self.open();
 
         // TODO: Error reporting
@@ -181,4 +216,59 @@ impl Parser {
 
         stack.pop().unwrap()
     }
+
+    pub fn parse_module(&mut self) {
+        let m = self.open();
+        self.parse_block();
+        self.close(m, TreeKind::File);
+    }
+
+    // File = (Stmt | Comment)*
+    //
+    // Stmt =
+    //   StmtVarDecl
+    // | StmtFunDecl
+    // | Expr
+    fn parse_block(&mut self) {
+        let m = self.open();
+        while !self.eof() {
+            match self.nth(0) {
+                TokenKind::TokenEOF => break,
+                TokenKind::TokenComment => self.parse_comment(),
+                TokenKind::TokenIdentifier => {
+                    if self.at(TokenKind::TokenColon) {
+                        if self.at(TokenKind::TokenOpenParen) {
+                            self.parse_fun_decl();
+                        } else {
+                            self.parse_var_decl();
+                        }
+                    } else {
+                        self.parse_expr();
+                    }
+                }
+                _ => self.advance_with_error("Expected statement"),
+            }
+        }
+        self.close(m, TreeKind::File);
+    }
+
+    // StmtDeclVar = Ident: Type "=" Expr "\n"
+    fn parse_var_decl(&mut self) {
+        assert!(self.at(TokenKind::TokenIdentifier));
+        let m = self.open();
+
+        self.expext(TokenKind::TokenIdentifier);
+        self.expext(TokenKind::TokenColon);
+        self.parse_type();
+        self.expext(TokenKind::TokenAssign);
+        self.parse_expr();
+        self.expext(TokenKind::TokenNewLine);
+
+        self.close(m, TreeKind::StmtVarDecl);
+    }
+
+    fn parse_comment(&mut self) {}
+    fn parse_fun_decl(&mut self) {}
+    fn parse_expr(&mut self) {}
+    fn parse_type(&mut self) {}
 }

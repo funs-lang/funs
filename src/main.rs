@@ -4,7 +4,8 @@ pub mod parser;
 pub mod source;
 pub mod utils;
 
-use crate::parser::old_parser::Parser;
+// use crate::parser::old_parser::Parser;
+use crate::parser::Parser;
 use lexer::Lexer;
 use logger::Logger;
 use source::Source;
@@ -38,7 +39,6 @@ fn main() {
     // } else {
     //     lexer.emit_errors();
     // }
-    let mut parser = Parser::new(source, lexer); // It can accepts lexer or tokens
-    let ast = parser.parse();
-    println!("{:#?}", ast);
+    let mut parser = Parser::new(lexer); // It can accepts lexer or tokens
+    let ast = parser.parse_module();
 }
