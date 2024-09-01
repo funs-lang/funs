@@ -4,9 +4,9 @@ pub mod parser;
 pub mod source;
 pub mod utils;
 
+use crate::parser::old_parser::Parser;
 use lexer::Lexer;
 use logger::Logger;
-use parser::Parser;
 use source::Source;
 use std::{env, path::PathBuf};
 
