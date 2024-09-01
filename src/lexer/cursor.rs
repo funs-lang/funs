@@ -2,7 +2,6 @@ use crate::source::Source;
 
 use super::token::TokenLocation;
 
-#[derive(Debug)]
 pub struct Cursor {
     source: Source,
     location: TokenLocation,

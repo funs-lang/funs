@@ -147,7 +147,7 @@ f2 = (a, b) ->
       b * b # return
 ;
 
-f3 = (a, b) ->
+f3 (int, int) -> int = (a, b) ->
     f_inner = (a, b) ->
         if gt a b then
           a_square = a * a
