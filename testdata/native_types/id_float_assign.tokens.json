@@ -20,9 +20,7 @@
     }
   },
   {
-    "kind": {
-      "TokenKeyword": "FloatType"
-    },
+    "kind": "TokenIdentifier",
     "lexeme": "float",
     "location": {
       "file_path": "",

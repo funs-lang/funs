@@ -20,9 +20,7 @@
     }
   },
   {
-    "kind": {
-      "TokenKeyword": "StrType"
-    },
+    "kind": "TokenIdentifier",
     "lexeme": "str",
     "location": {
       "file_path": "",

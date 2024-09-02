@@ -50,9 +50,7 @@
     }
   },
   {
-    "kind": {
-      "TokenKeyword": "UnitType"
-    },
+    "kind": "TokenIdentifier",
     "lexeme": "unit",
     "location": {
       "file_path": "",

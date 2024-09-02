@@ -20,9 +20,7 @@
     }
   },
   {
-    "kind": {
-      "TokenKeyword": "BoolType"
-    },
+    "kind": "TokenIdentifier",
     "lexeme": "bool",
     "location": {
       "file_path": "",
