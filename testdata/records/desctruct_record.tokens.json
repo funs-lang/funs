@@ -72,9 +72,7 @@
     }
   },
   {
-    "kind": {
-      "TokenKeyword": "IntType"
-    },
+    "kind": "TokenIdentifier",
     "lexeme": "int",
     "location": {
       "file_path": "",
@@ -114,9 +112,7 @@
     }
   },
   {
-    "kind": {
-      "TokenKeyword": "StrType"
-    },
+    "kind": "TokenIdentifier",
     "lexeme": "str",
     "location": {
       "file_path": "",
@@ -156,9 +152,7 @@
     }
   },
   {
-    "kind": {
-      "TokenKeyword": "IntType"
-    },
+    "kind": "TokenIdentifier",
     "lexeme": "int",
     "location": {
       "file_path": "",
@@ -198,9 +192,7 @@
     }
   },
   {
-    "kind": {
-      "TokenKeyword": "StrType"
-    },
+    "kind": "TokenIdentifier",
     "lexeme": "str",
     "location": {
       "file_path": "",
@@ -598,9 +590,7 @@
     }
   },
   {
-    "kind": {
-      "TokenKeyword": "IntType"
-    },
+    "kind": "TokenIdentifier",
     "lexeme": "int",
     "location": {
       "file_path": "",
@@ -620,9 +610,7 @@
     }
   },
   {
-    "kind": {
-      "TokenKeyword": "StrType"
-    },
+    "kind": "TokenIdentifier",
     "lexeme": "str",
     "location": {
       "file_path": "",
@@ -642,9 +630,7 @@
     }
   },
   {
-    "kind": {
-      "TokenKeyword": "IntType"
-    },
+    "kind": "TokenIdentifier",
     "lexeme": "int",
     "location": {
       "file_path": "",
@@ -664,9 +650,7 @@
     }
   },
   {
-    "kind": {
-      "TokenKeyword": "StrType"
-    },
+    "kind": "TokenIdentifier",
     "lexeme": "str",
     "location": {
       "file_path": "",

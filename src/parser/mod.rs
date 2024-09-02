@@ -16,6 +16,7 @@ enum TreeKind {
     File,
     Block,
     StmtVarDecl,
+    TypeExpr,
 }
 
 enum Child {
@@ -40,9 +41,10 @@ struct MarkOpened {
 // Stmt =
 //   StmtVarDecl
 // | StmtFunDecl
-// | Expr
+// | StmtExpr
 //
-// StmtDeclVar = Ident: Type "=" Expr "\n"
+// StmtExpr = Expr "\n"
+// StmtDeclVar = Ident: Type "=" Expr
 // Comment = "#" [^\n]*
 //
 // Expr =
@@ -63,6 +65,10 @@ struct MarkOpened {
 // Float = [0-9]+\.[0-9]+
 // Bool = "true" | "false"
 // Str = "\"" [^\n]* "\""
+// Type =
+//   Ident
+// | "[" Type "]"
+// | "(" Type ("," Type)* ")"
 //
 // ExprFunCall = Ident Expr*
 //
@@ -236,8 +242,8 @@ impl Parser {
                 TokenKind::TokenEOF => break,
                 TokenKind::TokenComment => self.parse_comment(),
                 TokenKind::TokenIdentifier => {
-                    if self.at(TokenKind::TokenColon) {
-                        if self.at(TokenKind::TokenOpenParen) {
+                    if self.nth(1) == TokenKind::TokenColon {
+                        if self.nth(2) == TokenKind::TokenOpenParen {
                             self.parse_fun_decl();
                         } else {
                             self.parse_var_decl();
@@ -252,7 +258,7 @@ impl Parser {
         self.close(m, TreeKind::File);
     }
 
-    // StmtDeclVar = Ident: Type "=" Expr "\n"
+    // StmtDeclVar = Ident: Type "=" StmtExpr
     fn parse_var_decl(&mut self) {
         assert!(self.at(TokenKind::TokenIdentifier));
         let m = self.open();
@@ -261,14 +267,43 @@ impl Parser {
         self.expext(TokenKind::TokenColon);
         self.parse_type();
         self.expext(TokenKind::TokenAssign);
-        self.parse_expr();
-        self.expext(TokenKind::TokenNewLine);
+        self.parse_stmt_expr();
 
         self.close(m, TreeKind::StmtVarDecl);
     }
 
+    // Type =
+    //   Ident
+    // | "[" Type "]"
+    // | "(" Type ("," Type)* ")"
+    fn parse_type(&mut self) {
+        let m = self.open();
+
+        match self.nth(0) {
+            TokenKind::TokenIdentifier => self.expext(TokenKind::TokenIdentifier),
+            TokenKind::TokenOpenBracket => {
+                self.expext(TokenKind::TokenOpenBracket);
+                self.parse_type();
+                self.expext(TokenKind::TokenCloseBracket);
+            }
+            TokenKind::TokenOpenParen => {
+                self.expext(TokenKind::TokenOpenParen);
+                self.parse_type();
+                while self.eat(TokenKind::TokenComma) {
+                    self.parse_type();
+                }
+                self.expext(TokenKind::TokenCloseParen);
+            }
+            _ => self.advance_with_error("Expected type"),
+        }
+
+        self.close(m, TreeKind::TypeExpr);
+    }
+
+    fn parse_stmt_expr(&mut self) {
+
+    }
+
     fn parse_comment(&mut self) {}
     fn parse_fun_decl(&mut self) {}
-    fn parse_expr(&mut self) {}
-    fn parse_type(&mut self) {}
 }

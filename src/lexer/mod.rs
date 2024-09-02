@@ -126,7 +126,7 @@ pub mod tests {
     }
 
     #[test]
-    fn text_lexer_lists() {
+    fn test_lexer_lists() {
         let fs_files = collect_fs_files("./testdata/lists", true);
         assert_eq!(fs_files.len(), 3);
 

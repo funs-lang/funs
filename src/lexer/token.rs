@@ -1,11 +1,6 @@
 use serde::{Deserialize, Serialize};
 use std::path::{Path, PathBuf};
 
-const KEYWORD_UNIT: &str = "unit";
-const KEYWORD_INT: &str = "int";
-const KEYWORD_FLOAT: &str = "float";
-const KEYWORD_BOOL: &str = "bool";
-const KEYWORD_STR: &str = "str";
 const KEYWORD_BOOL_TRUE: &str = "true";
 const KEYWORD_BOOL_FALSE: &str = "false";
 const KEYWORD_MATCH: &str = "match";
@@ -49,11 +44,6 @@ pub enum Literal {
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
 pub enum Keyword {
-    UnitType,
-    IntType,
-    FloatType,
-    BoolType,
-    StrType,
     Match,
     If,
     Then,
@@ -134,11 +124,6 @@ impl TokenKind {
         match lexeme {
             KEYWORD_BOOL_TRUE => Some(TokenKind::TokenLiteral(Literal::Bool)),
             KEYWORD_BOOL_FALSE => Some(TokenKind::TokenLiteral(Literal::Bool)),
-            KEYWORD_UNIT => Some(TokenKind::TokenKeyword(Keyword::UnitType)),
-            KEYWORD_INT => Some(TokenKind::TokenKeyword(Keyword::IntType)),
-            KEYWORD_FLOAT => Some(TokenKind::TokenKeyword(Keyword::FloatType)),
-            KEYWORD_BOOL => Some(TokenKind::TokenKeyword(Keyword::BoolType)),
-            KEYWORD_STR => Some(TokenKind::TokenKeyword(Keyword::StrType)),
             KEYWORD_MATCH => Some(TokenKind::TokenKeyword(Keyword::Match)),
             KEYWORD_IF => Some(TokenKind::TokenKeyword(Keyword::If)),
             KEYWORD_THEN => Some(TokenKind::TokenKeyword(Keyword::Then)),
@@ -342,11 +327,6 @@ impl std::fmt::Display for Literal {
 impl std::fmt::Display for Keyword {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         match self {
-            Keyword::UnitType => write!(f, "UnitType"),
-            Keyword::IntType => write!(f, "IntType"),
-            Keyword::FloatType => write!(f, "FloatType"),
-            Keyword::BoolType => write!(f, "BoolType"),
-            Keyword::StrType => write!(f, "StrType"),
             Keyword::Match => write!(f, "Match"),
             Keyword::If => write!(f, "If"),
             Keyword::Then => write!(f, "Then"),

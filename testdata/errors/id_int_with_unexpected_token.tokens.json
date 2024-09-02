@@ -20,9 +20,7 @@
     }
   },
   {
-    "kind": {
-      "TokenKeyword": "IntType"
-    },
+    "kind": "TokenIdentifier",
     "lexeme": "int",
     "location": {
       "file_path": "",
