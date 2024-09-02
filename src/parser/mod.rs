@@ -1,29 +1,35 @@
 // pub mod old_parser;
 pub mod ast;
 
+use crate::lexer::token::Literal;
 use crate::lexer::token::Token;
 use crate::lexer::token::TokenKind;
 use std::cell::Cell;
 use tracing::error;
 
-struct Tree {
+#[derive(Debug)]
+pub struct Tree {
     kind: TreeKind,
     children: Vec<Child>,
 }
 
+#[derive(Debug)]
 enum TreeKind {
     ErrorTree,
     File,
-    Block,
     StmtVarDecl,
     TypeExpr,
+    StmtExpr,
+    ExprLiteral,
 }
 
+#[derive(Debug)]
 enum Child {
     Tree(Tree),
     Token(Token),
 }
 
+#[derive(Debug)]
 enum Event {
     Open { kind: TreeKind },
     Close,
@@ -134,7 +140,7 @@ impl Parser {
     }
 
     fn eof(&self) -> bool {
-        self.pos == self.events.len()
+        self.pos == self.tokens.len()
     }
 
     fn nth(&self, lookahead: usize) -> TokenKind {
@@ -223,10 +229,9 @@ impl Parser {
         stack.pop().unwrap()
     }
 
-    pub fn parse_module(&mut self) {
-        let m = self.open();
-        self.parse_block();
-        self.close(m, TreeKind::File);
+    pub fn parse(mut self) -> Tree {
+        self.parse_file();
+        self.build_tree()
     }
 
     // File = (Stmt | Comment)*
@@ -235,11 +240,11 @@ impl Parser {
     //   StmtVarDecl
     // | StmtFunDecl
     // | Expr
-    fn parse_block(&mut self) {
+    fn parse_file(&mut self) {
         let m = self.open();
         while !self.eof() {
             match self.nth(0) {
-                TokenKind::TokenEOF => break,
+                TokenKind::TokenEOF => self.advance(),
                 TokenKind::TokenComment => self.parse_comment(),
                 TokenKind::TokenIdentifier => {
                     if self.nth(1) == TokenKind::TokenColon {
@@ -300,8 +305,34 @@ impl Parser {
         self.close(m, TreeKind::TypeExpr);
     }
 
+    // StmtExpr = Expr "\n"
     fn parse_stmt_expr(&mut self) {
+        let m = self.open();
+        self.parse_expr();
+        self.expext(TokenKind::TokenNewLine);
+        self.close(m, TreeKind::StmtExpr);
+    }
 
+    // Expr =
+    //   Ident
+    // | ExprLiteral
+    // | ExprBinary
+    // | ExprUnary
+    // | ExprParen
+    // | ExprFunCall
+    fn parse_expr(&mut self) {
+        let m = self.open();
+
+        match self.nth(0) {
+            TokenKind::TokenLiteral(Literal::Int)
+            | TokenKind::TokenLiteral(Literal::Float)
+            | TokenKind::TokenLiteral(Literal::Bool)
+            | TokenKind::TokenLiteral(Literal::Str) => {
+                self.advance();
+                self.close(m, TreeKind::ExprLiteral);
+            }
+            _ => unimplemented!(),
+        }
     }
 
     fn parse_comment(&mut self) {}

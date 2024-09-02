@@ -39,6 +39,7 @@ fn main() {
     // } else {
     //     lexer.emit_errors();
     // }
-    let mut parser = Parser::new(lexer); // It can accepts lexer or tokens
-    let ast = parser.parse_module();
+    let parser = Parser::new(lexer); // It can accepts lexer or tokens
+    let tree = parser.parse();
+    println!("{:?}", tree);
 }
