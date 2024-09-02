@@ -1,10 +1,84 @@
-use crate::parser::ast;
 use crate::{
-    lexer::token::{Keyword, Literal, Token, TokenKind},
+    lexer::token::{Literal, Token, TokenKind, TokenLocation},
     source::Source,
 };
+use serde::{Deserialize, Serialize};
 use tracing::error;
 use tracing::info;
+
+#[derive(Debug, Deserialize, Serialize, PartialEq)]
+pub enum AstError {
+    UnexpectedToken { token: Token },
+}
+
+impl std::fmt::Display for AstError {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        match self {
+            AstError::UnexpectedToken { token } => {
+                write!(f, "Unexpected token: {}", token)
+            }
+        }
+    }
+}
+
+#[derive(Debug, Deserialize, Serialize, PartialEq)]
+pub struct Ast {
+    pub source: Source,
+    pub root: Block,
+}
+
+#[derive(Debug, Deserialize, Serialize, PartialEq)]
+pub struct Block {
+    pub stmts: Box<[Stmt]>,
+}
+
+#[derive(Debug, Deserialize, Serialize, PartialEq)]
+pub enum Stmt {
+    Assign {
+        lhs: Expr,
+        type_: Type,
+        rhs: Result<Expr, AstError>,
+    },
+    Expr(Expr),
+    Comment {
+        comment: String,
+        location: TokenLocation,
+    },
+}
+
+#[derive(Debug, Deserialize, Serialize, PartialEq)]
+pub enum Type {
+    Int,
+    Float,
+    Bool,
+    Str,
+}
+
+#[derive(Debug, Deserialize, Serialize, PartialEq)]
+pub enum Expr {
+    Literal {
+        literal: TypeLiteral,
+        location: TokenLocation,
+    },
+    Identifier {
+        name: String,
+        location: TokenLocation,
+    },
+}
+
+#[derive(Debug, Deserialize, Serialize, PartialEq)]
+pub enum TypeLiteral {
+    Int(i64),
+    Float(f64),
+    Bool(bool),
+    Str(String),
+}
+
+impl Ast {
+    pub fn new(source: Source, root: Block) -> Ast {
+        Ast { source, root }
+    }
+}
 
 pub struct Parser<I: IntoIterator> {
     lexer: I::IntoIter,
@@ -29,14 +103,14 @@ impl<I: IntoIterator<Item = Token>> Parser<I> {
         self.curr_token = self.lexer.next();
     }
 
-    pub fn parse(&mut self) -> ast::Ast {
+    pub fn parse(&mut self) -> Ast {
         let source = self.source.clone();
-        let ast::Block { stmts } = self.parse_block();
-        let root = ast::Block { stmts };
-        ast::Ast::new(source, root)
+        let Block { stmts } = self.parse_block();
+        let root = Block { stmts };
+        Ast::new(source, root)
     }
 
-    fn parse_block(&mut self) -> ast::Block {
+    fn parse_block(&mut self) -> Block {
         let mut stmts = Vec::new();
         loop {
             match self.curr_token {
@@ -51,12 +125,12 @@ impl<I: IntoIterator<Item = Token>> Parser<I> {
                 _ => (),
             }
         }
-        ast::Block {
+        Block {
             stmts: stmts.into_boxed_slice(),
         }
     }
 
-    fn parse_stmt(&mut self) -> ast::Stmt {
+    fn parse_stmt(&mut self) -> Stmt {
         match &self.curr_token {
             Some(Token {
                 kind: TokenKind::TokenIdentifier,
@@ -78,7 +152,7 @@ impl<I: IntoIterator<Item = Token>> Parser<I> {
         }
     }
 
-    fn parse_identifier_stmt(&mut self) -> ast::Stmt {
+    fn parse_identifier_stmt(&mut self) -> Stmt {
         let lhs = self.curr_token.clone().unwrap(); // Safe to unwrap
         self.consume();
 
@@ -100,8 +174,8 @@ impl<I: IntoIterator<Item = Token>> Parser<I> {
         }
     }
 
-    fn parse_assign_stmt(&mut self, lhs: Token) -> ast::Stmt {
-        let lhs = ast::Expr::Identifier {
+    fn parse_assign_stmt(&mut self, lhs: Token) -> Stmt {
+        let lhs = Expr::Identifier {
             name: lhs.lexeme,
             location: lhs.location,
         };
@@ -123,7 +197,7 @@ impl<I: IntoIterator<Item = Token>> Parser<I> {
                         ..
                     }) => {
                         self.consume();
-                        ast::Stmt::Assign {
+                        Stmt::Assign {
                             lhs,
                             type_,
                             rhs: Ok(rhs),
@@ -136,14 +210,14 @@ impl<I: IntoIterator<Item = Token>> Parser<I> {
                 kind: TokenKind::TokenUnknown,
                 ..
             }) => {
-                let err = ast::AstError::UnexpectedToken {
+                let err = AstError::UnexpectedToken {
                     token: self.curr_token.clone().unwrap(),
                 };
                 error!("{}", err);
 
                 self.consume_until_new_statement();
 
-                ast::Stmt::Assign {
+                Stmt::Assign {
                     lhs,
                     type_,
                     rhs: Err(err),
@@ -153,7 +227,7 @@ impl<I: IntoIterator<Item = Token>> Parser<I> {
         }
     }
 
-    fn parse_comment_stmt(&mut self) -> ast::Stmt {
+    fn parse_comment_stmt(&mut self) -> Stmt {
         let comment = self.curr_token.clone().unwrap(); // Safe to unwrap
         self.consume();
         match self.curr_token {
@@ -162,7 +236,7 @@ impl<I: IntoIterator<Item = Token>> Parser<I> {
                 ..
             }) => {
                 self.consume();
-                ast::Stmt::Comment {
+                Stmt::Comment {
                     comment: comment.lexeme,
                     location: comment.location,
                 }
@@ -171,23 +245,24 @@ impl<I: IntoIterator<Item = Token>> Parser<I> {
         }
     }
 
-    fn parse_type(&mut self) -> ast::Type {
+    fn parse_type(&mut self) -> Type {
         match &self.curr_token {
             Some(Token {
-                kind: TokenKind::TokenKeyword(keyword),
+                kind: TokenKind::TokenIdentifier,
+                lexeme,
                 ..
-            }) => match keyword {
-                Keyword::IntType => ast::Type::Int,
-                Keyword::FloatType => ast::Type::Float,
-                Keyword::BoolType => ast::Type::Bool,
-                Keyword::StrType => ast::Type::Str,
+            }) => match lexeme.as_str() {
+                "int" => Type::Int,
+                "float" => Type::Float,
+                "bool" => Type::Bool,
+                "str" => Type::Str,
                 _ => todo!(), // Error of invalid type
             },
             _ => todo!(), // Error of unexpected token
         }
     }
 
-    fn parse_expr(&mut self) -> ast::Expr {
+    fn parse_expr(&mut self) -> Expr {
         match self.curr_token {
             Some(Token {
                 kind: TokenKind::TokenLiteral(_),
@@ -201,7 +276,7 @@ impl<I: IntoIterator<Item = Token>> Parser<I> {
         }
     }
 
-    fn parse_literal_expr(&mut self) -> ast::Expr {
+    fn parse_literal_expr(&mut self) -> Expr {
         let token = self.curr_token.clone().unwrap(); // Safe to unwrap
         match &self.curr_token {
             Some(Token {
@@ -213,8 +288,8 @@ impl<I: IntoIterator<Item = Token>> Parser<I> {
                         Ok(int) => int,
                         Err(_) => todo!(), // Error of invalid integer
                     };
-                    ast::Expr::Literal {
-                        literal: ast::Literal::Int(int),
+                    Expr::Literal {
+                        literal: TypeLiteral::Int(int),
                         location: token.location,
                     }
                 }
@@ -223,8 +298,8 @@ impl<I: IntoIterator<Item = Token>> Parser<I> {
                         Ok(float) => float,
                         Err(_) => todo!(), // Error of invalid float
                     };
-                    ast::Expr::Literal {
-                        literal: ast::Literal::Float(float),
+                    Expr::Literal {
+                        literal: TypeLiteral::Float(float),
                         location: token.location,
                     }
                 }
@@ -233,15 +308,15 @@ impl<I: IntoIterator<Item = Token>> Parser<I> {
                         Ok(bool_) => bool_,
                         Err(_) => todo!(), // Error of invalid bool
                     };
-                    ast::Expr::Literal {
-                        literal: ast::Literal::Bool(bool_),
+                    Expr::Literal {
+                        literal: TypeLiteral::Bool(bool_),
                         location: token.location,
                     }
                 }
                 Literal::Str => {
                     let str_ = token.lexeme.clone();
-                    ast::Expr::Literal {
-                        literal: ast::Literal::Str(str_),
+                    Expr::Literal {
+                        literal: TypeLiteral::Str(str_),
                         location: token.location,
                     }
                 }

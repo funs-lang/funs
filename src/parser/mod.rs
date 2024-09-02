@@ -1,5 +1,3 @@
-pub mod ast;
-
 use crate::lexer::token::Literal;
 use crate::lexer::token::Token;
 use crate::lexer::token::TokenKind;
