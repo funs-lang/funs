@@ -1,4 +1,3 @@
-// pub mod old_parser;
 pub mod ast;
 
 use crate::lexer::token::Literal;
@@ -8,6 +7,7 @@ use std::cell::Cell;
 use tracing::error;
 
 #[derive(Debug)]
+#[allow(dead_code)]
 pub struct Tree {
     kind: TreeKind,
     children: Vec<Child>,
@@ -24,6 +24,7 @@ enum TreeKind {
 }
 
 #[derive(Debug)]
+#[allow(dead_code)]
 enum Child {
     Tree(Tree),
     Token(Token),
