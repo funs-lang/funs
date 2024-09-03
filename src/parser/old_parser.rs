@@ -358,6 +358,8 @@ pub mod tests {
         let fs_files = fs_files.iter().filter(|p| {
             p.ends_with("id_int_assign.fs")
                 || p.ends_with("id_int_assign_2.fs")
+                || p.ends_with("comment.fs")
+                || p.ends_with("comment_and_id_int.fs")
                 || p.ends_with("id_int_assign_with_len_one.fs")
                 || p.ends_with("id_int_assign_with_spaces.fs")
                 || p.ends_with("id_float_assign.fs")
@@ -365,8 +367,6 @@ pub mod tests {
                 || p.ends_with("id_bool_false_assign.fs")
                 || p.ends_with("id_str_assign.fs")
                 || p.ends_with("id_str_assign_multiple_words.fs")
-                || p.ends_with("comment.fs")
-                || p.ends_with("comment_and_id_int.fs")
         });
 
         for path in fs_files {
