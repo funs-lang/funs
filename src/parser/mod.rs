@@ -365,6 +365,11 @@ pub mod tests {
                 || p.ends_with("id_int_assign_2.fs")
                 || p.ends_with("comment.fs")
                 || p.ends_with("comment_and_id_int.fs")
+                || p.ends_with("id_int_assign_with_len_one.fs")
+                || p.ends_with("id_int_assign_with_spaces.fs")
+                || p.ends_with("id_float_assign.fs")
+                || p.ends_with("id_bool_true_assign.fs")
+                || p.ends_with("id_bool_false_assign.fs")
         });
 
         for path in fs_files {
@@ -380,7 +385,7 @@ pub mod tests {
             let output_ast = Parser::new(Lexer::new(&source)).parse();
             let ast_file = fs_file.to_string().replace(".fs", ".ast.json");
             let json_ast = std::fs::File::open(ast_file).unwrap();
-            // println!("{}", serde_json::to_string(&output_ast).unwrap());
+            println!("{}", serde_json::to_string(&output_ast).unwrap());
             let expected_ast = serde_json::from_reader(json_ast).unwrap();
             assert_eq!(output_ast, expected_ast);
         }

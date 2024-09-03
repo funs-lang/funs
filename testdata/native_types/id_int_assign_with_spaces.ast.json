@@ -1,33 +1,117 @@
 {
-  "stmts": [
+  "kind": "File",
+  "children": [
     {
-      "Assign": {
-        "lhs": {
-          "Identifier": {
-            "name": "_x_int",
-            "location": {
-              "file_path": "",
-              "line": 0,
-              "column_start": 4,
-              "column_end": 10
-            }
-          }
-        },
-        "type_": "Int",
-        "rhs": {
-          "Ok": {
-            "Literal": {
-              "literal": {
-                "Int": 0
-              },
+      "Tree": {
+        "kind": "StmtVarDecl",
+        "children": [
+          {
+            "Token": {
+              "kind": "TokenIdentifier",
+              "lexeme": "_x_int",
               "location": {
                 "file_path": "",
                 "line": 0,
-                "column_start": 22,
-                "column_end": 23
+                "column_start": 4,
+                "column_end": 10
               }
             }
+          },
+          {
+            "Token": {
+              "kind": "TokenColon",
+              "lexeme": ":",
+              "location": {
+                "file_path": "",
+                "line": 0,
+                "column_start": 10,
+                "column_end": 11
+              }
+            }
+          },
+          {
+            "Tree": {
+              "kind": "TypeExpr",
+              "children": [
+                {
+                  "Token": {
+                    "kind": "TokenIdentifier",
+                    "lexeme": "int",
+                    "location": {
+                      "file_path": "",
+                      "line": 0,
+                      "column_start": 14,
+                      "column_end": 17
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "Token": {
+              "kind": "TokenAssign",
+              "lexeme": "=",
+              "location": {
+                "file_path": "",
+                "line": 0,
+                "column_start": 19,
+                "column_end": 20
+              }
+            }
+          },
+          {
+            "Tree": {
+              "kind": "StmtExpr",
+              "children": [
+                {
+                  "Tree": {
+                    "kind": "ExprLiteral",
+                    "children": [
+                      {
+                        "Token": {
+                          "kind": {
+                            "TokenLiteral": "Int"
+                          },
+                          "lexeme": "0",
+                          "location": {
+                            "file_path": "",
+                            "line": 0,
+                            "column_start": 22,
+                            "column_end": 23
+                          }
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "Token": {
+                    "kind": "TokenNewLine",
+                    "lexeme": "\\n",
+                    "location": {
+                      "file_path": "",
+                      "line": 0,
+                      "column_start": 23,
+                      "column_end": 23
+                    }
+                  }
+                }
+              ]
+            }
           }
+        ]
+      }
+    },
+    {
+      "Token": {
+        "kind": "TokenEOF",
+        "lexeme": "",
+        "location": {
+          "file_path": "",
+          "line": 1,
+          "column_start": 0,
+          "column_end": 0
         }
       }
     }
