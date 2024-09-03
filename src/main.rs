@@ -40,6 +40,5 @@ fn main() {
     //     lexer.emit_errors();
     // }
     let parser = Parser::new(lexer); // It can accepts lexer or tokens
-    let tree = parser.parse();
-    println!("{:?}", tree);
+    let _tree = parser.parse();
 }

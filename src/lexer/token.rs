@@ -289,7 +289,7 @@ impl From<&PathBuf> for TokenLocation {
     }
 }
 
-#[derive(Clone, Debug, PartialEq, serde::Deserialize, serde::Serialize)]
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 pub struct Token {
     /// The kind of the token
     pub kind: TokenKind,

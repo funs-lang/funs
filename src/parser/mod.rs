@@ -1,17 +1,18 @@
 use crate::lexer::token::Literal;
 use crate::lexer::token::Token;
 use crate::lexer::token::TokenKind;
+use serde::Deserialize;
+use serde::Serialize;
 use std::cell::Cell;
 use tracing::error;
 
-#[derive(Debug)]
-#[allow(dead_code)]
+#[derive(Debug, Deserialize, Serialize, PartialEq)]
 pub struct Tree {
     kind: TreeKind,
     children: Vec<Child>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Deserialize, Serialize, PartialEq)]
 enum TreeKind {
     ErrorTree,
     File,
@@ -21,8 +22,7 @@ enum TreeKind {
     ExprLiteral,
 }
 
-#[derive(Debug)]
-#[allow(dead_code)]
+#[derive(Debug, Deserialize, Serialize, PartialEq)]
 enum Child {
     Tree(Tree),
     Token(Token),
@@ -181,6 +181,7 @@ impl Parser {
 
         // TODO: Error reporting
         eprintln!("{error}");
+        error!("{error}");
         self.advance();
         self.close(m, TreeKind::ErrorTree);
     }
@@ -336,4 +337,38 @@ impl Parser {
 
     fn parse_comment(&mut self) {}
     fn parse_fun_decl(&mut self) {}
+}
+
+#[cfg(test)]
+pub mod tests {
+    use crate::{
+        lexer::Lexer, parser::Parser, source::Source, utils::file_handler::collect_fs_files,
+    };
+    use tracing::info;
+
+    #[test]
+    fn test_parser_native_types() {
+        let fs_files = collect_fs_files("./testdata/native_types", true);
+        assert_eq!(fs_files.len(), 15);
+
+        let fs_files = fs_files.iter().filter(|p| p.ends_with("id_int_assign.fs"));
+
+        for path in fs_files {
+            info!("file -> {:?}", path);
+            eprintln!("file -> {:?}", path);
+            let input = std::fs::File::open(path.clone()).unwrap();
+            let content = std::io::read_to_string(input).unwrap();
+            #[cfg(target_os = "windows")]
+            let content = content.replace("\r\n", "\n");
+            let source = Source::from(content);
+            let fs_file = path.to_str().unwrap();
+
+            let output_ast = Parser::new(Lexer::new(&source)).parse();
+            let ast_file = fs_file.to_string().replace(".fs", ".ast.json");
+            let json_ast = std::fs::File::open(ast_file).unwrap();
+            // println!("{}", serde_json::to_string(&output_tree).unwrap());
+            let expected_ast = serde_json::from_reader(json_ast).unwrap();
+            assert_eq!(output_ast, expected_ast);
+        }
+    }
 }
