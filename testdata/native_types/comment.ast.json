@@ -1,13 +1,46 @@
 {
-  "stmts": [
+  "kind": "File",
+  "children": [
     {
-      "Comment": {
-        "comment": "# this is a comment",
+      "Tree": {
+        "kind": "Comment",
+        "children": [
+          {
+            "Token": {
+              "kind": "TokenComment",
+              "lexeme": "# this is a comment",
+              "location": {
+                "file_path": "",
+                "line": 0,
+                "column_start": 0,
+                "column_end": 19
+              }
+            }
+          },
+          {
+            "Token": {
+              "kind": "TokenNewLine",
+              "lexeme": "\\n",
+              "location": {
+                "file_path": "",
+                "line": 0,
+                "column_start": 19,
+                "column_end": 19
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "Token": {
+        "kind": "TokenEOF",
+        "lexeme": "",
         "location": {
           "file_path": "",
-          "line": 0,
+          "line": 1,
           "column_start": 0,
-          "column_end": 19
+          "column_end": 0
         }
       }
     }
