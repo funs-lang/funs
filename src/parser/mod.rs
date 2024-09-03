@@ -17,6 +17,7 @@ enum TreeKind {
     ErrorTree,
     File,
     StmtVarDecl,
+    Comment,
     TypeExpr,
     StmtExpr,
     ExprLiteral,
@@ -50,7 +51,7 @@ struct MarkOpened {
 //
 // StmtExpr = Expr "\n"
 // StmtDeclVar = Ident: Type "=" Expr
-// Comment = "#" [^\n]*
+// Comment = "#" [^\n]* "\n"
 //
 // Expr =
 //   Ident
@@ -335,7 +336,15 @@ impl Parser {
         }
     }
 
-    fn parse_comment(&mut self) {}
+    // Comment = "#" [^\n]*
+    fn parse_comment(&mut self) {
+        assert!(self.at(TokenKind::TokenComment));
+        let m = self.open();
+        self.expext(TokenKind::TokenComment);
+        self.expext(TokenKind::TokenNewLine);
+        self.close(m, TreeKind::Comment);
+    }
+
     fn parse_fun_decl(&mut self) {}
 }
 
@@ -351,9 +360,11 @@ pub mod tests {
         let fs_files = collect_fs_files("./testdata/native_types", true);
         assert_eq!(fs_files.len(), 15);
 
-        let fs_files = fs_files
-            .iter()
-            .filter(|p| p.ends_with("id_int_assign.fs") || p.ends_with("id_int_assign_2.fs"));
+        let fs_files = fs_files.iter().filter(|p| {
+            p.ends_with("id_int_assign.fs")
+                || p.ends_with("id_int_assign_2.fs")
+                || p.ends_with("comment.fs")
+        });
 
         for path in fs_files {
             info!("file -> {:?}", path);
