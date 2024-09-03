@@ -351,7 +351,9 @@ pub mod tests {
         let fs_files = collect_fs_files("./testdata/native_types", true);
         assert_eq!(fs_files.len(), 15);
 
-        let fs_files = fs_files.iter().filter(|p| p.ends_with("id_int_assign.fs"));
+        let fs_files = fs_files
+            .iter()
+            .filter(|p| p.ends_with("id_int_assign.fs") || p.ends_with("id_int_assign_2.fs"));
 
         for path in fs_files {
             info!("file -> {:?}", path);
@@ -366,7 +368,7 @@ pub mod tests {
             let output_ast = Parser::new(Lexer::new(&source)).parse();
             let ast_file = fs_file.to_string().replace(".fs", ".ast.json");
             let json_ast = std::fs::File::open(ast_file).unwrap();
-            // println!("{}", serde_json::to_string(&output_tree).unwrap());
+            println!("{}", serde_json::to_string(&output_ast).unwrap());
             let expected_ast = serde_json::from_reader(json_ast).unwrap();
             assert_eq!(output_ast, expected_ast);
         }
