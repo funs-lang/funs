@@ -1,44 +1,148 @@
 {
-  "stmts": [
+  "kind": "File",
+  "children": [
     {
-      "Comment": {
-        "comment": "# this is a comment",
-        "location": {
-          "file_path": "",
-          "line": 0,
-          "column_start": 0,
-          "column_end": 19
-        }
-      }
-    },
-    {
-      "Assign": {
-        "lhs": {
-          "Identifier": {
-            "name": "x",
-            "location": {
-              "file_path": "",
-              "line": 1,
-              "column_start": 0,
-              "column_end": 1
-            }
-          }
-        },
-        "type_": "Int",
-        "rhs": {
-          "Ok": {
-            "Literal": {
-              "literal": {
-                "Int": 0
-              },
+      "Tree": {
+        "kind": "Comment",
+        "children": [
+          {
+            "Token": {
+              "kind": "TokenComment",
+              "lexeme": "# this is a comment",
               "location": {
                 "file_path": "",
-                "line": 1,
-                "column_start": 9,
-                "column_end": 10
+                "line": 0,
+                "column_start": 0,
+                "column_end": 19
+              }
+            }
+          },
+          {
+            "Token": {
+              "kind": "TokenNewLine",
+              "lexeme": "\\n",
+              "location": {
+                "file_path": "",
+                "line": 0,
+                "column_start": 19,
+                "column_end": 19
               }
             }
           }
+        ]
+      }
+    },
+    {
+      "Tree": {
+        "kind": "StmtVarDecl",
+        "children": [
+          {
+            "Token": {
+              "kind": "TokenIdentifier",
+              "lexeme": "x",
+              "location": {
+                "file_path": "",
+                "line": 1,
+                "column_start": 0,
+                "column_end": 1
+              }
+            }
+          },
+          {
+            "Token": {
+              "kind": "TokenColon",
+              "lexeme": ":",
+              "location": {
+                "file_path": "",
+                "line": 1,
+                "column_start": 1,
+                "column_end": 2
+              }
+            }
+          },
+          {
+            "Tree": {
+              "kind": "TypeExpr",
+              "children": [
+                {
+                  "Token": {
+                    "kind": "TokenIdentifier",
+                    "lexeme": "int",
+                    "location": {
+                      "file_path": "",
+                      "line": 1,
+                      "column_start": 3,
+                      "column_end": 6
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "Token": {
+              "kind": "TokenAssign",
+              "lexeme": "=",
+              "location": {
+                "file_path": "",
+                "line": 1,
+                "column_start": 7,
+                "column_end": 8
+              }
+            }
+          },
+          {
+            "Tree": {
+              "kind": "StmtExpr",
+              "children": [
+                {
+                  "Tree": {
+                    "kind": "ExprLiteral",
+                    "children": [
+                      {
+                        "Token": {
+                          "kind": {
+                            "TokenLiteral": "Int"
+                          },
+                          "lexeme": "0",
+                          "location": {
+                            "file_path": "",
+                            "line": 1,
+                            "column_start": 9,
+                            "column_end": 10
+                          }
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "Token": {
+                    "kind": "TokenNewLine",
+                    "lexeme": "\\n",
+                    "location": {
+                      "file_path": "",
+                      "line": 1,
+                      "column_start": 10,
+                      "column_end": 10
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "Token": {
+        "kind": "TokenEOF",
+        "lexeme": "",
+        "location": {
+          "file_path": "",
+          "line": 2,
+          "column_start": 0,
+          "column_end": 0
         }
       }
     }
